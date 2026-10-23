@@ -1,0 +1,43 @@
+---
+import Base from '../layouts/Base.astro';
+import StatusPill from '../components/StatusPill.astro';
+import projects from '../data/projects.json';
+
+const p = projects.find((x) => x.slug === 'rentlens')!;
+---
+<Base title="RentLens NSW · Aravind Danassegarane" description={p.summary}>
+  <div class="wrap section">
+    <p class="mono muted" style="font-size:13px;margin:32px 0 8px"><a href="/#projects">← All projects</a></p>
+    <div class="card-row" style="justify-content:flex-start;gap:12px">
+      <h1 class="h2">{p.name}</h1>
+      <StatusPill status={p.status} />
+    </div>
+    <p class="lede">{p.question} {p.summary}</p>
+    <div class="tags" style="margin-top:16px">{p.tags.map((t) => <span class="tag">{t}</span>)}</div>
+
+    <div class="actions" style="margin-top:20px">
+      <a class="btn btn-primary" href={p.live}>Open full dashboard</a>
+      <a class="btn btn-ghost" href={p.code}>View code on GitHub</a>
+    </div>
+
+    <section aria-labelledby="why-h" style="margin-top:40px">
+      <h2 id="why-h" class="h2-sm">Why it exists</h2>
+      <p class="lede">Listing sites show what landlords are asking. NSW Fair Trading records what tenants actually signed, through rental bond lodgements. RentLens turns those official records into median weekly rents by dwelling type, postcode and month.</p>
+    </section>
+
+    <section aria-labelledby="dash-h" style="margin-top:40px">
+      <h2 id="dash-h" class="h2-sm">Live dashboard</h2>
+      <iframe
+        class="dash"
+        src={p.live}
+        title="RentLens NSW live dashboard"
+        loading="lazy"
+        referrerpolicy="no-referrer"
+      ></iframe>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .dash { width: 100%; height: 80vh; min-height: 560px; margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+</style>

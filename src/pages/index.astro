@@ -65,9 +65,10 @@ const contactButtons = [
             <h3>{p.question}</h3>
             <p>{p.summary}</p>
             <div class="tags">{p.tags.map((t) => <span class="tag">{t}</span>)}</div>
-            {(p.story || p.code) && (
+            {(p.story || p.live || p.code) && (
               <div class="links">
                 {p.story && <a href={p.story}>Read the story</a>}
+                {p.live && <a href={p.live}>Live dashboard</a>}
                 {p.code && <a href={p.code}>Code</a>}
               </div>
             )}

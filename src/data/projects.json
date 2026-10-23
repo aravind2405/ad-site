@@ -19,8 +19,9 @@
     "question": "Where are Sydney rents heading?",
     "summary": "Turns NSW rental bond records into clear, tested trends by area.",
     "tags": ["dbt", "DuckDB", "Snowflake"],
-    "story": null,
-    "code": null
+    "story": "/rentlens",
+    "live": "https://aravind2405.github.io/rentlens-nsw/",
+    "code": "https://github.com/aravind2405/rentlens-nsw"
   },
   {
     "slug": "gridwatch",
