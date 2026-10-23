@@ -1,6 +1,0 @@
----
-interface Props { status: 'building' | 'live' | 'soon' }
-const labels = { building: 'Building', live: 'Live', soon: 'Coming soon' };
-const { status } = Astro.props;
----
-<span class={`pill pill-${status}`}>{labels[status]}</span>

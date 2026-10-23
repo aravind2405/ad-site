@@ -9,8 +9,8 @@
   --chip: #F0F1EE;
   --link: #1F5C8F;
   --link-hover: #16456C;
-  --sans: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
-  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+  --mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
 }
 
 * { box-sizing: border-box; }
@@ -157,3 +157,7 @@ img { max-width: 100%; }
 .tempting li:last-child { border-bottom: 0; }
 .lab-page .site-footer { border-color: #2A2E36; }
 .lab-page .site-footer .wrap { color: #A9B0BC; }
+
+.dash { width: 100%; height: 80vh; min-height: 560px; margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
+
+.dash { width: 100%; height: 80vh; min-height: 560px; margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }

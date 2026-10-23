@@ -1,0 +1,11 @@
+import type { Metadata, Viewport } from 'next';
+import type { ReactNode } from 'react';
+import Document from '@/components/Document';
+
+export const metadata: Metadata = { icons: { icon: '/favicon.svg' } };
+
+export const viewport: Viewport = { themeColor: '#14161B' };
+
+export default function LabLayout({ children }: { children: ReactNode }) {
+  return <Document dark>{children}</Document>;
+}
