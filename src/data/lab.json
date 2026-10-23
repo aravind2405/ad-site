@@ -29,9 +29,9 @@
     }
   ],
   "tempting": [
-    { "idea": "Rain on real terrain: where water pools", "note": "from a reel" },
-    { "idea": "Birds that flock from three simple rules", "note": "an evening" },
-    { "idea": "How a bushfire would spread on real hills", "note": "hackathon" },
-    { "idea": "Western Sydney heatwaves vs the power grid", "note": "hackathon" }
+    { "idea": "Rain on real terrain: where water pools" },
+    { "idea": "Birds that flock from three simple rules" },
+    { "idea": "How a bushfire would spread on real hills" },
+    { "idea": "Western Sydney heatwaves vs the power grid" }
   ]
 }
