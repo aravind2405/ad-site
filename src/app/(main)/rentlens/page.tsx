@@ -42,6 +42,7 @@ export default function RentLens() {
             title="RentLens NSW live dashboard"
             loading="lazy"
             referrerPolicy="no-referrer"
+            sandbox="allow-scripts"
           ></iframe>
         )}
         <p className="muted" style={{ fontSize: 14, marginTop: 12 }}>Data: NSW Fair Trading rental bond lodgements, published as open data by the NSW Government. The analysis is my own and is not an official NSW Government statistic.</p>
