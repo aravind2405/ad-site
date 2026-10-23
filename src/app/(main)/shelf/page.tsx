@@ -9,7 +9,8 @@ const description = "What I'm reading, and what stuck.";
 export const metadata: Metadata = {
   title: 'The shelf · Aravind Danassegarane',
   description,
-  openGraph: { title: 'The shelf · Aravind Danassegarane', description },
+  alternates: { canonical: '/shelf' },
+  openGraph: { title: 'The shelf · Aravind Danassegarane', description, url: '/shelf', type: 'website' },
 };
 
 const shelf: ShelfItem[] = shelfData as ShelfItem[];

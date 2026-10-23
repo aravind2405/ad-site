@@ -8,7 +8,8 @@ const description = "Side experiments with Sydney's trains, the weather and my o
 export const metadata: Metadata = {
   title: 'Curiosity Lab · Aravind Danassegarane',
   description,
-  openGraph: { title: 'Curiosity Lab · Aravind Danassegarane', description },
+  alternates: { canonical: '/lab' },
+  openGraph: { title: 'Curiosity Lab · Aravind Danassegarane', description, url: '/lab', type: 'website' },
 };
 
 const stages = ['Idea', 'Building', 'Working'];

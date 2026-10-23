@@ -9,7 +9,8 @@ const p = (projectsData as Project[]).find((x) => x.slug === 'rentlens')!;
 export const metadata: Metadata = {
   title: 'RentLens NSW · Aravind Danassegarane',
   description: p.summary,
-  openGraph: { title: 'RentLens NSW · Aravind Danassegarane', description: p.summary },
+  alternates: { canonical: '/rentlens' },
+  openGraph: { title: 'RentLens NSW · Aravind Danassegarane', description: p.summary, url: '/rentlens', type: 'website' },
 };
 
 export default function RentLens() {
