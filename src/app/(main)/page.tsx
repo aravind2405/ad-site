@@ -123,7 +123,9 @@ export default function Home() {
           </div>
           <div className="side">
             {links.email && <a className="btn btn-primary" href={`mailto:${links.email}`}>Email me</a>}
-            {contactButtons.map((b) => <a className="btn btn-ghost btn-sm" href={b.href} key={b.label}>{b.label}</a>)}
+            {contactButtons.map((b) => (
+              <a className="btn btn-ghost btn-sm" href={b.href} key={b.label} {...(b.href.startsWith('http') ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>{b.label}</a>
+            ))}
           </div>
         </div>
       </section>
