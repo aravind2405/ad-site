@@ -1,0 +1,124 @@
+---
+import Base from '../layouts/Base.astro';
+import StatusPill from '../components/StatusPill.astro';
+import profile from '../data/profile.json';
+import projects from '../data/projects.json';
+import now from '../data/now.json';
+import shelf from '../data/shelf.json';
+
+const featured = projects.find((p) => p.featured);
+const others = projects.filter((p) => !p.featured);
+const reading = shelf.find((s) => s.status === 'reading' && s.kind !== 'Course');
+const { links } = profile;
+const contactButtons = [
+  { label: 'Download resume', href: links.resume },
+  { label: 'LinkedIn', href: links.linkedin },
+  { label: 'GitHub', href: links.github },
+].filter((b) => b.href);
+---
+<Base title="Aravind Danassegarane">
+  <div class="wrap">
+    <section class="hero">
+      <h1>{profile.greeting}</h1>
+      <p class="tagline">{profile.tagline}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="#projects">See my projects</a>
+        {links.resume && <a class="btn btn-ghost" href={links.resume}>Download resume</a>}
+      </div>
+      <p class="creds">{profile.credentials}</p>
+    </section>
+
+    <section id="projects" class="section" aria-labelledby="pf-h">
+      <h2 id="pf-h" class="h2">Projects</h2>
+      <p class="lede">Real questions about Australia, answered with real public data and built the way I'd build at work.</p>
+
+      {featured && (
+        <article class="card featured">
+          <div class="main">
+            <div class="card-row" style="justify-content:flex-start">
+              <span class="mono muted" style="font-size:13px">Flagship · {featured.name}</span>
+              <StatusPill status={featured.status} />
+            </div>
+            <h3>{featured.question}</h3>
+            <p>{featured.summary}</p>
+            {(featured.story || featured.code) && (
+              <div class="links">
+                {featured.story && <a href={featured.story}>Read the story</a>}
+                {featured.code && <a href={featured.code}>Code</a>}
+              </div>
+            )}
+          </div>
+          <div class="side">
+            <span class="mono muted" style="font-size:13px">Skills it shows</span>
+            <ul>{featured.skills?.map((s) => <li>{s}</li>)}</ul>
+          </div>
+        </article>
+      )}
+
+      <div class="grid">
+        {others.map((p) => (
+          <article class="card stack">
+            <div class="card-row">
+              <span class="mono muted" style="font-size:13px">{p.name}</span>
+              <StatusPill status={p.status} />
+            </div>
+            <h3>{p.question}</h3>
+            <p>{p.summary}</p>
+            <div class="tags">{p.tags.map((t) => <span class="tag">{t}</span>)}</div>
+            {(p.story || p.code) && (
+              <div class="links">
+                {p.story && <a href={p.story}>Read the story</a>}
+                {p.code && <a href={p.code}>Code</a>}
+              </div>
+            )}
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="how-h">
+      <h2 id="how-h" class="h2-sm">How I work</h2>
+      <div class="principles">
+        <div><strong>Every number has a receipt</strong><span>If I claim a result, there's a query or a log behind it you can check.</span></div>
+        <div><strong>Tested before it ships</strong><span>Data checks and automated tests catch the wrong numbers before anyone sees them.</span></div>
+        <div><strong>Built on messy, real data</strong><span>No tutorial datasets. Live feeds and government records, with all their quirks.</span></div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="now-h">
+      <h2 id="now-h" class="h2-sm">Right now</h2>
+      <div class="now">
+        {now.map((n) => (
+          <div><span class={`label tone-${n.tone}`}>{n.label}</span><span>{n.text}</span></div>
+        ))}
+        {reading && (
+          <a href="/shelf"><span class="label tone-purple">Reading</span><span>{reading.title}</span></a>
+        )}
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="lab-h">
+      <div class="band">
+        <div>
+          <h2 id="lab-h">Curiosity Lab</h2>
+          <p>Side experiments with Sydney's trains, the weather and my own room. For the curious.</p>
+        </div>
+        <a class="btn btn-sm" href="/lab">Visit the lab</a>
+      </div>
+    </section>
+
+    <section id="contact" class="section" aria-labelledby="contact-h">
+      <div class="card contact">
+        <div class="main">
+          <h2 id="contact-h">Know a team that needs a data engineer?</h2>
+          <p>{profile.lookingFor}</p>
+          <p class="muted" style="font-size:15px">{profile.background}</p>
+        </div>
+        <div class="side">
+          {links.email && <a class="btn btn-primary" href={`mailto:${links.email}`}>Email me</a>}
+          {contactButtons.map((b) => <a class="btn btn-ghost btn-sm" href={b.href}>{b.label}</a>)}
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>

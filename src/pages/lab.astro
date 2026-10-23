@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import lab from '../data/lab.json';
+const stages = ['Idea', 'Building', 'Working'];
+---
+<Base title="Curiosity Lab · Aravind Danassegarane" description="Side experiments with Sydney's trains, the weather and my own room." current="lab" dark>
+  <section class="lab-hero">
+    <div class="wrap">
+      <span class="lab-badge">Side quests · open notebook</span>
+      <h1>Curiosity Lab</h1>
+      <p>Where I poke at Sydney with code to see what happens. Small experiments, honest results, the occasional thing that breaks.</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="exp-head">
+      <h2>The experiments</h2>
+      <span class="mono" style="font-size:13px;color:#A9B0BC">Idea → Building → Working</span>
+    </div>
+    <div class="exp-grid">
+      {lab.experiments.map((e) => (
+        <article class="exp">
+          <div class="card-row">
+            <span class="id">{e.id}</span>
+            <span class="stage-badge">{stages[e.stage - 1]}</span>
+          </div>
+          <h3>{e.name}</h3>
+          <p class="q">{e.question}</p>
+          <span class="aside">{e.aside}</span>
+          <div class="stagebar" role="img" aria-label={`Stage: ${stages[e.stage - 1]}`}>
+            {[1, 2, 3].map((n) => <span class={n <= e.stage ? 'on' : ''}></span>)}
+          </div>
+          <div class="uses"><b>Uses</b>{e.uses}</div>
+          <div class="tags">{e.tags.map((t) => <span class="tag">{t}</span>)}</div>
+        </article>
+      ))}
+    </div>
+
+    <section class="tempting" aria-labelledby="tempt-h">
+      <h2 id="tempt-h">Tempting. Not yet.</h2>
+      <p>Ideas I've written down so they stop distracting me.</p>
+      <ul>
+        {lab.tempting.map((t) => (
+          <li><span>{t.idea}</span><span class="mono" style="font-size:12px;color:#A9B0BC">{t.note}</span></li>
+        ))}
+      </ul>
+    </section>
+  </div>
+
+  <Fragment slot="footer">
+    <span>Side quests only. The main work is on the <a href="/">home page</a>.</span>
+    <span class="mono" style="font-size:13px">no experiments were harmed in the making of this page</span>
+  </Fragment>
+</Base>

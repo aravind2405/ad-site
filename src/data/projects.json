@@ -1,0 +1,47 @@
+[
+  {
+    "slug": "ontimesydney",
+    "name": "OnTimeSydney",
+    "featured": true,
+    "status": "building",
+    "question": "How reliable are Sydney's trains, really?",
+    "summary": "Collects live train data around the clock and turns it into a reliability record that isn't published anywhere else, with an API and a live map on top.",
+    "skills": ["Real-time data pipelines", "Orchestration with Airflow", "Data modelling in PostgreSQL", "APIs with FastAPI"],
+    "tags": ["GTFS-Realtime", "Airflow", "PostgreSQL", "FastAPI"],
+    "story": null,
+    "code": null
+  },
+  {
+    "slug": "rentlens",
+    "name": "RentLens NSW",
+    "featured": false,
+    "status": "live",
+    "question": "Where are Sydney rents heading?",
+    "summary": "Turns NSW rental bond records into clear, tested trends by area.",
+    "tags": ["dbt", "DuckDB", "Snowflake"],
+    "story": null,
+    "code": null
+  },
+  {
+    "slug": "gridwatch",
+    "name": "GridWatch AU",
+    "featured": false,
+    "status": "soon",
+    "question": "What's the power grid doing right now?",
+    "summary": "Electricity market data every five minutes, fully in the cloud, with the real running cost shown.",
+    "tags": ["AWS", "Terraform"],
+    "story": null,
+    "code": null
+  },
+  {
+    "slug": "groundtruth",
+    "name": "GroundTruth",
+    "featured": false,
+    "status": "soon",
+    "question": "Can an AI answer policy questions, and can I prove it?",
+    "summary": "An AI search assistant tested against known answers, so its accuracy is measured, not assumed.",
+    "tags": ["Retrieval", "Evaluation"],
+    "story": null,
+    "code": null
+  }
+]

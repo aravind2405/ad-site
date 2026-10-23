@@ -1,0 +1,54 @@
+---
+import '../styles/global.css';
+import profile from '../data/profile.json';
+
+interface Props {
+  title: string;
+  description?: string;
+  current?: 'home' | 'lab' | 'shelf';
+  dark?: boolean;
+}
+const { title, description = profile.tagline, current = 'home', dark = false } = Astro.props;
+const resume = profile.links.resume;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta name="theme-color" content={dark ? '#14161B' : '#F4F5F2'} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class={dark ? 'lab-page' : ''}>
+    <header class="site-header">
+      <nav class="wrap site-nav" aria-label="Main">
+        <a href="/" class="logo" aria-label="AD. — Aravind Danassegarane, home">AD.</a>
+        <div class="nav-links">
+          <a href="/#projects">Projects</a>
+          <a href="/lab" aria-current={current === 'lab' ? 'page' : undefined}>Curiosity Lab</a>
+          <a href="/shelf" aria-current={current === 'shelf' ? 'page' : undefined}>Shelf</a>
+          <a href="/#contact">Contact</a>
+          {resume && !dark && <a class="btn btn-ghost btn-sm" href={resume}>Resume</a>}
+        </div>
+      </nav>
+    </header>
+    <main id="top">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <slot name="footer">
+          <span>{profile.name} · Sydney</span>
+          <span>Built in the open</span>
+        </slot>
+      </div>
+    </footer>
+  </body>
+</html>

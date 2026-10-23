@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import shelf from '../data/shelf.json';
+
+const columns = [
+  { key: 'reading', title: 'Reading now', dot: '#6A55B0', field: 'why', label: 'Why' },
+  { key: 'next', title: 'Up next', dot: 'transparent', ring: true, field: 'why', label: 'Why' },
+  { key: 'done', title: 'Finished', dot: '#1F7A4D', field: 'stuck', label: 'What stuck' },
+];
+---
+<Base title="The shelf · Aravind Danassegarane" description="What I'm reading, and what stuck." current="shelf">
+  <div class="wrap">
+    <section class="page-head">
+      <h1>The shelf</h1>
+      <p>Books, papers, talks and courses shaping how I think, with what I took from each and where it ended up in my work.</p>
+    </section>
+
+    <section class="shelf-cols">
+      {columns.map((c) => {
+        const items = shelf.filter((s) => s.status === c.key);
+        return (
+          <div>
+            <h2>
+              <span class="dot" aria-hidden="true" style={c.ring ? 'border:2px solid #7A8090' : `background:${c.dot}`}></span>
+              {c.title}
+            </h2>
+            {items.length === 0 && <p class="empty">Nothing here yet.</p>}
+            {items.map((s) => (
+              <article class="card shelf-item">
+                <span class="mono muted" style="font-size:12px">{s.kind}</span>
+                <h3 style="margin:0">{s.title}</h3>
+                <span class="muted" style="font-size:14px">{s.by}</span>
+                {s[c.field] && <p>{c.label}: {s[c.field]}</p>}
+                {s.related && <span class="muted" style="font-size:13px">For: <a href={s.related.href}>{s.related.name}</a></span>}
+              </article>
+            ))}
+          </div>
+        );
+      })}
+    </section>
+  </div>
+</Base>

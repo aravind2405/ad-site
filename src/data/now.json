@@ -1,0 +1,4 @@
+[
+  { "label": "Building", "tone": "amber", "text": "OnTimeSydney's live train-data collector." },
+  { "label": "Studying", "tone": "blue", "text": "AWS Solutions Architect, exam 11 November." }
+]

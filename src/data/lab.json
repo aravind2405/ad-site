@@ -1,0 +1,37 @@
+{
+  "experiments": [
+    {
+      "id": "EXP-01 · SENSE · my room",
+      "name": "Habitat",
+      "stage": 1,
+      "question": "What is my room doing while I'm not looking?",
+      "aside": "// spoiler: probably getting warmer",
+      "uses": "Temperature, humidity and motion sensors",
+      "tags": ["sensors", "python", "heat model"]
+    },
+    {
+      "id": "EXP-02 · MODEL · the trains",
+      "name": "Ripple",
+      "stage": 1,
+      "question": "When the trains break down, how long until they're not?",
+      "aside": "// measured in minutes, not vibes",
+      "uses": "Months of my own train data",
+      "tags": ["simulation", "monte carlo", "survival models"]
+    },
+    {
+      "id": "EXP-03 · ACT · the streets",
+      "name": "Arvo",
+      "stage": 1,
+      "question": "What's the nicest way to be outside today?",
+      "aside": "// shade at 38°C, sun at 12°C. that's the idea.",
+      "uses": "Weather, tree shade, train times",
+      "tags": ["postgis", "shade routing", "p90 arrivals"]
+    }
+  ],
+  "tempting": [
+    { "idea": "Rain on real terrain: where water pools", "note": "from a reel" },
+    { "idea": "Birds that flock from three simple rules", "note": "an evening" },
+    { "idea": "How a bushfire would spread on real hills", "note": "hackathon" },
+    { "idea": "Western Sydney heatwaves vs the power grid", "note": "hackathon" }
+  ]
+}
