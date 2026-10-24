@@ -243,7 +243,136 @@ How the checker was validated, because a checker that cannot fail proves nothing
 ### Notes on method
 
 - `networkidle0` never settles for a second load of the home page in the same Chrome profile: the redesigned home page is refreshed hourly (`s-maxage=3600, stale-while-revalidate`), so Chrome revalidates the router's prefetch requests in the background. The server answers those requests in about a millisecond, a fresh browser context never hangs (0 of 12 runs), and Lighthouse and the Playwright tests are unaffected. `run-axe.mjs` and `check-contrast.mjs` now use one isolated browser context per page and wait for `load`, fonts and a short settle instead. This changes how the page is awaited, not what is measured; earlier results in this file were produced before that change and remain valid.
-- Local numbers are not live numbers. The live site, its security headers and the redirects are re-measured after deployment.
+- Local numbers are not live numbers. The live site, its security headers and the redirects were re-measured after deployment; see the next section.
+
+## Live measurement 2026-10-24 (production, `ad-site` commit `fff532c`)
+
+Measured against https://www.aravindd.com after PR #1 was merged and deployed: `ad-site` commit `fff532c` (squash merge of the redesign) and, in the embedded dashboard, `rentlens-nsw` commit `027896f`. Same machine, Chrome and tool versions as above. Times are AEDT.
+
+| Measurement | Started |
+|---|---|
+| axe-core | 13:30:29 |
+| Contrast check | 13:30:47 |
+| Security headers, TLS, redirects, exposed paths | 13:44:12 (finished 13:44:41) |
+| Lighthouse, 36 runs paced 20 s apart | 13:46:46 (finished 14:07:39) |
+
+Commands (scripts as committed, from the working directory with the tools installed):
+
+```bash
+export P="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth /shelf /lab"
+BASE=https://www.aravindd.com PAGES="$P" TAG=live-redesign node run-axe.mjs
+BASE=https://www.aravindd.com PAGES="$P" TAG=live-redesign node check-contrast.mjs
+bash check-headers.sh > out/headers-live-redesign.txt
+BASE=https://www.aravindd.com PAGES="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /shelf /lab" \
+  TAG=live-redesign- PAUSE=20 bash run-lighthouse.sh
+python3 summarize-lighthouse.py
+```
+
+### Lighthouse (live, median of 3 runs; 36 of 36 runs succeeded, every document returned 200)
+
+| Page | Form | Perf | A11y | Best practices | SEO | FCP | LCP | TBT | CLS | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `/` | mobile | 100 [99-100] | 100 | 100 | 100 | 0.84 s | 1.87 s | 0 ms | 0 | 217 KiB | 19 |
+| `/projects/rentlens` | mobile | 100 [99-100] | 100 | 100 | 100 | 0.79 s | 1.90 s | 5 ms | 0 | 283 KiB | 21 |
+| `/projects/ontimesydney` | mobile | 100 [91-100] | 100 | 100 | 100 | 0.81 s | 0.94 s | 3 ms | 0 | 216 KiB | 19 |
+| `/projects/gridwatch` | mobile | 100 [98-100] | 100 | 100 | 100 | 0.77 s | 1.81 s | 2 ms | 0 | 215 KiB | 19 |
+| `/shelf` | mobile | 100 | 100 | 100 | 100 | 0.80 s | 1.87 s | 4 ms | 0 | 215 KiB | 19 |
+| `/lab` | mobile | 100 | 100 | 100 | 100 | 0.78 s | 1.87 s | 1 ms | 0 | 215 KiB | 19 |
+| `/` | desktop | 100 | 100 | 100 | 100 | 0.23 s | 0.42 s | 0 ms | 0 | 217 KiB | 19 |
+| `/projects/rentlens` | desktop | 100 [99-100] | 100 | 100 | 100 | 0.23 s | 0.43 s | 0 ms | 0 | 283 KiB | 21 |
+| `/projects/ontimesydney` | desktop | 100 | 100 | 100 | 100 | 0.21 s | 0.42 s | 0 ms | 0 | 216 KiB | 19 |
+| `/projects/gridwatch` | desktop | 100 | 100 | 100 | 100 | 0.22 s | 0.43 s | 0 ms | 0 | 215 KiB | 19 |
+| `/shelf` | desktop | 100 | 100 | 100 | 100 | 0.22 s | 0.43 s | 0 ms | 0 | 215 KiB | 19 |
+| `/lab` | desktop | 100 | 100 | 100 | 100 | 0.22 s | 0.39 s | 0 ms | 0 | 215 KiB | 19 |
+
+No Lighthouse audit below 100 remains outside performance. `/projects/groundtruth` was not run; it uses the same template as `/projects/gridwatch`. The widest performance spread was on `/projects/ontimesydney` on mobile (91 to 100 across its three runs; the median is 100).
+
+The old site against the new one, live, measured with the same scripts (old site: this morning, 11:13 to 11:17):
+
+| Page | Form | Version | Perf | A11y | Best practices | SEO | LCP | TBT | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|
+| `/` | mobile | Old site | 100 [88-100] | 100 | 100 | 100 | 1.53 s | 8 ms | 224 KiB | 19 |
+| | | New site | 100 [99-100] | 100 | 100 | 100 | 1.87 s | 0 ms | 217 KiB | 19 |
+| `/` | desktop | Old site | 100 | 100 | 100 | 100 | 0.43 s | 0 ms | 228 KiB | 21 |
+| | | New site | 100 | 100 | 100 | 100 | 0.42 s | 0 ms | 217 KiB | 19 |
+| `/lab` | mobile | Old site | 100 | 100 | 100 | 100 | 1.86 s | 4 ms | 223 KiB | 19 |
+| | | New site | 100 | 100 | 100 | 100 | 1.87 s | 1 ms | 215 KiB | 19 |
+| `/lab` | desktop | Old site | 100 | 100 | 100 | 100 | 0.43 s | 0 ms | 223 KiB | 19 |
+| | | New site | 100 | 100 | 100 | 100 | 0.39 s | 0 ms | 215 KiB | 19 |
+| `/shelf` | mobile | Old site | 100 | 100 | 100 | 100 | 1.87 s | 2 ms | 222 KiB | 19 |
+| | | New site | 100 | 100 | 100 | 100 | 1.87 s | 4 ms | 215 KiB | 19 |
+| `/shelf` | desktop | Old site | 100 | 100 | 100 | 100 | 0.43 s | 0 ms | 222 KiB | 19 |
+| | | New site | 100 | 100 | 100 | 100 | 0.43 s | 0 ms | 215 KiB | 19 |
+| `/rentlens`, now `/projects/rentlens` | mobile | Old site | 99 [99-100] | 100 | 100 | 100 | 1.95 s | 2 ms | 289 KiB | 21 |
+| | | New site | 100 [99-100] | 100 | 100 | 100 | 1.90 s | 5 ms | 283 KiB | 21 |
+| `/rentlens`, now `/projects/rentlens` | desktop | Old site | 100 | 100 | 100 | 100 | 0.44 s | 0 ms | 289 KiB | 21 |
+| | | New site | 100 [99-100] | 100 | 100 | 100 | 0.43 s | 0 ms | 283 KiB | 21 |
+
+Scores are unchanged. The home page's mobile LCP is 0.34 s higher than before (1.87 s against 1.53 s), which fits the larger headline now being the largest paint; all other pages are within 0.1 s of before.
+
+### Accessibility (axe-core, live)
+
+Same rule tags and viewports as above.
+
+| Page | Violations (mobile / desktop) | Rules passed | Needs manual review |
+|---|---|---|---|
+| `/` | 0 / 0 | 37 | `color-contrast`, 36 elements |
+| `/projects/rentlens` | 0 / 0 | 42 | `frame-tested`, 1 elements |
+| `/projects/ontimesydney` | 0 / 0 | 39 | none |
+| `/projects/gridwatch` | 0 / 0 | 37 | none |
+| `/projects/groundtruth` | 0 / 0 | 37 | none |
+| `/shelf` | 0 / 0 | 36 | none |
+| `/lab` | 0 / 0 | 40 | `color-contrast`, 2 elements |
+
+All 14 page and viewport combinations have 0 violations, and the pass counts and review items are identical to the local measurement of the same commit. The review items are settled by the contrast check below, apart from `frame-tested` on `/projects/rentlens`, which is the embedded dashboard measured separately.
+
+### Contrast (live)
+
+| Page | Text nodes (per viewport) | Lowest, mobile | Lowest, desktop | Below threshold |
+|---|---|---|---|---|
+| `/` | 89 | 6.43:1 | 6.43:1 | 0 |
+| `/projects/rentlens` | 75 | 6.43:1 | 6.31:1 | 0 |
+| `/projects/ontimesydney` | 69 | 6.43:1 | 6.43:1 | 0 |
+| `/projects/gridwatch` | 31 | 6.43:1 | 6.43:1 | 0 |
+| `/projects/groundtruth` | 31 | 6.43:1 | 6.43:1 | 0 |
+| `/shelf` | 47 | 6.43:1 | 6.43:1 | 0 |
+| `/lab` | 50 | 5.39:1 | 5.39:1 | 0 |
+
+No text is below its threshold, and every figure equals the local measurement.
+
+### Security headers, TLS and exposure (live)
+
+| Check | Result |
+|---|---|
+| Required headers (CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy, COOP, HSTS) | 7 of 7 on `/`, the four `/projects/*` pages, `/lab`, `/shelf`, `/robots.txt`, `/sitemap.xml` and the 404 page |
+| `X-Powered-By` | absent |
+| HSTS | `max-age=63072000` (still no `includeSubDomains` or `preload`) |
+| CSP | unchanged from the first measurement; scripts and styles still allow `'unsafe-inline'` |
+| TLS | 1.3 and 1.2 accepted; 1.0 and 1.1 rejected; certificate verifies, Let's Encrypt, expires 2027-01-21 |
+| Redirects | `http://www`, `http://` apex, `https://` apex and `aravind-ad.vercel.app` end on `https://www.aravindd.com/` with 200 in 1 to 2 hops; `/rentlens` ends on `/projects/rentlens` in 1 hop |
+| Sensitive paths (`/.env`, `/.git/config`, `/package.json`, `/vercel.json`, `/next.config.mjs`, `/tsconfig.json`, `/LICENSE`, `/src/app/page.tsx`) | all 404 |
+| Source maps for the home page's JavaScript chunks | 403 |
+| External hosts in page HTML | `www.aravindd.com`, `github.com`, `aravind2405.github.io`, `www.linkedin.com`, `data.nsw.gov.au` |
+
+Full output: [`headers-live-redesign.txt`](measurements/2026-10-24/headers-live-redesign.txt).
+
+### Abuse-protection challenge during this measurement
+
+A burst of requests from this machine within about two minutes (28 page loads of roughly 20 requests each from the axe and contrast scans, then two runs of the header script of about 70 requests each) made Vercel's automatic abuse protection answer with a "Security Checkpoint" page (HTTP 403, `x-vercel-mitigated: challenge`). It was first seen at about 13:31 and had cleared by about 13:44. It was answering this machine only, and the Vercel API reported no custom firewall configuration for the project, so it was the platform's default protection. Consequences:
+
+- The axe and contrast results above were collected before it began; they scanned the real pages, which is confirmed because their pass counts and text-node counts equal the local runs exactly.
+- The header output from the first two attempts was discarded because the page bodies it fetched were challenge pages. The recorded header output is from the paced re-run at 13:44.
+- `check-headers.sh` now pauses 0.4 s between requests, and `run-lighthouse.sh` accepts `PAUSE` (set to 20 s for the live run) and waits while the site answers anything but 200. No waits were needed during the Lighthouse run.
+
+### Status of the findings
+
+| Finding | Status |
+|---|---|
+| Dashboard accessibility, best practices and SEO | Resolved (see the follow-up section above) |
+| `/lab` contrast | Resolved: lowest ratio 5.39:1 |
+| Missing security headers and iframe sandbox | Resolved earlier; still present on every page |
+| HSTS short form on the custom domain | Open |
+| CSP allows inline scripts and styles | Open (needed by Next.js hydration) |
 
 ## Not measured
 
