@@ -27,30 +27,6 @@ export function getProject(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
 
-export interface Skill {
-  name: string;
-  projects: { slug: string; name: string }[];
-}
-
-/**
- * Skills are derived from the stacks of projects that have actually started,
- * so the list can never claim a tool that no project uses. Planned stacks are excluded.
- */
-export function getSkills(): Skill[] {
-  const bySkill = new Map<string, Skill>();
-  for (const p of projects) {
-    if (p.status === 'planned') continue;
-    for (const name of p.stack) {
-      const entry = bySkill.get(name) ?? { name, projects: [] };
-      entry.projects.push({ slug: p.slug, name: p.name });
-      bySkill.set(name, entry);
-    }
-  }
-  return [...bySkill.values()].sort(
-    (a, b) => b.projects.length - a.projects.length || a.name.localeCompare(b.name),
-  );
-}
-
 export const statusLabel: Record<Project['status'], string> = {
   live: 'Live',
   'in-progress': 'In progress',

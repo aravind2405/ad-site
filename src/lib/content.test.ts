@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getProject, getSkills, lab, profile, projects, shelf } from './content';
+import { getProject, lab, profile, projects, shelf } from './content';
 
 describe('content', () => {
   it('has unique project slugs and resolves each one', () => {
@@ -7,24 +7,6 @@ describe('content', () => {
     expect(new Set(slugs).size).toBe(slugs.length);
     for (const slug of slugs) expect(getProject(slug)?.slug).toBe(slug);
     expect(getProject('does-not-exist')).toBeUndefined();
-  });
-
-  it('derives skills only from projects that have started', () => {
-    const skills = getSkills();
-    const planned = projects.filter((p) => p.status === 'planned').flatMap((p) => p.plannedStack);
-    const names = skills.map((s) => s.name);
-    for (const tool of planned) expect(names).not.toContain(tool);
-    for (const s of skills) {
-      expect(s.projects.length).toBeGreaterThan(0);
-      for (const ref of s.projects) {
-        expect(getProject(ref.slug)?.stack).toContain(s.name);
-      }
-    }
-  });
-
-  it('sorts skills by how many projects use them', () => {
-    const counts = getSkills().map((s) => s.projects.length);
-    expect(counts).toEqual([...counts].sort((a, b) => b - a));
   });
 
   it('only links shelf items to pages that exist', () => {

@@ -9,7 +9,7 @@ project's own README and read live repository activity from GitHub.
 
 | Route                         | Purpose                                                                                                                     |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `/`                           | Landing page: headline, skills, projects, Curiosity Lab link, contact                                                       |
+| `/`                           | Landing page: headline, projects, Curiosity Lab link, contact                                                               |
 | `/projects/[slug]`            | One page per project: status, architecture, how it is checked, data licence, roadmap, limitations, live repository activity |
 | `/shelf`                      | Courses and papers, filterable by status and type                                                                           |
 | `/lab`                        | Curiosity Lab, a dark page of early-stage experiments                                                                       |
@@ -49,9 +49,6 @@ Rules the schema enforces:
 - A planned project cannot link a repository or a demo, and lists its stack as `plannedStack`.
 - A live project needs a live URL, and a started project needs a repository.
 - Every project records the date it was checked against its README (`verified`).
-
-The skills on the landing page are derived from the stacks of projects that have started, so the list
-cannot claim a tool no project uses.
 
 To add a project, copy an existing file in `src/data/projects/`, add it to the list in `src/lib/content.ts`,
 and run `npm run check`.

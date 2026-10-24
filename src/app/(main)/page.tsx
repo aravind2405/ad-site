@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import ProjectCard from '@/components/ProjectCard';
-import { getSkills, profile, projects } from '@/lib/content';
+import { profile, projects } from '@/lib/content';
 import { getRepoMeta } from '@/lib/github';
 
 // Repository facts on the cards come live from GitHub and refresh hourly.
@@ -8,7 +8,6 @@ export const revalidate = 3600;
 
 export default async function Home() {
   const metas = await Promise.all(projects.map((p) => (p.repo ? getRepoMeta(p.repo) : null)));
-  const skills = getSkills();
   const { links } = profile;
 
   return (
@@ -47,27 +46,6 @@ export default async function Home() {
       </section>
 
       <div className="wrap">
-        <section className="section" aria-labelledby="skills-h">
-          <div className="section-head">
-            <span className="eyebrow">Skills</span>
-            <h2 id="skills-h" className="h2">
-              What I work with
-            </h2>
-            <p className="lede">Every tool listed here is used in a project below.</p>
-          </div>
-          <ul className="skills">
-            {skills.map((s) => (
-              <li
-                className="skill"
-                key={s.name}
-                title={`Used in ${s.projects.map((p) => p.name).join(', ')}`}
-              >
-                {s.name}
-              </li>
-            ))}
-          </ul>
-        </section>
-
         <section id="projects" className="section" aria-labelledby="projects-h">
           <div className="section-head">
             <span className="eyebrow">Work</span>
