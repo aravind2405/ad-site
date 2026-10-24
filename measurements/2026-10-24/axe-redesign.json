@@ -1,0 +1,170 @@
+{
+  "axeVersion": "4.14.0",
+  "runAt": "2026-10-24T02:02:06.421Z",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa",
+    "best-practice"
+  ],
+  "pages": [
+    {
+      "path": "/",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 36
+        }
+      ],
+      "inapplicable": 54
+    },
+    {
+      "path": "/",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 36
+        }
+      ],
+      "inapplicable": 54
+    },
+    {
+      "path": "/projects/rentlens",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/projects/rentlens",
+      "violations": [],
+      "passes": 42,
+      "incomplete": [
+        {
+          "id": "frame-tested",
+          "nodes": 1
+        }
+      ],
+      "inapplicable": 48
+    },
+    {
+      "path": "/projects/rentlens",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/projects/rentlens",
+      "violations": [],
+      "passes": 42,
+      "incomplete": [
+        {
+          "id": "frame-tested",
+          "nodes": 1
+        }
+      ],
+      "inapplicable": 48
+    },
+    {
+      "path": "/projects/ontimesydney",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/projects/ontimesydney",
+      "violations": [],
+      "passes": 39,
+      "incomplete": [],
+      "inapplicable": 52
+    },
+    {
+      "path": "/projects/ontimesydney",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/projects/ontimesydney",
+      "violations": [],
+      "passes": 39,
+      "incomplete": [],
+      "inapplicable": 52
+    },
+    {
+      "path": "/projects/gridwatch",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/projects/gridwatch",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [],
+      "inapplicable": 54
+    },
+    {
+      "path": "/projects/gridwatch",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/projects/gridwatch",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [],
+      "inapplicable": 54
+    },
+    {
+      "path": "/projects/groundtruth",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/projects/groundtruth",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [],
+      "inapplicable": 54
+    },
+    {
+      "path": "/projects/groundtruth",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/projects/groundtruth",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [],
+      "inapplicable": 54
+    },
+    {
+      "path": "/shelf",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/shelf",
+      "violations": [],
+      "passes": 36,
+      "incomplete": [],
+      "inapplicable": 55
+    },
+    {
+      "path": "/shelf",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/shelf",
+      "violations": [],
+      "passes": 36,
+      "incomplete": [],
+      "inapplicable": 55
+    },
+    {
+      "path": "/lab",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/lab",
+      "violations": [],
+      "passes": 40,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "inapplicable": 51
+    },
+    {
+      "path": "/lab",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/lab",
+      "violations": [],
+      "passes": 40,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "inapplicable": 51
+    }
+  ]
+}

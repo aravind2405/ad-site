@@ -1,0 +1,20 @@
+{
+  "runAt": "2026-10-24T02:00:20.520Z",
+  "base": "https://aravind2405.github.io/rentlens-nsw",
+  "pages": [
+    {
+      "path": "/",
+      "form": "mobile",
+      "checked": 70,
+      "lowest": 4.55,
+      "failures": []
+    },
+    {
+      "path": "/",
+      "form": "desktop",
+      "checked": 70,
+      "lowest": 4.55,
+      "failures": []
+    }
+  ]
+}

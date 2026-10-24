@@ -1,0 +1,286 @@
+{
+  "runAt": "2026-10-24T02:00:25.361Z",
+  "base": "http://127.0.0.1:3602",
+  "pages": [
+    {
+      "path": "/",
+      "form": "mobile",
+      "checked": 70,
+      "lowest": 2.54,
+      "failures": [
+        {
+          "sel": "div.date",
+          "text": "Data as at Sep 2026",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span",
+          "text": "+4.9% vs Sep 2025",
+          "ratio": 3.3,
+          "need": 4.5
+        },
+        {
+          "sel": "span",
+          "text": "+2.9% vs Sep 2025",
+          "ratio": 3.3,
+          "need": 4.5
+        },
+        {
+          "sel": "div.card-source",
+          "text": "NSW Fair Trading bond data",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "div.card-source",
+          "text": "Flats · median over Jan 2022 – Sep 2026 ",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "1",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "2",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "3",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "4",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "5",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "6",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "7",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "8",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "9",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "10",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "11",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "12",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "13",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "div.card-source",
+          "text": "All dwelling types · includes re-lodgeme",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "strong",
+          "text": "About this data:",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "footer",
+          "text": "Rents are from new leases only; long-ter",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "footer",
+          "text": "Data source: NSW Fair Trading Rental Bon",
+          "ratio": 2.54,
+          "need": 4.5
+        }
+      ]
+    },
+    {
+      "path": "/",
+      "form": "desktop",
+      "checked": 70,
+      "lowest": 2.54,
+      "failures": [
+        {
+          "sel": "div.date",
+          "text": "Data as at Sep 2026",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span",
+          "text": "+4.9% vs Sep 2025",
+          "ratio": 3.3,
+          "need": 4.5
+        },
+        {
+          "sel": "span",
+          "text": "+2.9% vs Sep 2025",
+          "ratio": 3.3,
+          "need": 4.5
+        },
+        {
+          "sel": "div.card-source",
+          "text": "NSW Fair Trading bond data",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "div.card-source",
+          "text": "Flats · median over Jan 2022 – Sep 2026 ",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "1",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "2",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "3",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "4",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "5",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "6",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "7",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "8",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "9",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "10",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "11",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "12",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "span.rank-num",
+          "text": "13",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "div.card-source",
+          "text": "All dwelling types · includes re-lodgeme",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "strong",
+          "text": "About this data:",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "footer",
+          "text": "Rents are from new leases only; long-ter",
+          "ratio": 2.54,
+          "need": 4.5
+        },
+        {
+          "sel": "footer",
+          "text": "Data source: NSW Fair Trading Rental Bon",
+          "ratio": 2.54,
+          "need": 4.5
+        }
+      ]
+    }
+  ]
+}
