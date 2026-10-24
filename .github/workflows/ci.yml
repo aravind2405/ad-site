@@ -22,7 +22,7 @@ jobs:
       # Read-only token provided by Actions; raises the GitHub API rate limit for the build.
       GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-node@v4
         with:
