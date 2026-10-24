@@ -1,0 +1,106 @@
+{
+  "axeVersion": "4.14.0",
+  "runAt": "2026-10-24T00:17:44.679Z",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa",
+    "best-practice"
+  ],
+  "pages": [
+    {
+      "path": "/",
+      "form": "mobile",
+      "finalUrl": "https://www.aravindd.com/",
+      "violations": [],
+      "passes": 36,
+      "incomplete": [],
+      "inapplicable": 55
+    },
+    {
+      "path": "/",
+      "form": "desktop",
+      "finalUrl": "https://www.aravindd.com/",
+      "violations": [],
+      "passes": 36,
+      "incomplete": [],
+      "inapplicable": 55
+    },
+    {
+      "path": "/lab",
+      "form": "mobile",
+      "finalUrl": "https://www.aravindd.com/lab",
+      "violations": [],
+      "passes": 39,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "inapplicable": 52
+    },
+    {
+      "path": "/lab",
+      "form": "desktop",
+      "finalUrl": "https://www.aravindd.com/lab",
+      "violations": [],
+      "passes": 39,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "inapplicable": 52
+    },
+    {
+      "path": "/shelf",
+      "form": "mobile",
+      "finalUrl": "https://www.aravindd.com/shelf",
+      "violations": [],
+      "passes": 34,
+      "incomplete": [],
+      "inapplicable": 57
+    },
+    {
+      "path": "/shelf",
+      "form": "desktop",
+      "finalUrl": "https://www.aravindd.com/shelf",
+      "violations": [],
+      "passes": 34,
+      "incomplete": [],
+      "inapplicable": 57
+    },
+    {
+      "path": "/rentlens",
+      "form": "mobile",
+      "finalUrl": "https://www.aravindd.com/rentlens",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [
+        {
+          "id": "frame-tested",
+          "nodes": 1
+        }
+      ],
+      "inapplicable": 53
+    },
+    {
+      "path": "/rentlens",
+      "form": "desktop",
+      "finalUrl": "https://www.aravindd.com/rentlens",
+      "violations": [],
+      "passes": 37,
+      "incomplete": [
+        {
+          "id": "frame-tested",
+          "nodes": 1
+        }
+      ],
+      "inapplicable": 53
+    }
+  ]
+}
