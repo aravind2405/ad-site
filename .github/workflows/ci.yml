@@ -16,7 +16,9 @@ concurrency:
 jobs:
   quality:
     name: quality
-    runs-on: ubuntu-latest
+    # Pinned: the ubuntu-latest label is moving to Ubuntu 26. Move up on purpose once CI passes there
+    # (the Playwright browser install is the part most likely to be sensitive to the OS).
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     env:
       # Read-only token provided by Actions; raises the GitHub API rate limit for the build.
