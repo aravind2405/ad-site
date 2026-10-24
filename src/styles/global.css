@@ -307,26 +307,6 @@ img {
   color: var(--ink-3);
 }
 
-/* skills (derived from project stacks) */
-.skills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.skill {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 6px 12px;
-  box-shadow: var(--shadow-sm);
-}
-
 /* cards */
 .card {
   position: relative;

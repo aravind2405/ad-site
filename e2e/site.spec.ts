@@ -166,15 +166,6 @@ test.describe('landing page', () => {
       .click({ position: { x: 60, y: 90 } });
     await expect(page).toHaveURL(/\/projects\/ontimesydney$/);
   });
-
-  test('skills come from the projects, never from planned stacks', async ({ page }) => {
-    await page.goto('/');
-    const skills = await page.locator('ul.skills li').allInnerTexts();
-    expect(skills).toContain('dbt');
-    expect(skills).toContain('Python');
-    expect(skills).not.toContain('AWS');
-    expect(skills).not.toContain('Terraform');
-  });
 });
 
 test.describe('project pages', () => {
