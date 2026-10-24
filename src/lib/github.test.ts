@@ -66,6 +66,8 @@ describe('getRepoMeta', () => {
   });
 
   it('sends a token only when one is configured', async () => {
+    // The environment may already provide a token (CI does), so control it explicitly.
+    vi.stubEnv('GITHUB_TOKEN', '');
     vi.mocked(fetch).mockResolvedValue(respond({}, false));
     await getRepoMeta('a/b');
     const without = (vi.mocked(fetch).mock.calls[0][1]?.headers ?? {}) as Record<string, string>;
