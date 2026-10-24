@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
 import '@/styles/global.css';
 
@@ -24,7 +26,11 @@ export default function Document({
 }) {
   return (
     <html lang="en" className={`${plexSans.variable} ${plexMono.variable}`}>
-      <body className={dark ? 'lab-page' : undefined}>{children}</body>
+      <body className={dark ? 'lab-page' : undefined}>
+        {children}
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
