@@ -94,7 +94,6 @@ export const experimentSchema = z.object({
   name: z.string().min(1),
   stage: z.number().int().min(1).max(3),
   question: z.string().min(1),
-  aside: z.string().min(1),
   uses: z.string().min(1),
   tags: z.array(z.string().min(1)),
 });

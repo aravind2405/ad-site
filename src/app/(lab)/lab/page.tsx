@@ -3,7 +3,8 @@ import Link from 'next/link';
 import SiteShell from '@/components/SiteShell';
 import { lab } from '@/lib/content';
 
-const description = "Side experiments with Sydney's trains, the weather and my own room.";
+const description =
+  'Early-stage experiments, each starting from a question about data I can get hold of.';
 
 export const metadata: Metadata = {
   title: 'Curiosity Lab',
@@ -23,23 +24,17 @@ export default function Lab() {
   return (
     <SiteShell
       footer={
-        <>
-          <span>
-            Side quests only. The main work is on the <Link href="/">home page</Link>.
-          </span>
-          <span className="mono" style={{ fontSize: 13 }}>
-            no experiments were harmed in the making of this page
-          </span>
-        </>
+        <span>
+          The main work is on the <Link href="/">home page</Link>.
+        </span>
       }
     >
       <section className="lab-hero">
         <div className="wrap">
-          <span className="lab-badge">Side quests · open notebook</span>
           <h1>Curiosity Lab</h1>
           <p>
-            Where I poke at Sydney with code to see what happens. Small experiments, honest results,
-            the occasional thing that breaks.
+            Early-stage experiments, each starting from a question about data I can get hold of.
+            Nothing here is finished; every card shows how far it has got.
           </p>
         </div>
       </section>
@@ -60,7 +55,6 @@ export default function Lab() {
               </div>
               <h3>{e.name}</h3>
               <p className="q">{e.question}</p>
-              <span className="aside">{e.aside}</span>
               <div className="stagebar" role="img" aria-label={`Stage: ${stages[e.stage - 1]}`}>
                 {[1, 2, 3].map((n) => (
                   <span key={n} className={n <= e.stage ? 'on' : ''}></span>
@@ -82,8 +76,8 @@ export default function Lab() {
         </div>
 
         <section className="tempting" aria-labelledby="tempt-h">
-          <h2 id="tempt-h">Tempting. Not yet.</h2>
-          <p>Ideas I&apos;ve written down so they stop distracting me.</p>
+          <h2 id="tempt-h">Ideas for later</h2>
+          <p>Ideas I may come back to.</p>
           <ul>
             {lab.tempting.map((t) => (
               <li key={t.idea}>
