@@ -21,6 +21,8 @@ npm init -y && npm install --save-exact lighthouse@13.5.0 axe-core@4.14.0 puppet
 cp <repo>/scripts/measure/* . && mkdir -p out
 ```
 
+The contrast check also needs `pngjs`: `npm install --save-exact pngjs@7.0.0`.
+
 ### 1. Lighthouse
 
 Scores are the median of 3 runs. Mobile uses Lighthouse's default mobile preset and desktop uses `--preset=desktop`, both with simulated throttling. Performance range across the 3 runs is shown in brackets where it varied.
@@ -106,7 +108,7 @@ Full output: [`headers.txt`](measurements/2026-10-24/headers.txt).
 Ordered by importance.
 
 1. **The embedded dashboard was the weakest page (fixed, see the follow-up measurement below).** Accessibility 87, best practices 96, SEO 90. Causes: low-contrast small text (see the table above), no `<main>` landmark, no meta description, and a console error that is a 404 for `https://aravind2405.github.io/favicon.ico` (the dashboard has no favicon). Fixed in `rentlens-nsw` PR #17 (merge commit `027896f`). For reference, `#6b7280` on white measures 4.83:1 and `#15803d` on white measures 5.02:1, both above the 4.5:1 minimum.
-2. **`/lab` needs a manual contrast check.** axe could not decide 2 elements on the dark theme.
+2. **`/lab` needed a manual contrast check (resolved).** axe could not decide 2 elements on the dark theme; the contrast check in the redesign measurement below measures them at 5.39:1 at the lowest.
 3. **HSTS on the custom domain is the short form.** Adding `includeSubDomains` is low-risk; `preload` is a long-term commitment and should be a deliberate choice.
 4. **The CSP allows inline scripts and styles.** This is needed by Next.js hydration today; a nonce-based policy would make pages render per request.
 5. **Home page mobile performance varies run to run** (88 to 100 in 3 runs). Median is 100.
@@ -145,11 +147,109 @@ Raw results: [`lighthouse-summary.json`](measurements/2026-10-24/lighthouse-summ
 
 Still open from the findings above: the `/lab` contrast check (2 elements needing manual review), the short HSTS value on the custom domain, and the CSP's `'unsafe-inline'`.
 
+## Redesign measurement 2026-10-24 (commit `9f6d5bb`, measured locally before deploy)
+
+Measured 2026-10-24 from 13:02 to 13:09 AEDT against a local production build (`npm run build`, then `next start` on port 3700) of `ad-site` commit `9f6d5bb`. This is **not** the live site: it has not been deployed yet, and local runs have no CDN, so they are only comparable with other local runs. The previous version (`fb6d5ba`, then `main`) was measured the same way at 12:43 for comparison. Same machine, Chrome and tool versions as above.
+
+Commands (in the working directory with the scripts copied in, `pngjs@7.0.0` also installed for the contrast check):
+
+```bash
+export P="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth /shelf /lab"
+BASE=http://127.0.0.1:3700 PAGES="$P" TAG=redesign node run-axe.mjs                                # 13:02:05
+BASE=http://127.0.0.1:3700 PAGES="$P" TAG=redesign node check-contrast.mjs                         # 13:02:21
+BASE=http://127.0.0.1:3700 PAGES="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /shelf /lab" \
+  TAG=redesign- bash run-lighthouse.sh                                                             # 13:02:37 to 13:09:12
+BASE=http://127.0.0.1:3800 PAGES="/" TAG=mainlocal- bash run-lighthouse.sh                         # previous version, 12:43
+python3 summarize-lighthouse.py
+```
+
+### Lighthouse (local, median of 3 runs, 36 of 36 runs succeeded)
+
+| Page | Form | Perf | A11y | Best practices | SEO | FCP | LCP | TBT | CLS | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `/` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.30 s | 0 ms | 0 | 224 KiB | 19 |
+| `/projects/rentlens` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.30 s | 0 ms | 0 | 290 KiB | 21 |
+| `/projects/ontimesydney` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.30 s | 0 ms | 0 | 224 KiB | 19 |
+| `/projects/gridwatch` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.31 s | 8 ms | 0 | 222 KiB | 19 |
+| `/shelf` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.31 s | 7 ms | 0 | 222 KiB | 19 |
+| `/lab` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.31 s | 7 ms | 0 | 223 KiB | 19 |
+| `/` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 224 KiB | 19 |
+| `/projects/rentlens` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 290 KiB | 21 |
+| `/projects/ontimesydney` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 224 KiB | 19 |
+| `/projects/gridwatch` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 222 KiB | 19 |
+| `/shelf` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 222 KiB | 19 |
+| `/lab` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 223 KiB | 19 |
+
+`/projects/groundtruth` was not run through Lighthouse; it has the same template as `/projects/gridwatch`.
+
+Like for like against the previous version, home page, local:
+
+| Version | Form | Perf | A11y | Best practices | SEO | FCP | LCP | TBT | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Previous (`fb6d5ba`) | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.32 s | 8 ms | 231 KiB | 19 |
+| Redesign (`9f6d5bb`) | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.30 s | 0 ms | 224 KiB | 19 |
+| Previous (`fb6d5ba`) | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 236 KiB | 21 |
+| Redesign (`9f6d5bb`) | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 224 KiB | 19 |
+
+The redesign did not change the scores, and no Lighthouse audit below 100 remains outside performance. A mobile LCP of about 2.3 s is the same for both versions in this local setup; the live CDN numbers earlier in this file (1.5 to 2.0 s) come from a different environment and should not be compared with these.
+
+### Accessibility (axe-core)
+
+axe-core 4.14.0, tags `wcag2a`, `wcag2aa`, `wcag21a`, `wcag21aa`, `wcag22aa` and `best-practice`, phone and desktop viewports, commit `9f6d5bb`.
+
+| Page | Violations (mobile / desktop) | Rules passed | Needs manual review |
+|---|---|---|---|
+| `/` | 0 / 0 | 37 | `color-contrast`, 36 elements |
+| `/projects/rentlens` | 0 / 0 | 42 | `frame-tested`, 1 elements |
+| `/projects/ontimesydney` | 0 / 0 | 39 | none |
+| `/projects/gridwatch` | 0 / 0 | 37 | none |
+| `/projects/groundtruth` | 0 / 0 | 37 | none |
+| `/shelf` | 0 / 0 | 36 | none |
+| `/lab` | 0 / 0 | 40 | `color-contrast`, 2 elements |
+
+All 14 page and viewport combinations have 0 violations. A first scan found one best-practice violation, `heading-order` on `/shelf` (cards used `h3` directly under the `h1`); it was fixed before this commit by making the card titles `h2`. The end-to-end tests now include the best-practice rules, so that class of problem fails CI.
+
+### Contrast over gradients and other backgrounds
+
+axe cannot decide contrast where text sits over a gradient, which is why the home page shows 36 elements "needs manual review" and `/lab` shows 2. `check-contrast.mjs` measures them: it renders the page with the text made transparent (and transitions disabled), samples the real pixels behind each rendered line of glyphs, and computes the lowest WCAG contrast ratio per text node against the 4.5:1 requirement (3:1 for large text).
+
+| Page | Text nodes (per viewport) | Lowest, mobile | Lowest, desktop | Below threshold |
+|---|---|---|---|---|
+| `/` | 89 | 6.43:1 | 6.43:1 | 0 |
+| `/projects/rentlens` | 75 | 6.43:1 | 6.31:1 | 0 |
+| `/projects/ontimesydney` | 69 | 6.43:1 | 6.43:1 | 0 |
+| `/projects/gridwatch` | 31 | 6.43:1 | 6.43:1 | 0 |
+| `/projects/groundtruth` | 31 | 6.43:1 | 6.43:1 | 0 |
+| `/shelf` | 47 | 6.43:1 | 6.43:1 | 0 |
+| `/lab` | 50 | 5.39:1 | 5.39:1 | 0 |
+
+No text on any page is below its threshold. The lowest ratio on the light pages is 6.31:1 and on the dark Lab page 5.39:1, so the gradients do not weaken contrast. The `frame-tested` item on `/projects/rentlens` is the embedded dashboard, which is a separate page measured above.
+
+How the checker was validated, because a checker that cannot fail proves nothing:
+
+- **Negative control:** run on the old dashboard (unchanged `docs/index.html` from `rentlens-nsw` before PR #17), it reports the known ratios, 2.54:1 for `#9CA3AF` text and 3.30:1 for `#16A34A` text, and flags 22 elements per viewport.
+- **Independent calculation:** run on the live dashboard, its lowest ratio is 4.55:1, which matches the 4.55:1 computed by hand for the inactive filter buttons (`#6B7280` on `#F7F8FA`). That clears the 4.5:1 minimum by 0.05, so those buttons are close to the limit.
+- **Two bugs found and fixed while building it:** sampling the element's whole box included its border and rounded corners, and `transition: all` on the dashboard buttons left the text mid-fade in the screenshot. Both produced false failures and are why the script samples glyph lines and disables transitions.
+
+### Tests
+
+| Command | Result (commit `9f6d5bb`) |
+|---|---|
+| `npm test` | 41 unit tests passed |
+| `npm run build && npm run e2e` | 43 end-to-end and accessibility tests passed |
+| `npm run check` | typecheck, lint, format check and unit tests passed |
+| `npm audit --omit=dev --audit-level=high` | 0 vulnerabilities |
+
+### Notes on method
+
+- `networkidle0` never settles for a second load of the home page in the same Chrome profile: the redesigned home page is refreshed hourly (`s-maxage=3600, stale-while-revalidate`), so Chrome revalidates the router's prefetch requests in the background. The server answers those requests in about a millisecond, a fresh browser context never hangs (0 of 12 runs), and Lighthouse and the Playwright tests are unaffected. `run-axe.mjs` and `check-contrast.mjs` now use one isolated browser context per page and wait for `load`, fonts and a short settle instead. This changes how the page is awaited, not what is measured; earlier results in this file were produced before that change and remain valid.
+- Local numbers are not live numbers. The live site, its security headers and the redirects are re-measured after deployment.
+
 ## Not measured
 
 - Real-user (field) data such as Core Web Vitals from visitors. Lighthouse is lab data from one machine and location, so these scores are not a guarantee for visitors on slow devices or networks.
 - Keyboard-only navigation and screen-reader testing. Automated tools find only some accessibility problems.
-- The skip-link pattern, focus order and reduced-motion behaviour.
+- Focus order and reduced-motion behaviour. The skip link and keyboard operation of the shelf filters are covered by end-to-end tests, which record pass or fail rather than a measurement.
 - Anything about the other projects in this workspace.
 
 ## Reproduce

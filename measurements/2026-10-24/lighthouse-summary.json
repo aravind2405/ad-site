@@ -457,6 +457,447 @@
       },
       "auditsBelow1": []
     },
+    "mainlocal-home/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T01:43:37.721Z",
+        "2026-10-24T01:43:47.630Z",
+        "2026-10-24T01:43:57.542Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.8,
+        "LCP": 499.9,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.8
+      },
+      "weight": {
+        "transferKiB": 236,
+        "requests": 21,
+        "scriptKiB": 142
+      },
+      "auditsBelow1": []
+    },
+    "redesign-home/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:05:49.514Z",
+        "2026-10-24T02:05:59.421Z",
+        "2026-10-24T02:06:09.329Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.2,
+        "LCP": 499.2,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.2
+      },
+      "weight": {
+        "transferKiB": 224,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": []
+    },
+    "redesign-lab/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:08:30.247Z",
+        "2026-10-24T02:08:40.123Z",
+        "2026-10-24T02:08:50.011Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.6,
+        "LCP": 499.4,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.6
+      },
+      "weight": {
+        "transferKiB": 223,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": []
+    },
+    "redesign-projects-gridwatch/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:07:31.029Z",
+        "2026-10-24T02:07:40.894Z",
+        "2026-10-24T02:07:50.763Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.2,
+        "LCP": 499.2,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.2
+      },
+      "weight": {
+        "transferKiB": 222,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": []
+    },
+    "redesign-projects-ontimesydney/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:07:01.403Z",
+        "2026-10-24T02:07:11.277Z",
+        "2026-10-24T02:07:21.151Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.3,
+        "LCP": 499.2,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.3
+      },
+      "weight": {
+        "transferKiB": 224,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": []
+    },
+    "redesign-projects-rentlens/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:06:19.303Z",
+        "2026-10-24T02:06:35.396Z",
+        "2026-10-24T02:06:50.910Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.2,
+        "LCP": 499.1,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.2
+      },
+      "weight": {
+        "transferKiB": 290,
+        "requests": 21,
+        "scriptKiB": 203
+      },
+      "auditsBelow1": []
+    },
+    "redesign-shelf/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:08:00.627Z",
+        "2026-10-24T02:08:10.512Z",
+        "2026-10-24T02:08:20.372Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.6,
+        "LCP": 499.6,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.6
+      },
+      "weight": {
+        "transferKiB": 222,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": []
+    },
     "rentlens/desktop": {
       "runs": 3,
       "fetchTimes": [
@@ -1069,6 +1510,489 @@
           "performance",
           "largest-contentful-paint",
           0.98
+        ]
+      ]
+    },
+    "mainlocal-home/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T01:43:07.992Z",
+        "2026-10-24T01:43:17.935Z",
+        "2026-10-24T01:43:27.803Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 755.1,
+        "LCP": 2315.5,
+        "TBT": 8,
+        "CLS": 0,
+        "SI": 755.1
+      },
+      "weight": {
+        "transferKiB": 231,
+        "requests": 19,
+        "scriptKiB": 142
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    },
+    "redesign-home/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:02:39.604Z",
+        "2026-10-24T02:02:49.480Z",
+        "2026-10-24T02:02:59.361Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 754.5,
+        "LCP": 2300.5,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 754.5
+      },
+      "weight": {
+        "transferKiB": 224,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    },
+    "redesign-lab/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:05:19.826Z",
+        "2026-10-24T02:05:29.713Z",
+        "2026-10-24T02:05:39.614Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 753.3,
+        "LCP": 2311.1,
+        "TBT": 7.2,
+        "CLS": 0,
+        "SI": 753.3
+      },
+      "weight": {
+        "transferKiB": 223,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    },
+    "redesign-projects-gridwatch/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:04:20.547Z",
+        "2026-10-24T02:04:30.450Z",
+        "2026-10-24T02:04:40.329Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 753.6,
+        "LCP": 2314.6,
+        "TBT": 8.1,
+        "CLS": 0,
+        "SI": 753.6
+      },
+      "weight": {
+        "transferKiB": 222,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    },
+    "redesign-projects-ontimesydney/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:03:50.711Z",
+        "2026-10-24T02:04:00.622Z",
+        "2026-10-24T02:04:10.523Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 754.3,
+        "LCP": 2301.3,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 754.3
+      },
+      "weight": {
+        "transferKiB": 224,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    },
+    "redesign-projects-rentlens/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:03:09.264Z",
+        "2026-10-24T02:03:19.743Z",
+        "2026-10-24T02:03:35.239Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 754.7,
+        "LCP": 2302.8,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 754.7
+      },
+      "weight": {
+        "transferKiB": 290,
+        "requests": 21,
+        "scriptKiB": 203
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    },
+    "redesign-shelf/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-24T02:04:50.214Z",
+        "2026-10-24T02:05:00.053Z",
+        "2026-10-24T02:05:09.934Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 754.8,
+        "LCP": 2312.5,
+        "TBT": 6.9,
+        "CLS": 0,
+        "SI": 754.8
+      },
+      "weight": {
+        "transferKiB": 222,
+        "requests": 19,
+        "scriptKiB": 144
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
         ]
       ]
     },

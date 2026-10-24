@@ -1,0 +1,104 @@
+{
+  "runAt": "2026-10-24T02:02:22.280Z",
+  "base": "http://127.0.0.1:3700",
+  "pages": [
+    {
+      "path": "/",
+      "form": "mobile",
+      "checked": 89,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/",
+      "form": "desktop",
+      "checked": 89,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/rentlens",
+      "form": "mobile",
+      "checked": 75,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/rentlens",
+      "form": "desktop",
+      "checked": 75,
+      "lowest": 6.31,
+      "failures": []
+    },
+    {
+      "path": "/projects/ontimesydney",
+      "form": "mobile",
+      "checked": 69,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/ontimesydney",
+      "form": "desktop",
+      "checked": 69,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/gridwatch",
+      "form": "mobile",
+      "checked": 31,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/gridwatch",
+      "form": "desktop",
+      "checked": 31,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/groundtruth",
+      "form": "mobile",
+      "checked": 31,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/projects/groundtruth",
+      "form": "desktop",
+      "checked": 31,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/shelf",
+      "form": "mobile",
+      "checked": 47,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/shelf",
+      "form": "desktop",
+      "checked": 47,
+      "lowest": 6.43,
+      "failures": []
+    },
+    {
+      "path": "/lab",
+      "form": "mobile",
+      "checked": 50,
+      "lowest": 5.39,
+      "failures": []
+    },
+    {
+      "path": "/lab",
+      "form": "desktop",
+      "checked": 50,
+      "lowest": 5.39,
+      "failures": []
+    }
+  ]
+}

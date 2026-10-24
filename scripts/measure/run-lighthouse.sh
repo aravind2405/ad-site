@@ -9,7 +9,7 @@ TAG="${TAG:-}"
 mkdir -p out
 for form in mobile desktop; do
   for page in $PAGES; do
-    name=$([ "$page" = "/" ] && echo home || echo "${page#/}")
+    name=$([ "$page" = "/" ] && echo home || echo "${page#/}" | tr "/" "-")
     for n in 1 2 3; do
       extra=""; [ "$form" = desktop ] && extra="--preset=desktop"
       npx lighthouse "$BASE$page" $extra --quiet \
