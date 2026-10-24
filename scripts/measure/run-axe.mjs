@@ -26,10 +26,15 @@ const results = { axeVersion, runAt: new Date().toISOString(), tags, pages: [] }
 
 for (const path of pages) {
   for (const [form, vp] of Object.entries(viewports)) {
-    const page = await browser.newPage();
+    // One isolated browser context per page: Next.js router prefetches are cached by Chrome and
+    // revalidated in the background, which keeps networkidle0 from settling in a shared session.
+    const context = await browser.createBrowserContext();
+    const page = await context.newPage();
     await page.setBypassCSP(true);
     await page.setViewport(vp);
-    await page.goto(BASE + path, { waitUntil: 'networkidle0', timeout: 60000 });
+    await page.goto(BASE + path, { waitUntil: 'load', timeout: 60000 });
+    await page.evaluate(() => document.fonts.ready);
+    await new Promise((resolve) => setTimeout(resolve, 800));
     await page.evaluate(axeSource);
     const r = await page.evaluate(async (tags) => {
       const res = await window.axe.run(document, { runOnly: { type: 'tag', values: tags } });
@@ -44,7 +49,7 @@ for (const path of pages) {
       };
     }, tags);
     results.pages.push({ path, form, finalUrl: page.url(), ...r });
-    await page.close();
+    await context.close();
   }
 }
 await browser.close();

@@ -15,7 +15,7 @@
       "stage": 1,
       "question": "When the trains break down, how long until they're not?",
       "aside": "// measured in minutes, not vibes",
-      "uses": "Months of my own train data",
+      "uses": "Sydney rail delay data, still to be collected",
       "tags": ["simulation", "monte carlo", "survival models"]
     },
     {

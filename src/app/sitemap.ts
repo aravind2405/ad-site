@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
+import { projects } from '@/lib/content';
 import { SITE_URL } from '@/lib/site';
-
-const routes = ['/', '/rentlens', '/lab', '/shelf'];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const lastModified = new Date();
-  return routes.map((path) => ({ url: `${SITE_URL}${path === '/' ? '' : path}`, lastModified }));
+  const paths = ['', '/lab', '/shelf', ...projects.map((p) => `/projects/${p.slug}`)];
+  return paths.map((path) => ({ url: `${SITE_URL}${path}`, lastModified }));
 }

@@ -1,0 +1,30 @@
+{
+  "slug": "groundtruth",
+  "name": "GroundTruth",
+  "status": "planned",
+  "question": "Can an AI answer policy questions, and can I prove it?",
+  "summary": "Planned: an AI search assistant tested against known answers, so its accuracy is measured, not assumed. Work has not started.",
+  "stack": [],
+  "plannedStack": ["Retrieval", "Evaluation"],
+  "repo": null,
+  "live": null,
+  "verified": { "date": "2026-10-24", "against": "the local project folder, which is empty" },
+  "details": {
+    "statusNote": "Planned. Work has not started: there is no code or repository yet.",
+    "overview": [
+      "The question this project is meant to answer: can an AI assistant answer policy questions, and can that be proven?",
+      "The plan is a search assistant that is tested against questions with known answers, so its accuracy is something measured rather than assumed."
+    ],
+    "architecture": null,
+    "decisions": [],
+    "practices": [],
+    "data": null,
+    "roadmap": [],
+    "limitations": [],
+    "willCover": [
+      "A set of questions with known answers",
+      "Retrieval over policy documents",
+      "Measured accuracy, reported together with the method used"
+    ]
+  }
+}

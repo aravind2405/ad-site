@@ -1,11 +1,6 @@
-import type { ProjectStatus } from '@/lib/types';
-
-const labels: Record<ProjectStatus, string> = {
-  building: 'Building',
-  live: 'Live',
-  soon: 'Coming soon',
-};
+import { statusLabel } from '@/lib/content';
+import type { ProjectStatus } from '@/lib/schemas';
 
 export default function StatusPill({ status }: { status: ProjectStatus }) {
-  return <span className={`pill pill-${status}`}>{labels[status]}</span>;
+  return <span className={`pill pill-${status}`}>{statusLabel[status]}</span>;
 }
