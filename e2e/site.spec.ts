@@ -212,6 +212,32 @@ test.describe('project pages', () => {
   });
 });
 
+test.describe('lab page', () => {
+  test('has a plain description, no badge and no playful notes', async ({ page }) => {
+    await page.goto('/lab');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Curiosity Lab');
+    await expect(page.locator('.lab-hero')).toContainText(
+      'Early-stage experiments, each starting from a question about data I can get hold of.',
+    );
+    const text = (await page.locator('body').innerText()).toLowerCase();
+    for (const phrase of ['side quests', 'open notebook', 'harmed', 'spoiler', 'not vibes']) {
+      expect(text, phrase).not.toContain(phrase);
+    }
+    await expect(page.getByRole('heading', { name: 'Ideas for later' })).toBeVisible();
+  });
+
+  test('shows each experiment with its stage', async ({ page }) => {
+    await page.goto('/lab');
+    const cards = page.locator('article.exp');
+    await expect(cards).toHaveCount(3);
+    for (const name of ['Habitat', 'Ripple', 'Arvo']) {
+      const card = cards.filter({ hasText: name });
+      await expect(card).toContainText('Idea');
+      await expect(card.getByRole('img', { name: /Stage: Idea/ })).toBeVisible();
+    }
+  });
+});
+
 test.describe('shelf', () => {
   test('filters by status and type', async ({ page }) => {
     await page.goto('/shelf');
