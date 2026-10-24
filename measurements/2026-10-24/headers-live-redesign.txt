@@ -1,0 +1,85 @@
+## headers per page (required: content-security-policy x-frame-options x-content-type-options referrer-policy permissions-policy cross-origin-opener-policy strict-transport-security)
+/ | HTTP/2 200  | missing: none
+/projects/rentlens | HTTP/2 200  | missing: none
+/projects/ontimesydney | HTTP/2 200  | missing: none
+/projects/gridwatch | HTTP/2 200  | missing: none
+/projects/groundtruth | HTTP/2 200  | missing: none
+/lab | HTTP/2 200  | missing: none
+/shelf | HTTP/2 200  | missing: none
+/robots.txt | HTTP/2 200  | missing: none
+/sitemap.xml | HTTP/2 200  | missing: none
+/does-not-exist | HTTP/2 404  | missing: none
+
+## header values (home)
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; frame-src https://aravind2405.github.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+cross-origin-opener-policy: same-origin
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+server: Vercel
+strict-transport-security: max-age=63072000
+x-content-type-options: nosniff
+x-frame-options: DENY
+
+## information leakage
+x-powered-by header present: 0
+
+## redirects (final status, final URL, hops)
+http://www.aravindd.com/ -> 200 https://www.aravindd.com/ (1 hops)
+http://aravindd.com/ -> 200 https://www.aravindd.com/ (2 hops)
+https://aravindd.com/ -> 200 https://www.aravindd.com/ (1 hops)
+https://aravind-ad.vercel.app/ -> 200 https://www.aravindd.com/ (1 hops)
+https://www.aravindd.com/rentlens -> 200 https://www.aravindd.com/projects/rentlens (1 hops)
+
+## TLS
+Verify return code: 0 (ok)
+    Protocol  : TLSv1.3
+    Cipher    : TLS_AES_128_GCM_SHA256
+    Verify return code: 0 (ok)
+subject=CN=www.aravindd.com
+issuer=C=US, O=Let's Encrypt, CN=YR1
+notAfter=Jan 21 22:52:38 2027 GMT
+tls1: rejected
+tls1_1: rejected
+tls1_2:     Protocol  : TLSv1.2
+tls1_3:     Protocol  : TLSv1.3
+
+## sensitive paths (expect 404)
+/.env 404
+/.env.local 404
+/.git/config 404
+/.vercel/project.json 404
+/package.json 404
+/vercel.json 404
+/next.config.mjs 404
+/tsconfig.json 404
+/LICENSE 404
+/src/app/page.tsx 404
+/_next/static/chunks/main.js.map 403
+
+## source maps for JS chunks on the home page (expect 403/404)
+/_next/static/immutable/chunks/00z4pmesk2f4f.js.map 403
+/_next/static/immutable/chunks/0c0hxoamwjsbw.js.map 403
+/_next/static/immutable/chunks/0meshd4c712hl.js.map 403
+/_next/static/immutable/chunks/20xelqi0bxx4-.js.map 403
+/_next/static/immutable/chunks/2c_2b2prcozy6.js.map 403
+
+## CSP directives
+default-src 'self'
+script-src 'self' 'unsafe-inline'
+style-src 'self' 'unsafe-inline'
+img-src 'self' data:
+font-src 'self'
+connect-src 'self'
+frame-src https://aravind2405.github.io
+frame-ancestors 'none'
+base-uri 'self'
+form-action 'self'
+object-src 'none'
+upgrade-insecure-requests
+
+## external hosts referenced by page HTML (expect only the dashboard and links)
+  28 https://www.aravindd.com
+  28 https://github.com
+   6 https://aravind2405.github.io
+   4 https://www.linkedin.com
+   2 https://data.nsw.gov.au
