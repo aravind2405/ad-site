@@ -46,7 +46,9 @@ export default function RentLens() {
             sandbox="allow-scripts"
           ></iframe>
         )}
-        <p className="muted" style={{ fontSize: 14, marginTop: 12 }}>Data: NSW Fair Trading rental bond lodgements, published as open data by the NSW Government. The analysis is my own and is not an official NSW Government statistic.</p>
+        <p className="muted" style={{ fontSize: 14, marginTop: 12 }}>Data: NSW Fair Trading rental bond lodgements, © State of New South Wales, licensed under{' '}
+          <a href="https://data.nsw.gov.au/data/dataset/rental-bond-lodgement" target="_blank" rel="noopener noreferrer">Creative Commons Attribution (CC BY)</a>.
+          {' '}Median rents are my own aggregation of that data and are not an official NSW Government statistic.</p>
       </section>
     </div>
   );

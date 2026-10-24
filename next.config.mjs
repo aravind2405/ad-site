@@ -38,7 +38,7 @@ const nextConfig = {
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'aravind-ad.vercel.app' }],
-        destination: 'https://aravindd.com/:path*',
+        destination: 'https://www.aravindd.com/:path*',
         permanent: true,
       },
     ];
