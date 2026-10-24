@@ -105,11 +105,45 @@ Full output: [`headers.txt`](measurements/2026-10-24/headers.txt).
 
 Ordered by importance.
 
-1. **The embedded dashboard is the weakest page.** Accessibility 87, best practices 96, SEO 90. Causes: low-contrast small text (see the table above), no `<main>` landmark, no meta description, and a console error that is a 404 for `https://aravind2405.github.io/favicon.ico` (the dashboard has no favicon). Fixes live in the `rentlens-nsw` repo (`docs/index.html`). For reference, `#6b7280` on white measures 4.83:1 and `#15803d` on white measures 5.02:1, both above the 4.5:1 minimum.
+1. **The embedded dashboard was the weakest page (fixed, see the follow-up measurement below).** Accessibility 87, best practices 96, SEO 90. Causes: low-contrast small text (see the table above), no `<main>` landmark, no meta description, and a console error that is a 404 for `https://aravind2405.github.io/favicon.ico` (the dashboard has no favicon). Fixed in `rentlens-nsw` PR #17 (merge commit `027896f`). For reference, `#6b7280` on white measures 4.83:1 and `#15803d` on white measures 5.02:1, both above the 4.5:1 minimum.
 2. **`/lab` needs a manual contrast check.** axe could not decide 2 elements on the dark theme.
 3. **HSTS on the custom domain is the short form.** Adding `includeSubDomains` is low-risk; `preload` is a long-term commitment and should be a deliberate choice.
 4. **The CSP allows inline scripts and styles.** This is needed by Next.js hydration today; a nonce-based policy would make pages render per request.
 5. **Home page mobile performance varies run to run** (88 to 100 in 3 runs). Median is 100.
+
+## Follow-up measurement 2026-10-24: dashboard after rentlens-nsw PR #17
+
+Measured 2026-10-24, 11:39 to 11:41 AEDT, against the live dashboard at `rentlens-nsw` commit `027896f` (GitHub Pages build `built`; the plain URL was confirmed to serve the new `<main>` before measuring). Same machine, Chrome and tool versions as above, same scripts and settings. The fixes were: darker text colours for contrast, a `<main>` landmark, a meta description and a favicon.
+
+Commands:
+
+```bash
+BASE=https://aravind2405.github.io/rentlens-nsw PAGES="/" TAG=dashboard-after node run-axe.mjs              # 11:39:43
+BASE=https://aravind2405.github.io/rentlens-nsw PAGES="/" TAG=dashboard-after- bash run-lighthouse.sh      # 11:39:45 to 11:40:46
+python3 summarize-lighthouse.py
+```
+
+Lighthouse, median of 3 runs (the "Before" rows repeat the baseline above, measured 11:19 to 11:20 at `rentlens-nsw` commit `ffdb9e0`):
+
+| Dashboard | Form | Perf | A11y | Best practices | SEO | FCP | LCP | TBT | CLS | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| Before | mobile | 98 | 87 | 96 | 90 | 1.90 s | 1.90 s | 0 ms | 0 | 71 KiB | 3 |
+| **After** | mobile | 98 | **100** | **100** | **100** | 1.88 s | 1.88 s | 0 ms | 0 | 67 KiB | 3 |
+| Before | desktop | 100 | 87 | 96 | 90 | 0.54 s | 0.54 s | 0 ms | 0 | 71 KiB | 3 |
+| **After** | desktop | 100 [99-100] | **100** | **100** | **100** | 0.52 s | 0.52 s | 0 ms | 0 | 67 KiB | 3 |
+
+axe-core 4.14.0, same rule tags and viewports as above:
+
+| Dashboard | Violations (mobile / desktop) | Rules passed | Needs manual review |
+|---|---|---|---|
+| Before | 3 / 3 (`color-contrast` 12 elements, `landmark-one-main` 1, `region` 12) | 21 | `color-contrast`, 9 elements |
+| **After** | **0 / 0** | 24 | none |
+
+The Lighthouse console-error audit that flagged the missing favicon no longer fails. Performance did not change. The small difference in transfer size between the two measurements (71 KiB vs 67 KiB) was not investigated. A local measurement made before the merge gave the same scores and is recorded in `rentlens-nsw` `docs/log.md`.
+
+Raw results: [`lighthouse-summary.json`](measurements/2026-10-24/lighthouse-summary.json) (now also includes the local before and after groups and these live runs) and [`axe-dashboard-after.json`](measurements/2026-10-24/axe-dashboard-after.json).
+
+Still open from the findings above: the `/lab` contrast check (2 elements needing manual review), the short HSTS value on the custom domain, and the CSP's `'unsafe-inline'`.
 
 ## Not measured
 
