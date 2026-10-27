@@ -34,8 +34,8 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="wrap">
-        <section id="projects" className="section" aria-labelledby="projects-h">
+      <section id="projects" className="projects-band" aria-labelledby="projects-h">
+        <div className="wrap">
           <div className="section-head">
             <h2 id="projects-h" className="h2">
               Projects
@@ -48,8 +48,10 @@ export default async function Home() {
             ))}
           </div>
           <p className="next-up">{nextUpLine()}</p>
-        </section>
+        </div>
+      </section>
 
+      <div className="wrap">
         <section className="section reveal" aria-labelledby="lab-h">
           <div className="band">
             <div>
