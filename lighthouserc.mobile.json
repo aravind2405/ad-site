@@ -4,7 +4,7 @@
       "startServerCommand": "npm run start -- -p 3200",
       "startServerReadyPattern": "Ready",
       "url": ["http://127.0.0.1:3200/", "http://127.0.0.1:3200/projects/rentlens"],
-      "numberOfRuns": 3,
+      "numberOfRuns": 5,
       "settings": {
         "chromeFlags": "--no-sandbox --headless=new"
       }
