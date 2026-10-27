@@ -508,6 +508,9 @@ time {
   margin: 0;
   font-size: 24px;
 }
+.band .eyebrow {
+  color: #d3d7de;
+}
 .band p {
   margin: 6px 0 0;
   font-size: var(--text-body);
