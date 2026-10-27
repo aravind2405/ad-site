@@ -3,7 +3,7 @@ import { projects } from './content';
 import { profileSchema, projectSchema, shelfSchema } from './schemas';
 
 const base = projects.find((p) => p.status === 'live')!;
-const planned = projects.find((p) => p.status === 'planned')!;
+const planned = projects.find((p) => p.status === 'coming-soon')!;
 
 describe('project schema', () => {
   it('accepts every project shipped with the site', () => {
@@ -29,7 +29,7 @@ describe('project schema', () => {
   });
 
   it('rejects a started project without a repository', () => {
-    expect(projectSchema.safeParse({ ...base, repo: null, status: 'in-progress' }).success).toBe(
+    expect(projectSchema.safeParse({ ...base, repo: null, status: 'building' }).success).toBe(
       false,
     );
   });

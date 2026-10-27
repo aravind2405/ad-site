@@ -1,9 +1,9 @@
 {
   "slug": "ontimesydney",
   "name": "OnTimeSydney",
-  "status": "in-progress",
+  "status": "building",
   "question": "How on time are Sydney's buses, really?",
-  "summary": "Captures Sydney bus GTFS-Realtime data continuously to measure reliability honestly: what was observed against what was predicted and scheduled. It is at the foundation stage, so no data has been collected yet.",
+  "summary": "Sets up a pipeline to capture Sydney bus GTFS-Realtime data and compare what was observed with what was predicted and scheduled. It is at the foundation stage (v0.1) and no data has been collected yet. The collector is next.",
   "stack": [
     "Python",
     "GTFS-Realtime",

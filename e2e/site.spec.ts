@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 const routes = [
-  { path: '/', h1: 'Messy data in. Answers you can trust out.' },
+  { path: '/', h1: "Hi, I'm Aravind." },
   { path: '/projects/rentlens', h1: 'What are tenants actually paying across NSW?' },
   { path: '/projects/ontimesydney', h1: "How on time are Sydney's buses, really?" },
   { path: '/projects/gridwatch', h1: 'What is the power grid doing right now?' },
@@ -154,7 +154,7 @@ test.describe('landing page', () => {
     await page.goto('/');
     for (const name of ['GridWatch AU', 'GroundTruth']) {
       const card = page.locator('article.project-card', { hasText: name });
-      await expect(card).toContainText('Planned');
+      await expect(card).toContainText('Coming soon');
       await expect(card.locator('a')).toHaveCount(1);
     }
   });

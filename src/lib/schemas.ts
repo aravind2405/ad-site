@@ -3,7 +3,7 @@ import { z } from 'zod';
 const httpsUrl = z.url({ protocol: /^https$/ });
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'expected YYYY-MM-DD');
 
-export const projectStatus = z.enum(['live', 'in-progress', 'planned']);
+export const projectStatus = z.enum(['live', 'building', 'coming-soon']);
 export type ProjectStatus = z.infer<typeof projectStatus>;
 
 const projectDetails = z.object({
@@ -48,7 +48,7 @@ export const projectSchema = z
   })
   .superRefine((p, ctx) => {
     const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
-    if (p.status === 'planned') {
+    if (p.status === 'coming-soon') {
       if (p.repo) issue('a planned project must not link a repository');
       if (p.live) issue('a planned project must not link a live demo');
       if (p.stack.length > 0) issue('a planned project must list its stack as plannedStack');

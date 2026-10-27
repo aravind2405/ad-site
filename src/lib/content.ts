@@ -29,6 +29,6 @@ export function getProject(slug: string): Project | undefined {
 
 export const statusLabel: Record<Project['status'], string> = {
   live: 'Live',
-  'in-progress': 'In progress',
-  planned: 'Planned',
+  building: 'Building',
+  'coming-soon': 'Coming soon',
 };

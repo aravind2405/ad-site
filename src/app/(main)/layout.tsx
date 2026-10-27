@@ -6,7 +6,7 @@ import { profile } from '@/lib/content';
 import { SITE_URL } from '@/lib/site';
 
 const title = 'Aravind Danassegarane';
-const description = `${profile.headline} ${profile.subheadline}`;
+const description = profile.subheadline;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
