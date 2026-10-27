@@ -16,7 +16,6 @@
   --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
   --shadow-md: 0 1px 2px rgba(16, 24, 40, 0.04), 0 10px 28px -14px rgba(16, 24, 40, 0.16);
   --shadow-lg: 0 2px 4px rgba(16, 24, 40, 0.04), 0 18px 40px -16px rgba(16, 24, 40, 0.22);
-  --shadow-hover: 0 1px 3px rgba(16, 24, 40, 0.14), 0 10px 22px -8px rgba(16, 24, 40, 0.34);
   --header-h: 64px;
   --sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
   --mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
