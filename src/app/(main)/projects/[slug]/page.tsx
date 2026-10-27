@@ -79,9 +79,6 @@ export default async function ProjectPage({ params }: Props) {
 
       <div className="tone tone-hero">
         <div className="wrap">
-          <Link className="crumb" href="/#projects">
-            ← All projects
-          </Link>
           <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
             <header className="detail-head">
               <div className="title-row">
@@ -324,9 +321,9 @@ export default async function ProjectPage({ params }: Props) {
               <span className="exit-label">Previous project</span>
               <span className="exit-title">{previous.name}</span>
             </Link>
-            <Link href={`/projects/${next.slug}`}>
+            <Link className="exit-next" href={`/projects/${next.slug}`}>
               <span className="exit-label">Next project</span>
-              <span className="exit-title">{next.name}</span>
+              <span className="exit-title">{next.name} →</span>
             </Link>
           </nav>
 

@@ -221,9 +221,13 @@ test.describe('project pages', () => {
     await expect(table.getByRole('columnheader')).toHaveCount(4);
   });
 
-  test('every project page links back to the projects list', async ({ page }) => {
+  test('the Projects nav link leads back to the projects list', async ({ page }) => {
     await page.goto('/projects/rentlens');
-    await page.getByRole('link', { name: '← All projects' }).click();
+    await expect(page.getByRole('link', { name: '← All projects' })).toHaveCount(0);
+    await page
+      .getByRole('navigation', { name: 'Main' })
+      .getByRole('link', { name: 'Projects' })
+      .click();
     await expect(page).toHaveURL(/\/#projects$/);
   });
 });
