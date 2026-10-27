@@ -3,7 +3,7 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--header-h) + 16px);
+  scroll-padding-top: 80px;
 }
 body {
   margin: 0;
@@ -31,7 +31,8 @@ img {
 .wrap {
   max-width: var(--container-max);
   margin: 0 auto;
-  padding: 0 var(--gutter);
+  padding-left: max(var(--gutter), env(safe-area-inset-left));
+  padding-right: max(var(--gutter), env(safe-area-inset-right));
 }
 .mono {
   font-family: var(--mono);
@@ -77,19 +78,13 @@ time {
   color: #fff;
 }
 
-/* header: stays visible while scrolling */
+/* header: opaque, stays visible while scrolling (phones hide it on scroll down) */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 50;
   background: var(--bg);
-  border-bottom: 1px solid var(--line);
-}
-@supports (backdrop-filter: blur(1px)) {
-  .site-header {
-    background: rgb(244 245 242 / 0.72);
-    backdrop-filter: saturate(1.4) blur(14px);
-  }
+  border-bottom: var(--stroke-hairline) solid var(--line);
 }
 .site-nav {
   display: flex;
@@ -108,31 +103,105 @@ time {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: var(--space-1);
+  gap: var(--space-2);
   font-size: var(--text-body-sm);
 }
-.nav-links a {
+.nav-main {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.nav-main a,
+.nav-menu summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
   color: var(--ink);
   text-decoration: none;
-  padding: 8px 12px;
+  padding: 0 12px;
   border-radius: var(--radius-sm);
-  transition: background-color 0.15s ease;
+  cursor: pointer;
 }
-.nav-links a:hover {
+.nav-main a:hover,
+.nav-menu summary:hover {
   background: rgba(22, 24, 29, 0.06);
   color: var(--ink);
 }
 .nav-links a[aria-current='page'] {
-  background: rgba(22, 24, 29, 0.08);
   font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke-rule);
+  text-underline-offset: 8px;
 }
-@media (max-width: 560px) {
+.nav-menu {
+  display: none;
+}
+.nav-menu summary {
+  list-style: none;
+  border: var(--stroke-hairline) solid var(--line);
+}
+.nav-menu summary::-webkit-details-marker {
+  display: none;
+}
+.nav-sheet {
+  display: none;
+}
+.nav-menu[open] .nav-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+  padding: var(--space-4) var(--gutter) calc(var(--space-6) + env(safe-area-inset-bottom));
+  background: var(--bg);
+  border-top: var(--stroke-hairline) solid var(--line);
+  box-shadow: var(--shadow-lg);
+}
+.nav-sheet a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+}
+.nav-cta {
+  margin-left: var(--space-1);
+}
+@media (max-width: 767px) {
   .nav-links {
-    gap: 0;
+    gap: var(--space-1);
     font-size: var(--text-caption);
   }
-  .nav-links a {
-    padding: 8px 8px;
+  .nav-main a {
+    padding: 0 8px;
+  }
+  .nav-cta {
+    margin-left: 0;
+    padding: 0 14px;
+    font-size: var(--text-caption);
+  }
+}
+@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+  .site-header {
+    transition: transform 0.3s ease;
+  }
+}
+@media (max-width: 767px) {
+  .site-header.is-hidden {
+    transform: translateY(-100%);
+  }
+}
+@media (max-width: 339px) {
+  .nav-main {
+    display: none;
+  }
+  .nav-menu {
+    display: block;
   }
 }
 
@@ -213,7 +282,7 @@ time {
 
 /* sections */
 .section {
-  padding-bottom: var(--space-22);
+  padding-bottom: var(--space-20);
 }
 .section-head {
   display: flex;
@@ -268,18 +337,18 @@ time {
 }
 .hero {
   position: relative;
-  padding: 88px 24px 64px;
+  padding: var(--space-22) var(--gutter) var(--space-10);
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: var(--space-5);
 }
 .hero h1 {
   margin: 0;
-  max-width: 14ch;
+  max-width: 20ch;
   font-size: var(--text-display);
-  line-height: 1.02;
+  line-height: var(--leading-display);
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: var(--tracking-display);
 }
 .hero .sub {
   margin: 0;
@@ -293,6 +362,13 @@ time {
   flex-wrap: wrap;
   gap: var(--space-3);
   padding-top: 6px;
+}
+@media (max-width: 767px) {
+  .hero {
+    padding-top: var(--space-8);
+    padding-bottom: var(--space-6);
+    gap: var(--space-4);
+  }
 }
 .creds {
   margin: 0;
@@ -485,7 +561,7 @@ time {
   flex: 1 1 240px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-3);
 }
 .contact .side .btn {
   width: 100%;
@@ -502,13 +578,31 @@ time {
 }
 .site-footer .wrap {
   padding-top: var(--space-6);
-  padding-bottom: var(--space-6);
+  padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
   display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  flex-direction: column;
   gap: var(--space-3);
   font-size: var(--text-caption);
   color: var(--ink-3);
+}
+.footer-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-6);
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
+}
+.footer-meta {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-6);
 }
 
 /* project detail */
@@ -829,25 +923,31 @@ time {
   background: #14161b;
   border-color: #2a2e36;
 }
-@supports (backdrop-filter: blur(1px)) {
-  .lab-page .site-header {
-    background: rgb(20 22 27 / 0.7);
-  }
-}
 .lab-page .skip-link {
   background: #d3d7de;
   color: #14161b;
 }
 .lab-page .logo,
-.lab-page .nav-links a {
+.lab-page .nav-main a,
+.lab-page .nav-menu summary,
+.lab-page .nav-sheet a {
   color: #f2f3f0;
 }
-.lab-page .nav-links a:hover {
+.lab-page .nav-main a:hover,
+.lab-page .nav-menu summary:hover {
   background: rgba(242, 243, 240, 0.08);
 }
-.lab-page .nav-links a[aria-current='page'] {
-  background: rgba(242, 243, 240, 0.08);
-  color: #f2f3f0;
+.lab-page .nav-menu summary {
+  border-color: #2a2e36;
+}
+.lab-page .nav-menu[open] .nav-sheet {
+  background: #14161b;
+  border-color: #2a2e36;
+}
+.lab-page .nav-links .nav-cta {
+  background: #f2f3f0;
+  border-color: #f2f3f0;
+  color: #14161b;
 }
 .lab-hero {
   background-image:

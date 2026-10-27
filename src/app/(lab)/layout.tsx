@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   icons: { icon: '/favicon.svg' },
 };
 
-export const viewport: Viewport = { themeColor: '#14161B' };
+export const viewport: Viewport = { themeColor: '#14161B', viewportFit: 'cover' };
 
 export default function LabLayout({ children }: { children: ReactNode }) {
   return <Document dark>{children}</Document>;

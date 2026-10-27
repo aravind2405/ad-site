@@ -68,9 +68,9 @@ test.describe('navigation', () => {
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
     const box = await header.boundingBox();
     expect(box?.y).toBeLessThanOrEqual(1);
-    // The glass effect must actually apply (a build step once dropped the standard property).
-    const blur = await header.evaluate((el) => getComputedStyle(el).backdropFilter);
-    expect(blur).toContain('blur');
+    // The bar is opaque: its background must have no transparency.
+    const bg = await header.evaluate((el) => getComputedStyle(el).backgroundColor);
+    expect(bg).toBe('rgb(244, 245, 242)');
     await expect(page.getByRole('link', { name: 'Shelf' })).toBeInViewport();
     await page.getByRole('link', { name: 'Shelf' }).click();
     await expect(page).toHaveURL(/\/shelf$/);
