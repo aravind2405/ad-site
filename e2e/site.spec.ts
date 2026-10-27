@@ -1,4 +1,5 @@
 import { allowPlainHttpInWebKit, expect, test } from './fixtures';
+import { followNavLink } from './helpers';
 
 const routes = [
   { path: '/', h1: "Hi, I'm Aravind." },
@@ -68,34 +69,82 @@ test.describe('navigation', () => {
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
     const box = await header.boundingBox();
     expect(box?.y).toBeLessThanOrEqual(1);
+    await expect(header).toBeInViewport();
     // The bar is opaque: its background must have no transparency.
     const bg = await header.evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(bg).toBe('rgb(244, 245, 242)');
-    const labLink = page
-      .getByRole('navigation', { name: 'Main' })
-      .getByRole('link', { name: 'Lab' });
-    await expect(labLink).toBeInViewport();
-    await labLink.click();
+    await followNavLink(page, 'Curiosity Lab');
     await expect(page).toHaveURL(/\/lab$/);
   });
 
-  test('anchor links land below the sticky bar', async ({ page }) => {
+  test('each nav link opens its page or lands on its section below the sticky bar', async ({
+    page,
+  }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: 'Contact', exact: true }).click();
-    await expect(page.locator('#contact')).toBeInViewport();
-    const top = await page.locator('#contact').evaluate((el) => el.getBoundingClientRect().top);
-    expect(top).toBeGreaterThanOrEqual(60);
+    for (const [name, id] of [
+      ['Projects', 'projects'],
+      ['Contact', 'contact'],
+    ]) {
+      await followNavLink(page, name);
+      await expect(page).toHaveURL(new RegExp(`#${id}$`));
+      const heading = page.locator(`#${id} h2`).first();
+      await expect(heading).toBeInViewport();
+      const bar = (await page.locator('header.site-header').boundingBox())!;
+      const top = (await heading.boundingBox())!.y;
+      expect(top, `${name} heading is hidden behind the nav`).toBeGreaterThanOrEqual(
+        bar.y + bar.height,
+      );
+    }
+    await followNavLink(page, 'Curiosity Lab');
+    await expect(page).toHaveURL(/\/lab$/);
+  });
+
+  test('highlights the section on screen while scrolling the home page', async ({ page }) => {
+    await page.goto('/');
+    const current = page.locator('.nav-links a[aria-current="location"]');
+    for (const [id, label] of [
+      ['projects', 'Projects'],
+      ['lab', 'Curiosity Lab'],
+      ['contact', 'Contact'],
+    ]) {
+      await page.locator(`#${id}`).scrollIntoViewIfNeeded();
+      await page.evaluate((target) => {
+        const el = document.getElementById(target)!;
+        const rect = el.getBoundingClientRect();
+        window.scrollBy(0, rect.top + rect.height / 2 - innerHeight / 2);
+      }, id);
+      await expect(current.first(), id).toHaveText(label);
+    }
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await expect(current).toHaveCount(0);
+  });
+
+  test('works as a menu on phones: opens, follows a link, closes on Escape', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(!isMobile, 'the menu is for phone-sized screens');
+    await page.goto('/');
+    const summary = page.locator('.nav-menu summary');
+    await expect(summary).toBeVisible();
+    await expect(page.locator('.nav-main')).toBeHidden();
+    await summary.click();
+    await expect(page.locator('.nav-sheet').getByRole('link')).toHaveCount(3);
+    await page.keyboard.press('Escape');
+    await expect(page.locator('.nav-menu')).not.toHaveAttribute('open', '');
+    await expect(summary).toBeFocused();
+    await summary.click();
+    await page.locator('.nav-sheet').getByRole('link', { name: 'Curiosity Lab' }).click();
+    await expect(page).toHaveURL(/\/lab$/);
   });
 
   test('marks the current page in the menu', async ({ page }) => {
     await page.goto('/lab');
-    const nav = page.getByRole('navigation', { name: 'Main' });
-    await expect(nav.getByRole('link', { name: 'Lab' })).toHaveAttribute('aria-current', 'page');
+    const nav = page.locator('.nav-main');
+    const link = (name: string) => nav.getByRole('link', { name, includeHidden: true });
+    await expect(link('Curiosity Lab')).toHaveAttribute('aria-current', 'page');
     await page.goto('/projects/ontimesydney');
-    await expect(nav.getByRole('link', { name: 'Projects' })).toHaveAttribute(
-      'aria-current',
-      'page',
-    );
+    await expect(link('Projects')).toHaveAttribute('aria-current', 'page');
   });
 
   test('has a working skip link', async ({ page, browserName }) => {
@@ -192,9 +241,9 @@ test.describe('landing page', () => {
   test('the nav lists exactly Projects, Curiosity Lab and Contact', async ({ page }) => {
     await page.goto('/');
     const nav = page.getByRole('navigation', { name: 'Main' });
-    const names = (await nav.locator('.nav-links').getByRole('link').allInnerTexts()).map((t) =>
-      t.trim(),
-    );
+    const names = (
+      await nav.locator('.nav-links').getByRole('link', { includeHidden: true }).allTextContents()
+    ).map((t) => t.trim());
     // The menu on very narrow phones repeats the same links; compare each distinct label once.
     expect([...new Set(names)].sort()).toEqual(['Contact', 'Curiosity Lab', 'Projects']);
     await expect(nav.getByRole('link', { name: 'Shelf' })).toHaveCount(0);
@@ -243,6 +292,32 @@ test.describe('landing page', () => {
       await expect(link).toHaveAttribute('target', '_blank');
       await expect(link).toHaveAttribute('rel', /noopener/);
     }
+  });
+
+  test('the Curiosity Lab band shows three experiments with honest stages and a way in', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const band = page.locator('#lab');
+    await expect(band.getByRole('heading', { level: 2, name: 'Curiosity Lab' })).toBeVisible();
+    const tiles = band.locator('.lab-tile');
+    await expect(tiles).toHaveCount(3);
+    for (const name of ['Habitat', 'Ripple', 'Arvo']) {
+      const tile = tiles.filter({ hasText: name });
+      await expect(tile).toHaveCount(1);
+      await expect(tile.locator('.stage-badge')).toHaveText(/^(Idea|Building|Shipped)$/);
+    }
+    await band.getByRole('link', { name: /Enter the Lab/ }).click();
+    await expect(page).toHaveURL(/\/lab$/);
+  });
+
+  test('the contact band keeps its current copy and LinkedIn and GitHub links', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    const contact = page.locator('#contact');
+    await expect(contact.getByRole('heading', { level: 2 })).toHaveText("Let's talk");
+    await expect(contact).toContainText('open to graduate and internship roles from Jan 2027');
   });
 
   test('the whole card opens the project details', async ({ page }) => {
@@ -310,10 +385,7 @@ test.describe('project pages', () => {
   test('the Projects nav link leads back to the projects list', async ({ page }) => {
     await page.goto('/projects/rentlens');
     await expect(page.getByRole('link', { name: '← All projects' })).toHaveCount(0);
-    await page
-      .getByRole('navigation', { name: 'Main' })
-      .getByRole('link', { name: 'Projects' })
-      .click();
+    await followNavLink(page, 'Projects');
     await expect(page).toHaveURL(/\/#projects$/);
   });
 });

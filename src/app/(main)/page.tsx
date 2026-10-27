@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
-import { gridProjects, nextUpLine, profile } from '@/lib/content';
+import { gridProjects, lab, labStages, nextUpLine, profile } from '@/lib/content';
 import { getRepoMeta } from '@/lib/github';
 import { SITE_URL } from '@/lib/site';
 
@@ -51,21 +51,33 @@ export default async function Home() {
         </div>
       </section>
 
-      <div className="wrap">
-        <section className="section reveal" aria-labelledby="lab-h">
-          <div className="band">
+      <section id="lab" className="lab-band" aria-labelledby="lab-h">
+        <div className="wrap reveal">
+          <div className="lab-band-head">
             <div>
-              <span className="eyebrow">Experiments</span>
               <h2 id="lab-h">Curiosity Lab</h2>
               <p>Early experiments on rail delays, weather and my own room. None are finished.</p>
             </div>
-            <Link className="btn btn-sm" href="/lab">
-              Visit the lab
+            <Link className="btn btn-sm lab-enter" href="/lab">
+              Enter the Lab <span aria-hidden="true">→</span>
             </Link>
           </div>
-        </section>
+          <ul className="lab-tiles">
+            {lab.experiments.map((e) => (
+              <li className="lab-tile" key={e.name}>
+                <div className="lab-tile-top">
+                  <h3>{e.name}</h3>
+                  <span className="stage-badge">{labStages[e.stage - 1]}</span>
+                </div>
+                <p>{e.question}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
-        <section id="contact" className="section reveal" aria-labelledby="contact-h">
+      <section id="contact" className="contact-band" aria-labelledby="contact-h">
+        <div className="wrap reveal">
           <div className="card contact">
             <div className="main">
               <h2 id="contact-h">{profile.contact.heading}</h2>
@@ -89,8 +101,8 @@ export default async function Home() {
               )}
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
     </>
   );
 }

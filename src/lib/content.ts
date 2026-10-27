@@ -21,6 +21,9 @@ if (new Set(slugs).size !== slugs.length) {
   throw new Error(`Duplicate project slugs: ${slugs.join(', ')}`);
 }
 
+/** Honest stage labels for lab experiments, in order. */
+export const labStages = ['Idea', 'Building', 'Shipped'] as const;
+
 /** Projects with a repository and real work: the only ones the home page grid shows. */
 export const gridProjects: Project[] = projects.filter((p) => p.status !== 'coming-soon' && p.repo);
 
