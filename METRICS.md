@@ -456,3 +456,25 @@ npx playwright test -c <config using devices['Pixel 7']>                        
 | Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is "the top bar stays in view while scrolling", which does not apply on phones because the header hides on scroll down by design |
 
 One Lighthouse run (home, mobile, run 1) hit `NO_NAVSTART` and was re-run on the same build at 00:28. A first contrast run flagged `/lab` at 1.31:1 on the footer line "The main work is on the home page." That was the pale link underline (`--line`) being sampled as background on the dark page, and the same reading appears on the live site, so it predates this change. The underline colour is now derived from the text colour (`color-mix(in srgb, currentColor 35%, transparent)`), after which `/lab` reads 7.65:1.
+
+## Calmer hover states, 2026-10-28
+
+Measured 2026-10-28 at about 00:45 AEDT against a local production build (port 3115) of branch `style/calmer-hover`, on `main` at `ff9bf8a` (PR 24). Local, not live. Scripts run from the scratch copy used above.
+
+```bash
+export P="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth /shelf /lab"
+BASE=http://127.0.0.1:3115 PAGES="$P" TAG=calm node run-axe.mjs
+BASE=http://127.0.0.1:3115 PAGES="$P" TAG=calm node check-contrast.mjs
+npx playwright test                                              # desktop Chrome
+npx playwright test -c <config using devices['Pixel 7']>         # phone, temporary config, not committed
+```
+
+| Check | Result |
+|---|---|
+| axe-core, 7 pages at 375 px and 1440 px | 0 violations in all 14 runs |
+| Lowest text contrast, all 7 pages, both sizes | 6.73:1 (`/lab` 7.65:1); 0 below threshold |
+| Horizontal overflow, 8 routes at 320, 375, 768, 1280 px | none |
+| Playwright, desktop Chrome | 52 of 52 passed |
+| Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
+
+Lighthouse was not re-run: this change only edits colour and shadow rules in `global.css`, and the previous run on the same code path is recorded above.
