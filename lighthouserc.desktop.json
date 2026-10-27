@@ -7,7 +7,7 @@
       "numberOfRuns": 5,
       "settings": {
         "preset": "desktop",
-        "chromeFlags": "--no-sandbox --headless=new"
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage --headless=new"
       }
     },
     "assert": {

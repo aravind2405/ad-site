@@ -6,7 +6,7 @@
       "url": ["http://127.0.0.1:3200/", "http://127.0.0.1:3200/projects/rentlens"],
       "numberOfRuns": 5,
       "settings": {
-        "chromeFlags": "--no-sandbox --headless=new"
+        "chromeFlags": "--no-sandbox --disable-dev-shm-usage --headless=new"
       }
     },
     "assert": {
