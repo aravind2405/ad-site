@@ -563,3 +563,17 @@ Measured 2026-10-28 at about 02:50 AEDT on a local production build (ports 3122)
 | Vitest | 57 passed |
 
 Measured with a Playwright script that reads `getBoundingClientRect().top` of `.project-card` after load (`scratchpad/fold.mjs`, not committed). Lighthouse is run by the CI gate on this PR.
+
+## Lab band, contact band and sticky nav, 2026-10-28
+
+Measured 2026-10-28 at about 03:30 AEDT on a local production build (port 3124) of branch `feat/home-lab-contact-nav`, stacked on `feat/home-hero-projects`. Local, not live. Scripts run from the scratch copy used above with `TAG=labnav`.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs (the home page is measured with reduced motion so no section is caught mid-fade) |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home); 0 elements below threshold, including the dark Lab band |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Playwright, 4 projects | 187 passed, 0 failed |
+| Vitest | 57 passed |
+
+Lighthouse is run by the CI gate on this PR.

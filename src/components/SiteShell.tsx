@@ -4,9 +4,6 @@ import NavLinks from '@/components/NavLinks';
 import { profile } from '@/lib/content';
 import { formatDate } from '@/lib/format';
 
-// Phones only: hide the header on scroll down, show it on scroll up or when it has focus.
-const headerScript = `(function(){var h=document.querySelector('.site-header');if(!h)return;var m=matchMedia('(max-width:767px)'),y=scrollY;addEventListener('scroll',function(){var c=scrollY;if(!m.matches){h.classList.remove('is-hidden');y=c;return}if(c-y>0&&c>8&&!h.contains(document.activeElement)){h.classList.add('is-hidden')}else if(c<y){h.classList.remove('is-hidden')}y=c},{passive:true});h.addEventListener('focusin',function(){h.classList.remove('is-hidden')})})();`;
-
 // Sections below the first screen fade and rise once as they scroll into view. Without
 // JavaScript (or with reduced motion) nothing is hidden: the hidden state needs the js class.
 // A watcher picks up sections added by client-side navigation, which never reloads this script.
@@ -31,7 +28,6 @@ export default function SiteShell({ footer, children }: Props) {
           <NavLinks resume={profile.links.resume} />
         </nav>
       </header>
-      <script dangerouslySetInnerHTML={{ __html: headerScript }} />
       <main id="main" tabIndex={-1}>
         {children}
       </main>

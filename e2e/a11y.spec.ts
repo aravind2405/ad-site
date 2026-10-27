@@ -17,7 +17,8 @@ const viewports = {
 
 for (const [name, size] of Object.entries(viewports)) {
   test.describe(`accessibility (${name})`, () => {
-    test.use({ viewport: size });
+    // Reduced motion shows every section in its final state, so axe never measures a half-faded one.
+    test.use({ viewport: size, reducedMotion: 'reduce' });
 
     for (const path of paths) {
       test(`${path} has no WCAG A/AA violations`, async ({ page }) => {
