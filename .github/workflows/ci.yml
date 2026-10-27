@@ -80,13 +80,19 @@ jobs:
         run: npm run check:privacy
 
       - name: Install browsers
-        # The system-package part of this step has hung once on a hosted runner, so each attempt is
-        # limited to five minutes and there are three attempts.
+        # A hosted runner's package mirror is sometimes very slow. apt is told to time out and
+        # retry stalled downloads, each attempt is capped, and a stuck apt-get left by a timed-out
+        # attempt is cleared before the next one so it cannot hold the package lock.
         run: |
+          printf 'Acquire::Retries "5";\nAcquire::http::Timeout "30";\nAcquire::https::Timeout "30";\n' \
+            | sudo tee /etc/apt/apt.conf.d/99ci-retries >/dev/null
           for attempt in 1 2 3; do
-            if timeout 300 npx playwright install --with-deps chromium webkit; then exit 0; fi
+            if timeout 420 npx playwright install --with-deps chromium webkit; then exit 0; fi
             echo "Browser install attempt $attempt failed or timed out."
-            sleep 10
+            sudo pkill -x apt-get || true
+            sudo pkill -x dpkg || true
+            sleep 5
+            sudo dpkg --configure -a || true
           done
           exit 1
 
