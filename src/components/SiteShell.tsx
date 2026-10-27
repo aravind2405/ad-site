@@ -9,7 +9,8 @@ const headerScript = `(function(){var h=document.querySelector('.site-header');i
 
 // Sections below the first screen fade and rise once as they scroll into view. Without
 // JavaScript (or with reduced motion) nothing is hidden: the hidden state needs the js class.
-const revealScript = `(function(){if(!('IntersectionObserver' in window))return;var els=document.querySelectorAll('.reveal');if(!els.length)return;document.documentElement.classList.add('js');var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});els.forEach(function(el){io.observe(el)})})();`;
+// A watcher picks up sections added by client-side navigation, which never reloads this script.
+const revealScript = `(function(){if(!('IntersectionObserver' in window))return;document.documentElement.classList.add('js');var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});function scan(n){if(n.nodeType!==1)return;if(n.matches('.reveal'))io.observe(n);n.querySelectorAll('.reveal').forEach(function(el){io.observe(el)})}scan(document.body);new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(scan)})}).observe(document.body,{childList:true,subtree:true})})();`;
 
 interface Props {
   footer?: ReactNode;
