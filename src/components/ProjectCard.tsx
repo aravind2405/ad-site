@@ -14,8 +14,7 @@ interface Props {
 }
 
 export default function ProjectCard({ project, meta }: Props) {
-  const { slug, name, status, question, summary, stack, plannedStack, repo, live, liveLabel } =
-    project;
+  const { slug, name, status, question, summary, stack, repo, live, liveLabel } = project;
   return (
     <ViewTransition name={`project-${slug}`} share="morph" default="none">
       <article className="card project-card">
@@ -33,11 +32,6 @@ export default function ProjectCard({ project, meta }: Props) {
           {stack.slice(0, MAX_TAGS).map((t) => (
             <li className="tag" key={t}>
               {t}
-            </li>
-          ))}
-          {plannedStack.slice(0, MAX_TAGS).map((t) => (
-            <li className="tag tag-planned" key={t} title="Planned, not built yet">
-              {t} (planned)
             </li>
           ))}
         </ul>

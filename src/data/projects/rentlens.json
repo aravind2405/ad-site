@@ -5,7 +5,6 @@
   "question": "What are tenants actually paying across NSW?",
   "summary": "Turns official NSW rental bond lodgements into median weekly rents by dwelling type, postcode and month: signed rents, not asking prices. A tested dbt pipeline on DuckDB feeds a live dashboard.",
   "stack": ["Python", "dbt", "DuckDB", "Parquet", "Chart.js", "GitHub Actions", "GitHub Pages"],
-  "plannedStack": [],
   "repo": "aravind2405/rentlens-nsw",
   "live": "https://aravind2405.github.io/rentlens-nsw/",
   "verified": {

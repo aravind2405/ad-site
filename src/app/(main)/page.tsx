@@ -2,7 +2,7 @@ import Link from 'next/link';
 import Button from '@/components/Button';
 import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
-import { profile, projects } from '@/lib/content';
+import { gridProjects, nextUpLine, profile } from '@/lib/content';
 import { getRepoMeta } from '@/lib/github';
 import { SITE_URL } from '@/lib/site';
 
@@ -12,7 +12,7 @@ const RESUME_FILE = 'Aravind-Danassegarane-Resume.pdf';
 export const revalidate = 3600;
 
 export default async function Home() {
-  const metas = await Promise.all(projects.map((p) => (p.repo ? getRepoMeta(p.repo) : null)));
+  const metas = await Promise.all(gridProjects.map((p) => (p.repo ? getRepoMeta(p.repo) : null)));
   const { links } = profile;
 
   return (
@@ -30,22 +30,6 @@ export default async function Home() {
         <div className="wrap hero">
           <h1 id="hero-h">{profile.headline}</h1>
           <p className="sub">{profile.subheadline}</p>
-          <div className="hero-actions">
-            <Button href="#projects" arrow>
-              See my projects
-            </Button>
-            {links.resume ? (
-              <Button href={links.resume} variant="ghost" download={RESUME_FILE}>
-                Download resume
-              </Button>
-            ) : (
-              links.linkedin && (
-                <Button href={links.linkedin} variant="ghost" external>
-                  LinkedIn
-                </Button>
-              )
-            )}
-          </div>
           <p className="creds">{profile.credentials}</p>
         </div>
       </section>
@@ -53,17 +37,17 @@ export default async function Home() {
       <div className="wrap">
         <section id="projects" className="section" aria-labelledby="projects-h">
           <div className="section-head">
-            <span className="eyebrow">Work</span>
             <h2 id="projects-h" className="h2">
               Projects
             </h2>
             <p className="lede">Real systems, measured: transport, housing, energy and AI.</p>
           </div>
           <div className="project-grid">
-            {projects.map((p, i) => (
+            {gridProjects.map((p, i) => (
               <ProjectCard key={p.slug} project={p} meta={metas[i]} />
             ))}
           </div>
+          <p className="next-up">{nextUpLine()}</p>
         </section>
 
         <section className="section reveal" aria-labelledby="lab-h">
