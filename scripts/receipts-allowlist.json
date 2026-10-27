@@ -3,6 +3,12 @@
   "allowed": {
     "2026": "year in dates and the graduation line",
     "2027": "year in the availability line",
-    "4.0": "version of the CC BY licence"
+    "4.0": "version of the CC BY licence",
+    "404": "HTTP error code on the not-found page",
+    "1": "stage number in the architecture diagram",
+    "2": "stage number in the architecture diagram",
+    "3": "stage number in the architecture diagram",
+    "4": "stage number in the architecture diagram",
+    "5": "stage number in the architecture diagram"
   }
 }

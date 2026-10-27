@@ -58,11 +58,6 @@ export default async function ProjectPage({ params }: Props) {
 
   const structured =
     d.decisions.length > 0 && d.decisions.every((x) => x.chose && x.rejected && x.why);
-  const proof = [
-    { id: 'prac-h', title: heading.verify ?? 'How I know it works', items: d.practices },
-    { id: 'lim-h', title: 'Known limitations', items: d.limitations },
-    { id: 'road-h', title: heading.next ?? "What's next", items: d.roadmap },
-  ].filter((group) => group.items.length > 0);
 
   return (
     <>
@@ -126,16 +121,11 @@ export default async function ProjectPage({ params }: Props) {
         </div>
       </div>
 
-      <section className="tone tone-white" aria-labelledby="thirty-h">
+      <section id="problem" className="tone tone-white" aria-labelledby="problem-h">
         <div className="wrap">
-          <h2 id="thirty-h" className="sr-only">
-            In 30 seconds
-          </h2>
-          <dl className="glance">
-            <div>
-              <dt>The problem</dt>
-              <dd>{d.overview[0]}</dd>
-            </div>
+          <h2 id="problem-h">Problem</h2>
+          <p className="problem-lead">{d.overview[0]}</p>
+          <dl className="glance glance-2">
             {d.overview[1] && (
               <div>
                 <dt>{comingSoon ? 'What I will build' : 'What I built'}</dt>
@@ -152,58 +142,31 @@ export default async function ProjectPage({ params }: Props) {
               {para}
             </p>
           ))}
+          {d.willCover.length > 0 && (
+            <>
+              <h3 className="sub-h">What it will cover</h3>
+              <ul className="bullets">
+                {d.willCover.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+              <p className="soon">Case study coming soon.</p>
+            </>
+          )}
         </div>
       </section>
 
-      {isLive && project.live && (
-        <section className="tone tone-mist" aria-labelledby="live-h">
+      {d.architecture && (
+        <section id="architecture" className="tone tone-mist" aria-labelledby="arch-h">
           <div className="wrap reveal">
-            <h2 id="live-h">{project.liveLabel ?? 'Live demo'}</h2>
-            <iframe
-              className="dash"
-              src={project.live}
-              title={`${project.name} ${project.liveLabel?.toLowerCase() ?? 'live demo'}`}
-              loading="lazy"
-              referrerPolicy="no-referrer"
-              sandbox="allow-scripts"
-            />
-            {d.data && (
-              <p className="credit">
-                Data: {d.data.source}
-                {d.data.copyright ? `, ${d.data.copyright}` : ''}, licensed under{' '}
-                {d.data.licenceLink ? (
-                  <a href={d.data.licenceLink} target="_blank" rel="noopener noreferrer">
-                    {d.data.licence}
-                  </a>
-                ) : (
-                  d.data.licence
-                )}
-                .{d.data.note ? ` ${d.data.note}` : ''}
+            <h2 id="arch-h">Architecture</h2>
+            {heading.how && <p className="section-point">{heading.how}</p>}
+            <p className="prose-p">{d.architecture.summary}</p>
+            {d.architecture.planned && (
+              <p className="planned-note">
+                This is the design, not a running system: no data flows through it yet.
               </p>
             )}
-          </div>
-        </section>
-      )}
-
-      {d.willCover.length > 0 && (
-        <section className="tone tone-mist" aria-labelledby="cover-h">
-          <div className="wrap reveal">
-            <h2 id="cover-h">What it will cover</h2>
-            <ul className="bullets">
-              {d.willCover.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <p className="soon">Case study coming soon.</p>
-          </div>
-        </section>
-      )}
-
-      {d.architecture && (
-        <section className="tone tone-white" aria-labelledby="arch-h">
-          <div className="wrap reveal">
-            <h2 id="arch-h">{heading.how ?? 'How it works'}</h2>
-            <p className="prose-p">{d.architecture.summary}</p>
             {diagram && (
               <Diagram
                 definition={diagram}
@@ -221,11 +184,14 @@ export default async function ProjectPage({ params }: Props) {
         </section>
       )}
 
-      {d.decisions.length > 0 && (
-        <section className="tone tone-hero" aria-labelledby="dec-h">
+      {!comingSoon && (
+        <section id="decisions" className="tone tone-hero" aria-labelledby="dec-h">
           <div className="wrap reveal">
-            <h2 id="dec-h">{heading.decisions ?? 'Decisions and trade-offs'}</h2>
-            {structured ? (
+            <h2 id="dec-h">Key decisions</h2>
+            {heading.decisions && <p className="section-point">{heading.decisions}</p>}
+            {d.decisions.length === 0 ? (
+              <p className="none-yet">No decisions are written up yet.</p>
+            ) : structured ? (
               <div className="table-wrap">
                 <table className="tradeoffs">
                   <thead>
@@ -258,34 +224,81 @@ export default async function ProjectPage({ params }: Props) {
                 ))}
               </div>
             )}
+            {repoUrl && project.adrs.length > 0 && (
+              <>
+                <h3 className="sub-h">Decision records in the repo</h3>
+                <ul className="adr-links">
+                  {project.adrs.map((adr) => (
+                    <li key={adr.file}>
+                      <a
+                        href={`${repoUrl}/blob/main/docs/decisions/${adr.file}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        {adr.title}
+                        <span className="sr-only"> (opens in a new tab)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
           </div>
         </section>
       )}
 
-      {proof.length > 0 && (
-        <section className="tone tone-white" aria-label="Proof, limits and next steps">
+      {!comingSoon && (
+        <section id="evidence" className="tone tone-white" aria-labelledby="evidence-h">
           <div className="wrap reveal">
-            <div className="proof">
-              {proof.map((group) => (
-                <div key={group.id}>
-                  <h2 id={group.id}>{group.title}</h2>
-                  <ul className="bullets" aria-labelledby={group.id}>
-                    {group.items.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
-      <section className="tone tone-mist" aria-label="Project details">
-        <div className="wrap reveal">
-          {(meta || (d.data && !isLive)) && (
+            <h2 id="evidence-h">Evidence</h2>
+            {heading.verify && <p className="section-point">{heading.verify}</p>}
             <dl className="facts">
-              {d.data && !isLive && (
+              {repoUrl && (
+                <div>
+                  <dt>Repository</dt>
+                  <dd>
+                    <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+                      {project.repo}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </dd>
+                </div>
+              )}
+              {meta?.ci && (
+                <div>
+                  <dt>Tests and CI</dt>
+                  <dd>
+                    <a href={meta.ci.url} target="_blank" rel="noopener noreferrer">
+                      Latest run: {ciText[meta.ci.state].toLowerCase()}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </dd>
+                </div>
+              )}
+              {project.live && (
+                <div>
+                  <dt>Live demo</dt>
+                  <dd>
+                    <a href={project.live} target="_blank" rel="noopener noreferrer">
+                      {project.liveLabel ?? 'Live demo'}
+                      <span className="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  </dd>
+                </div>
+              )}
+              {meta && (
+                <div>
+                  <dt>Last push</dt>
+                  <dd>{formatDate(meta.pushedAt)}</dd>
+                </div>
+              )}
+              {meta?.license && (
+                <div>
+                  <dt>Code licence</dt>
+                  <dd>{meta.license}</dd>
+                </div>
+              )}
+              {d.data && (
                 <>
                   <div>
                     <dt>Data source</dt>
@@ -297,34 +310,67 @@ export default async function ProjectPage({ params }: Props) {
                   </div>
                 </>
               )}
-              {meta && (
-                <>
-                  <div>
-                    <dt>Last push</dt>
-                    <dd>{formatDate(meta.pushedAt)}</dd>
-                  </div>
-                  {meta.license && (
-                    <div>
-                      <dt>Code licence</dt>
-                      <dd>{meta.license}</dd>
-                    </div>
-                  )}
-                  {meta.ci && (
-                    <div>
-                      <dt>Latest CI run</dt>
-                      <dd>
-                        <a href={meta.ci.url} target="_blank" rel="noopener noreferrer">
-                          {ciText[meta.ci.state]}
-                          <span className="sr-only"> (opens in a new tab)</span>
-                        </a>
-                      </dd>
-                    </div>
-                  )}
-                </>
-              )}
             </dl>
-          )}
+            {d.practices.length > 0 && (
+              <>
+                <h3 className="sub-h">How it is checked</h3>
+                <ul className="bullets">
+                  {d.practices.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            {isLive && project.live && (
+              <>
+                <h3 className="sub-h">{project.liveLabel ?? 'Live demo'}</h3>
+                <iframe
+                  className="dash"
+                  src={project.live}
+                  title={`${project.name} ${project.liveLabel?.toLowerCase() ?? 'live demo'}`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer"
+                  sandbox="allow-scripts"
+                />
+                {d.data && (
+                  <p className="credit">
+                    Data: {d.data.source}
+                    {d.data.copyright ? `, ${d.data.copyright}` : ''}, licensed under{' '}
+                    {d.data.licenceLink ? (
+                      <a href={d.data.licenceLink} target="_blank" rel="noopener noreferrer">
+                        {d.data.licence}
+                      </a>
+                    ) : (
+                      d.data.licence
+                    )}
+                    .{d.data.note ? ` ${d.data.note}` : ''}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </section>
+      )}
 
+      {!comingSoon && (
+        <section id="limitations" className="tone tone-mist" aria-labelledby="lim-h">
+          <div className="wrap reveal">
+            <h2 id="lim-h">Known limitations</h2>
+            {d.limitations.length === 0 ? (
+              <p className="none-yet">None are documented yet.</p>
+            ) : (
+              <ul className="bullets">
+                {d.limitations.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </section>
+      )}
+
+      <section className="tone tone-hero" aria-label="More projects and sources">
+        <div className="wrap reveal">
           <nav className="exits" aria-label="More projects">
             <Link href={`/projects/${previous.slug}`}>
               <span className="exit-label">Previous project</span>

@@ -6,7 +6,7 @@ const channel = process.env.CI ? undefined : 'chrome';
 const desktop = { width: 1440, height: 900 };
 const phone = { width: 390, height: 844 };
 // The accessibility and link-crawl suites do not depend on the browser, so they run once.
-const onlyOnce = /(a11y|links)\.spec\.ts$/;
+const onlyOnce = /(a11y|links|receipts)\.spec\.ts$/;
 
 export default defineConfig({
   testDir: 'e2e',

@@ -553,3 +553,25 @@ Measured 2026-10-28 at about 04:40 AEDT on a local production build of branch `f
 Lighthouse does not scroll, so it measures the page before Mermaid loads. The 654 KiB is the cost to people who scroll to the diagram. Production dependency audit with Mermaid: 0 vulnerabilities.
 
 Commands: `npm run build`, then `npx playwright test`, `npm run lighthouse`, `BASE=http://127.0.0.1:3129 PAGES="/projects/rentlens /projects/ontimesydney" TAG=diagram node check-contrast.mjs` (scratch copy of `scripts/measure`), and a Playwright/CDP script that sums `Network.loadingFinished` `encodedDataLength` before and after scrolling the diagram into view (`scratchpad/bytes.mjs`, not committed).
+
+## Case study structure and stack tags, 2026-10-28
+
+Measured 2026-10-28 at about 05:20 AEDT on a local production build (port 3131) of branch `feat/case-study-structure`, stacked on `feat/rentlens-diagram`. Local, not live. Scripts run from the scratch copy used above, `TAG=casestudy`, six pages.
+
+| Check | Result |
+|---|---|
+| Section order on RentLens and OnTimeSydney | Problem, Architecture, Key decisions, Evidence, Known limitations (Playwright, all four browser projects) |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1; 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.47 s and 2.32 s |
+| Lighthouse CI, same pages, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 182 passed, 0 failed (includes a new test that scans every number shown on 7 pages) |
+| Vitest | 60 passed |
+| ADR link `https://github.com/aravind2405/rentlens-nsw/blob/main/docs/decisions/001-duckdb-first.md` | HTTP 200 on 2026-10-28 (`curl -L`) |
+
+Numbers visible on the rendered pages, found by `scratchpad/numbers.mjs` (dates and version labels removed): `2026` (copyright year), `1` to `5` (stage numbers in the architecture diagram), `4.0` (CC BY licence version), `404` (error code). None is a measurement; each is in `scripts/receipts-allowlist.json` with its reason. The Playwright test `e2e/receipts.spec.ts` repeats this scan in CI.
+
+Stack tags were checked against each repo on 2026-10-28:
+- RentLens (`rentlens-nsw`, commit `f78a180`): `requirements.txt` has `dbt-core`, `dbt-duckdb`, `duckdb`, `pyarrow` (Parquet) and `openpyxl`; `docs/index.html` loads Chart.js; `.github/workflows/dbt.yml` runs in GitHub Actions; README states GitHub Pages. All seven tags confirmed.
+- OnTimeSydney (`ontimesydney`, commit `d43ed94`): `requirements.txt` lists no runtime dependencies ("added per phase with the code that uses them"), `dbt/` holds only empty `models`, `snapshots` and `tests` folders, and `src/ontimesydney/{collector,common,loaders}` are empty packages. Confirmed in use: Python 3.13, pytest, ruff (`requirements-dev.txt`, `pyproject.toml`) and GitHub Actions (`ci.yml`). GTFS-Realtime, Parquet, PostgreSQL and dbt are the planned design, so they are no longer shown as tags.
