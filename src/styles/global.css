@@ -716,101 +716,6 @@ time {
   gap: var(--space-3);
   margin-top: 6px;
 }
-.read-time {
-  margin: 0;
-  font-family: var(--mono);
-  font-size: var(--text-data);
-  color: var(--ink-3);
-}
-.detail-layout {
-  display: block;
-}
-.toc {
-  margin-top: var(--space-8);
-  padding: var(--space-4) var(--space-5);
-  background: var(--surface);
-  border: var(--stroke-hairline) solid var(--line);
-  border-radius: var(--radius-md);
-  font-size: var(--text-caption);
-}
-.toc-title {
-  margin: 0 0 var(--space-2);
-  font-family: var(--mono);
-  font-size: var(--text-label);
-  letter-spacing: 0.04em;
-  color: var(--ink-3);
-}
-.toc ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--space-5);
-}
-.toc a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap-target);
-  color: var(--ink-2);
-  text-decoration: none;
-}
-.toc a:hover {
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-thickness: var(--stroke-hairline);
-  text-underline-offset: 0.25em;
-}
-@media (min-width: 1200px) {
-  .detail-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 220px;
-    gap: var(--space-10);
-    align-items: start;
-  }
-  .detail-main {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .toc {
-    grid-column: 2;
-    grid-row: 1;
-    position: sticky;
-    top: 96px;
-    margin-top: var(--space-10);
-  }
-  .toc ol {
-    flex-direction: column;
-    gap: 0;
-  }
-  .toc a {
-    min-height: 36px;
-  }
-}
-.thirty {
-  margin: 0;
-  display: grid;
-  gap: var(--space-3);
-  max-width: 720px;
-}
-.thirty > div {
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface);
-  border: var(--stroke-hairline) solid var(--line);
-  border-radius: var(--radius-md);
-}
-.thirty dt {
-  font-family: var(--mono);
-  font-size: var(--text-label);
-  letter-spacing: 0.04em;
-  color: var(--ink-3);
-}
-.thirty dd {
-  margin: var(--space-1) 0 0;
-  font-size: var(--text-body);
-  line-height: var(--leading-body);
-  color: var(--ink-2);
-}
 .stands {
   border-left: 4px solid var(--accent);
   padding-left: var(--space-3);
@@ -932,14 +837,6 @@ time {
 .exit-title {
   font-weight: 600;
 }
-.detail-section {
-  margin-top: 44px;
-}
-.detail-section h2 {
-  margin: 0 0 14px;
-  font-size: var(--text-subsection-title);
-  letter-spacing: -0.01em;
-}
 .prose p {
   margin: 0 0 14px;
   max-width: 720px;
@@ -1052,6 +949,96 @@ time {
   font-size: var(--text-caption);
   color: var(--ink-3);
   max-width: 720px;
+}
+
+/* project page: full-width tonal bands. Tints are mixes of the existing background,
+   surface and accent, so no new hue is introduced. */
+.tone {
+  padding-block: clamp(44px, 7vw, 84px);
+}
+.tone-hero {
+  background: var(--tint-accent);
+}
+.tone-white {
+  background: var(--surface);
+}
+.tone-mist {
+  background: var(--bg);
+}
+.tone + .tone {
+  border-top: var(--stroke-hairline) solid var(--line-soft);
+}
+.tone h2 {
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-section-title);
+  line-height: var(--leading-section);
+  letter-spacing: -0.015em;
+}
+.tone-hero .tag {
+  background: var(--surface);
+}
+.tone .crumb {
+  margin-top: 0;
+}
+.detail-head h1 {
+  max-width: 18ch;
+}
+.glance {
+  margin: 0;
+  display: grid;
+  gap: var(--space-8);
+}
+.glance dt {
+  font-family: var(--mono);
+  font-size: var(--text-label);
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+}
+.glance dd {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-body-lg);
+  line-height: 1.65;
+  color: var(--ink-2);
+}
+.stands {
+  border-left: 3px solid var(--accent);
+  padding-left: var(--space-3);
+}
+@media (min-width: 900px) {
+  .glance {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-10);
+  }
+}
+.proof {
+  display: grid;
+  gap: var(--space-10);
+}
+.proof h2 {
+  font-size: var(--text-card-title);
+  line-height: var(--leading-card);
+  letter-spacing: -0.01em;
+}
+.proof .bullets {
+  padding-left: var(--space-4);
+  font-size: var(--text-body-sm);
+}
+@media (min-width: 900px) {
+  .proof {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-10);
+  }
+}
+.decisions {
+  display: grid;
+  gap: var(--space-3);
+}
+.tone .facts {
+  max-width: none;
+  margin-bottom: var(--space-8);
+}
+.tone .exits {
+  margin-top: 0;
 }
 
 /* shelf */

@@ -206,19 +206,12 @@ test.describe('project pages', () => {
     }
   });
 
-  test('project pages have a reading time, an On this page list and exits', async ({ page }) => {
+  test('project pages end with previous and next project links', async ({ page }) => {
     await page.goto('/projects/rentlens');
-    await expect(page.locator('.read-time')).toHaveText(/^\d+ min read$/);
-    const toc = page.getByRole('navigation', { name: 'On this page' });
-    const links = toc.getByRole('link');
-    expect(await links.count()).toBeGreaterThanOrEqual(5);
-    for (const href of await links.evaluateAll((els) => els.map((e) => e.getAttribute('href')))) {
-      await expect(page.locator(href!), href!).toHaveCount(1);
-    }
     const exits = page.getByRole('navigation', { name: 'More projects' });
     await expect(exits.getByRole('link', { name: /Next project/ })).toBeVisible();
     await expect(exits.getByRole('link', { name: /Previous project/ })).toBeVisible();
-    await expect(exits.getByRole('link', { name: /Curiosity Lab/ })).toBeVisible();
+    await expect(page.locator('.toc, .read-time')).toHaveCount(0);
   });
 
   test('RentLens shows its design decision as a trade-offs table', async ({ page }) => {
@@ -371,7 +364,7 @@ test.describe('engineering', () => {
     await page.goto('/');
     await page.locator('.project-card a[href="/projects/rentlens"]').first().click();
     await expect(page).toHaveURL(/\/projects\/rentlens$/);
-    const live = page.locator('.detail-section.reveal').first();
+    const live = page.locator('.tone .reveal').first();
     await live.scrollIntoViewIfNeeded();
     await expect(live).toHaveClass(/\bin\b/);
     await expect(live).toHaveCSS('opacity', '1');
