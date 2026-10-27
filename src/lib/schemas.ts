@@ -12,7 +12,25 @@ const projectDetails = z.object({
   architecture: z
     .object({ summary: z.string().min(1), steps: z.array(z.string().min(1)).min(2) })
     .nullable(),
-  decisions: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })),
+  decisions: z.array(
+    z.object({
+      title: z.string().min(1),
+      body: z.string().min(1),
+      // Optional structure for the trade-offs table.
+      chose: z.string().min(1).optional(),
+      rejected: z.string().min(1).optional(),
+      why: z.string().min(1).optional(),
+    }),
+  ),
+  // Optional headings that state the point of a section instead of labelling it.
+  headings: z
+    .object({
+      how: z.string().min(1).optional(),
+      decisions: z.string().min(1).optional(),
+      verify: z.string().min(1).optional(),
+      next: z.string().min(1).optional(),
+    })
+    .optional(),
   practices: z.array(z.string().min(1)),
   data: z
     .object({

@@ -17,7 +17,10 @@
   "plannedStack": [],
   "repo": "aravind2405/ontimesydney",
   "live": null,
-  "verified": { "date": "2026-10-24", "against": "the project README and repository" },
+  "verified": {
+    "date": "2026-10-24",
+    "against": "the project README and repository"
+  },
   "details": {
     "statusNote": "Foundation stage (v0.1). No data has been collected yet, so there are no findings to show.",
     "overview": [
@@ -59,6 +62,11 @@
       "No data has been collected yet.",
       "Known limitations are not documented yet; the README says they will be added as they are found."
     ],
-    "willCover": []
+    "willCover": [],
+    "headings": {
+      "how": "The design: a collector feeds Parquet, PostgreSQL and three dbt layers",
+      "verify": "CI runs lint, tests and a repository check on every push, before any data exists",
+      "next": "Next is the collector, then loading, modelling and metrics"
+    }
   }
 }
