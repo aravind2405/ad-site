@@ -193,16 +193,39 @@ test.describe('project pages', () => {
 
   test('OnTimeSydney states plainly that no data exists yet', async ({ page }) => {
     await page.goto('/projects/ontimesydney');
-    await expect(page.locator('.callout')).toContainText('No data has been collected yet');
+    await expect(page.locator('.stands')).toContainText('No data has been collected yet');
     await expect(page.locator('body')).not.toContainText(/live map|airflow|fastapi|trains/i);
   });
 
   test('planned project pages say work has not started', async ({ page }) => {
     for (const slug of ['gridwatch', 'groundtruth']) {
       await page.goto(`/projects/${slug}`);
-      await expect(page.locator('.callout')).toContainText('Work has not started');
+      await expect(page.locator('.stands')).toContainText('Work has not started');
+      await expect(page.locator('.soon')).toHaveText('Case study coming soon.');
       await expect(page.getByRole('link', { name: /View code on GitHub/ })).toHaveCount(0);
     }
+  });
+
+  test('project pages have a reading time, an On this page list and exits', async ({ page }) => {
+    await page.goto('/projects/rentlens');
+    await expect(page.locator('.read-time')).toHaveText(/^\d+ min read$/);
+    const toc = page.getByRole('navigation', { name: 'On this page' });
+    const links = toc.getByRole('link');
+    expect(await links.count()).toBeGreaterThanOrEqual(5);
+    for (const href of await links.evaluateAll((els) => els.map((e) => e.getAttribute('href')))) {
+      await expect(page.locator(href!), href!).toHaveCount(1);
+    }
+    const exits = page.getByRole('navigation', { name: 'More projects' });
+    await expect(exits.getByRole('link', { name: /Next project/ })).toBeVisible();
+    await expect(exits.getByRole('link', { name: /Previous project/ })).toBeVisible();
+    await expect(exits.getByRole('link', { name: /Curiosity Lab/ })).toBeVisible();
+  });
+
+  test('RentLens shows its design decision as a trade-offs table', async ({ page }) => {
+    await page.goto('/projects/rentlens');
+    const table = page.locator('table.tradeoffs');
+    await expect(table).toContainText('Watermark on the arrival time of each file');
+    await expect(table.getByRole('columnheader')).toHaveCount(4);
   });
 
   test('every project page links back to the projects list', async ({ page }) => {
