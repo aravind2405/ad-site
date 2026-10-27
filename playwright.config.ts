@@ -1,6 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const port = 3100;
+// Locally Chromium runs on the installed Chrome; CI installs Playwright's own Chromium and WebKit.
+const channel = process.env.CI ? undefined : 'chrome';
+const desktop = { width: 1440, height: 900 };
+const phone = { width: 390, height: 844 };
+// The accessibility and link-crawl suites do not depend on the browser, so they run once.
+const onlyOnce = /(a11y|links)\.spec\.ts$/;
 
 export default defineConfig({
   testDir: 'e2e',
@@ -11,9 +17,23 @@ export default defineConfig({
   use: { baseURL: `http://127.0.0.1:${port}`, trace: 'on-first-retry' },
   projects: [
     {
-      name: 'chromium',
-      // Locally this uses the installed Chrome; CI installs Playwright's Chromium.
-      use: { ...devices['Desktop Chrome'], channel: process.env.CI ? undefined : 'chrome' },
+      name: 'chromium-desktop',
+      use: { ...devices['Desktop Chrome'], viewport: desktop, channel },
+    },
+    {
+      name: 'chromium-mobile',
+      use: { ...devices['Pixel 7'], viewport: phone, channel },
+      testIgnore: onlyOnce,
+    },
+    {
+      name: 'webkit-desktop',
+      use: { ...devices['Desktop Safari'], viewport: desktop },
+      testIgnore: onlyOnce,
+    },
+    {
+      name: 'webkit-mobile',
+      use: { ...devices['iPhone 14'], viewport: phone },
+      testIgnore: onlyOnce,
     },
   ],
   // Tests run against the production build: `npm run build` first.
