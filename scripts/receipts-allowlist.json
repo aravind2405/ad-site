@@ -1,0 +1,8 @@
+{
+  "comment": "Numbers allowed in site copy without a METRICS.md receipt, each with the reason. Keep this list short.",
+  "allowed": {
+    "2026": "year in dates and the graduation line",
+    "2027": "year in the availability line",
+    "4.0": "version of the CC BY licence"
+  }
+}

@@ -509,3 +509,26 @@ Measured 2026-10-28 at about 01:35 AEDT against a local production build (port 3
 | Playwright, Pixel 7 emulation | 46 of 47 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
 
 Lighthouse was not re-run: the change removes a page and its CSS and adds no code to the remaining pages. The dated measurements under `measurements/` and the earlier sections above still mention the Shelf as it was then and are left unchanged.
+
+## Test tooling and CI gates, 2026-10-28
+
+Measured 2026-10-28 at about 01:20 to 01:30 AEDT on a local production build of branch `test/ci-gates`. Local, not live; Lighthouse CI uses its own server on ports 3200 and 3201.
+
+```bash
+npm run build
+npx playwright test                       # four projects: chromium and webkit, desktop 1440x900 and phone 390x844
+npm run lighthouse                        # lhci autorun, mobile then desktop, 3 runs each, thresholds in lighthouserc.*.json
+npm run check:privacy && npm run check:receipts && npm run check:hygiene
+```
+
+| Check | Result |
+|---|---|
+| Playwright, 4 projects (chromium desktop, chromium phone, WebKit desktop, WebKit phone) | 151 passed, 0 failed (axe and link crawl run once, in chromium desktop) |
+| Vitest | 53 passed (includes the privacy and receipt script tests) |
+| Lighthouse CI mobile, home and `/projects/rentlens`, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s and 2.47 s |
+| Lighthouse CI desktop, same pages, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Privacy check on the build | 141 built files scanned, no email-shaped text |
+| Receipt check on site copy | passes; allowlisted numbers are 2026, 2027 and 4.0, each with a reason |
+| Production dependency audit | 0 vulnerabilities |
+
+WebKit note: the production CSP has `upgrade-insecure-requests`, which WebKit applies even to plain `http://127.0.0.1`, so pages never hydrate in a local WebKit run. The test fixture removes only that directive from responses in WebKit runs; production headers are unchanged and covered by `src/config.test.ts`. Playwright's request interception also stalls on redirects in WebKit, so the two redirect tests check the 308 and `Location` in every browser and drive the page-level redirect in Chromium only.

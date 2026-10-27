@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { allowPlainHttpInWebKit, expect, test } from './fixtures';
 
 const routes = [
   { path: '/', h1: "Hi, I'm Aravind." },
@@ -59,7 +59,8 @@ test.describe('every page', () => {
 });
 
 test.describe('navigation', () => {
-  test('the top bar stays in view while scrolling', async ({ page }) => {
+  test('the top bar stays in view while scrolling', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'phones hide the header on scroll down by design');
     await page.goto('/');
     const header = page.locator('header.site-header');
     await expect(header).toBeVisible();
@@ -97,9 +98,10 @@ test.describe('navigation', () => {
     );
   });
 
-  test('has a working skip link', async ({ page }) => {
+  test('has a working skip link', async ({ page, browserName }) => {
     await page.goto('/');
-    await page.keyboard.press('Tab');
+    // Safari only Tabs to links when Option is held (its default setting), unlike Chrome.
+    await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
     const skip = page.getByRole('link', { name: 'Skip to main content' });
     await expect(skip).toBeFocused();
     await expect(skip).toBeInViewport();
@@ -107,7 +109,13 @@ test.describe('navigation', () => {
     await expect(page.locator('#main')).toBeFocused();
   });
 
-  test('moves /rentlens to the project page', async ({ page }) => {
+  test('moves /rentlens to the project page', async ({ page, request, browserName }) => {
+    const res = await request.get('/rentlens', { maxRedirects: 0 });
+    expect(res.status()).toBe(308);
+    expect(res.headers()['location']).toBe('/projects/rentlens');
+    // Playwright's request interception stalls on redirects in WebKit, so the page-level
+    // navigation runs in Chromium only; the redirect itself is checked above in every browser.
+    if (browserName === 'webkit') return;
     await page.goto('/rentlens');
     await expect(page).toHaveURL(/\/projects\/rentlens$/);
   });
@@ -264,9 +272,13 @@ test.describe('removed pages', () => {
   test('the old shelf address permanently redirects to the home page', async ({
     page,
     request,
+    browserName,
   }) => {
     const res = await request.get('/shelf', { maxRedirects: 0 });
     expect(res.status()).toBe(308);
+    expect(res.headers()['location']).toBe('/');
+    // See the /rentlens test: page-level redirects are not driven in WebKit.
+    if (browserName === 'webkit') return;
     await page.goto('/shelf');
     await expect(page).toHaveURL(/\/$/);
     await expect(page.getByRole('link', { name: 'Shelf' })).toHaveCount(0);
@@ -333,6 +345,7 @@ test.describe('engineering', () => {
 
   test('content stays visible without JavaScript', async ({ browser }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
+    await allowPlainHttpInWebKit(context, browser.browserType().name());
     const page = await context.newPage();
     await page.goto('/');
     await expect(page.locator('#contact')).toBeVisible();
@@ -349,6 +362,7 @@ test.describe('engineering', () => {
       ['reduce', false],
     ] as const) {
       const context = await browser.newContext({ reducedMotion });
+      await allowPlainHttpInWebKit(context, browser.browserType().name());
       const page = await context.newPage();
       await page.goto('/');
       const timing = await page
