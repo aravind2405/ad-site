@@ -20,7 +20,7 @@ describe('native scrolling only', () => {
       /\bonWheel\b|\bonTouchMove\b/,
       /\.scrollTo\(|\.scrollBy\(|\.scrollIntoView\(|scrollTop\s*=|scrollLeft\s*=/,
       /lenis|locomotive|gsap|scrolltrigger|fullpage|scrollmagic|smooth-scrollbar|framer-motion/i,
-      /overflow-anchor|scroll-snap-type:\s*[a-z]+\s+mandatory/,
+      /overflow-anchor/,
     ];
     for (const file of sourceFiles(join(process.cwd(), 'src'))) {
       const text = readFileSync(file, 'utf8');
@@ -34,10 +34,18 @@ describe('native scrolling only', () => {
     }
   });
 
-  it('snaps with proximity only, never mandatory', () => {
-    expect(css).not.toMatch(/mandatory/);
+  it('snaps the home page one screen at a time, only where motion is welcome', () => {
+    // Native CSS snapping, one page per swipe or scroll. Never under reduced motion.
+    expect(css).toMatch(
+      /@media \(prefers-reduced-motion: no-preference\) \{\s*html:has\(\.home\) \{\s*scroll-snap-type: y mandatory;/,
+    );
+    expect(css).toMatch(
+      /\.home > section \{\s*scroll-snap-align: start;\s*scroll-snap-stop: always;/,
+    );
+    // The only other snapping is the sideways row of project cards on phones.
     const snaps = [...css.matchAll(/scroll-snap-type:\s*([^;]+);/g)].map((m) => m[1].trim());
-    expect(snaps).toEqual(['y proximity']);
+    expect(snaps).toEqual(['y mandatory', 'x mandatory']);
+    expect(css).not.toMatch(/proximity/);
   });
 
   it('uses small-viewport units, never the plain vh that jumps with the mobile address bar', () => {

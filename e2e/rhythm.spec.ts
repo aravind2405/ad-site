@@ -7,17 +7,22 @@ const styleOf = (page: Page, selector: string, property: string) =>
     .first()
     .evaluate((el, p) => getComputedStyle(el).getPropertyValue(p), property);
 
+// color-mix() reports as color(srgb 0.9 0.9 0.9) rather than rgb(), so read either form.
+const rgbOf = async (page: Page, selector: string) => {
+  const color = await styleOf(page, selector, 'color');
+  const srgb = /color\(srgb ([\d. ]+)\)/.exec(color);
+  if (srgb) return srgb[1].split(' ').map((v) => Math.round(Number(v) * 255));
+  return color.match(/\d+/g)!.slice(0, 3).map(Number);
+};
+
 test.describe('home page rhythm', () => {
-  test('snaps gently to its bands and keeps the nav clear', async ({ page }) => {
+  test('snaps one page at a time and keeps the nav clear', async ({ page }) => {
     await page.goto('/');
-    // Browsers print "y proximity" as just "y", because proximity is the default strictness.
-    const snapType = await page.evaluate(
-      () => getComputedStyle(document.documentElement).scrollSnapType,
-    );
-    expect(snapType).toMatch(/^y( proximity)?$/);
-    expect(snapType).not.toContain('mandatory');
-    for (const selector of ['.hero-shell', '#projects', '#lab', '#contact']) {
+    expect(await styleOf(page, 'html', 'scroll-snap-type')).toBe('y mandatory');
+    for (const selector of ['#hero', '#projects', '#lab', '#contact']) {
       expect(await styleOf(page, selector, 'scroll-snap-align'), selector).toContain('start');
+      // one swipe or scroll can never skip a page
+      expect(await styleOf(page, selector, 'scroll-snap-stop'), selector).toBe('always');
     }
     const header = (await page.locator('header.site-header').boundingBox())!;
     const padding = await page.evaluate(() =>
@@ -56,58 +61,79 @@ test.describe('home page rhythm', () => {
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before);
   });
 
-  test('Lab and Contact fill the screen below the nav and centre their content', async ({
-    page,
-  }) => {
+  test('every page fills the screen below the nav and centres its content', async ({ page }) => {
     await page.goto('/');
     const viewport = page.viewportSize()!;
     const headerHeight = (await page.locator('header.site-header').boundingBox())!.height;
-    for (const id of ['lab', 'contact']) {
+    for (const id of ['hero', 'projects', 'lab', 'contact']) {
       const band = (await page.locator(`#${id}`).boundingBox())!;
       expect(band.height, `${id} fills the screen`).toBeGreaterThanOrEqual(
         viewport.height - headerHeight - 2,
       );
-      const content = (await page.locator(`#${id} .wrap`).boundingBox())!;
-      const bandMiddle = band.y + band.height / 2;
-      const contentMiddle = content.y + content.height / 2;
-      // The band's top padding is larger than its bottom one, so allow for half the difference.
-      expect(Math.abs(contentMiddle - bandMiddle), `${id} content is centred`).toBeLessThanOrEqual(
-        Math.max(48, band.height * 0.12),
-      );
+      // a page that fits the screen is exactly one screen tall, so one swipe moves one page
+      if (id !== 'contact') {
+        expect(band.height, `${id} is one screen`).toBeLessThanOrEqual(
+          viewport.height - headerHeight + 2,
+        );
+      }
     }
-    // Projects is sized by its content, not stretched to the screen.
-    expect(await styleOf(page, '#projects', 'min-height')).toBe('0px');
   });
 
-  test('sizes the bands in small-viewport units so the mobile address bar cannot make them jump', async ({
+  test('sizes the pages in small-viewport units so the mobile address bar cannot make them jump', async ({
     page,
   }) => {
     await page.goto('/');
-    const rule = await page.evaluate(() => {
-      for (const sheet of [...document.styleSheets]) {
-        for (const r of [...sheet.cssRules]) {
-          if (
-            r instanceof CSSStyleRule &&
-            r.selectorText.includes('.lab-band') &&
-            r.style.minHeight
-          ) {
-            return r.style.minHeight;
-          }
-        }
-      }
-      return '';
-    });
-    expect(rule).toContain('svh');
-    expect(rule).not.toMatch(/\d\s*vh/);
+    const token = await page.evaluate(() =>
+      getComputedStyle(document.documentElement).getPropertyValue('--page-h').trim(),
+    );
+    expect(token).toContain('svh');
+    expect(token).not.toMatch(/\d\s*vh/);
+    expect(await styleOf(page, '#projects', 'min-height')).not.toBe('0px');
   });
 
-  test('the cream projects band fades into the charcoal Lab band', async ({ page }) => {
+  test('the page behind blends from cream to charcoal instead of switching', async ({ page }) => {
     await page.goto('/');
-    const image = await styleOf(page, '#lab', 'background-image');
-    expect(image).toContain('linear-gradient');
-    expect(image).toContain('rgb(242, 237, 225)'); // cream
-    expect(image).toContain('rgb(20, 22, 27)'); // charcoal
-    expect(await styleOf(page, '#projects', 'background-color')).toBe('rgb(242, 237, 225)');
+    // measure the blend without the snapping pulling the page to a page edge
+    await page.addStyleTag({ content: 'html { scroll-snap-type: none !important; }' });
+    const at = async (from: string, to: string, f: number) => {
+      await page.evaluate(
+        ([a, b, t]) => {
+          const h = document.querySelector('.site-header')!.getBoundingClientRect().height;
+          const top = (id: string) =>
+            document.getElementById(id)!.getBoundingClientRect().top + scrollY - h;
+          window.scrollTo({
+            top: top(a as string) + (top(b as string) - top(a as string)) * (t as number),
+            behavior: 'instant',
+          });
+        },
+        [from, to, f],
+      );
+      await page.waitForTimeout(250);
+      return page.evaluate(() => {
+        const root = document.documentElement.style;
+        return {
+          bg: root.getPropertyValue('--stage-bg'),
+          dark: Number(root.getPropertyValue('--dark')),
+        };
+      });
+    };
+    const red = (bg: string) => Number(/rgb\((\d+)/.exec(bg)![1]);
+    const cream = await at('projects', 'lab', 0);
+    const quarter = await at('projects', 'lab', 0.25);
+    const half = await at('projects', 'lab', 0.5);
+    const lab = await at('projects', 'lab', 1);
+    expect(red(cream.bg)).toBeGreaterThan(235);
+    expect(red(lab.bg)).toBeLessThan(25);
+    // in between it is a real blend, getting darker in order
+    expect(red(quarter.bg)).toBeLessThan(red(cream.bg));
+    expect(red(half.bg)).toBeLessThan(red(quarter.bg));
+    expect(red(half.bg)).toBeGreaterThan(red(lab.bg));
+    expect(cream.dark).toBe(0);
+    expect(lab.dark).toBe(1);
+    // and the nav text follows: light over the Lab, dark over the cream
+    expect(await rgbOf(page, '.logo')).toEqual([242, 243, 240]);
+    await at('projects', 'lab', 0);
+    expect(await rgbOf(page, '.logo')).toEqual([22, 24, 29]);
   });
 
   test('every band uses the same content width', async ({ page }) => {

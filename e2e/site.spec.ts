@@ -69,9 +69,10 @@ test.describe('navigation', () => {
     const box = await header.boundingBox();
     expect(box?.y).toBeLessThanOrEqual(1);
     await expect(header).toBeInViewport();
-    // The bar is opaque: its background must have no transparency.
-    const bg = await header.evaluate((el) => getComputedStyle(el).backgroundColor);
-    expect(bg).toBe('rgb(244, 245, 242)');
+    // The bar is a tint of the page behind it (blurred), at least 85% solid so text stays readable.
+    const bg = await header.evaluate((el) => getComputedStyle(el, '::before').backgroundColor);
+    const alpha = Number(/\/\s*([\d.]+)\)/.exec(bg)?.[1] ?? 1);
+    expect(alpha).toBeGreaterThanOrEqual(0.85);
     await followNavLink(page, 'Curiosity Lab');
     await expect(page).toHaveURL(/\/lab$/);
   });
@@ -227,13 +228,17 @@ test.describe('landing page', () => {
     }
   });
 
-  test('the hero has the headline, subline and credentials but no buttons', async ({ page }) => {
+  test('the hero has the headline, subline and credentials and one cue to scroll', async ({
+    page,
+  }) => {
     await page.goto('/');
     const hero = page.locator('.hero-shell');
     await expect(hero.getByRole('heading', { level: 1 })).toBeVisible();
     await expect(hero.locator('.sub')).toBeVisible();
     await expect(hero.locator('.creds')).toContainText('Master of IT');
-    await expect(hero.getByRole('link')).toHaveCount(0);
+    // the only link is the cue that points at the next page
+    await expect(hero.getByRole('link')).toHaveCount(1);
+    await expect(hero.getByRole('link', { name: /Projects/ })).toHaveAttribute('href', '#projects');
     await expect(hero.getByRole('button')).toHaveCount(0);
   });
 
@@ -248,19 +253,24 @@ test.describe('landing page', () => {
     await expect(nav.getByRole('link', { name: 'Shelf' })).toHaveCount(0);
   });
 
-  test('the top of the project cards is visible in the first screen', async ({ page }) => {
+  test('the first screen is the hero alone, with a cue to the projects page below', async ({
+    page,
+  }) => {
     await page.goto('/');
     const viewportHeight = page.viewportSize()!.height;
-    const box = await page.locator('article.project-card').first().boundingBox();
-    // At least 80px of the first card shows, so the page clearly continues below the hero.
-    expect(box!.y).toBeLessThan(viewportHeight - 80);
-    const hero = await page.locator('.hero-shell').boundingBox();
-    expect(hero!.y + hero!.height, 'the hero must not fill the screen').toBeLessThan(
-      viewportHeight,
-    );
+    const hero = (await page.locator('.hero-shell').boundingBox())!;
+    const header = (await page.locator('header.site-header').boundingBox())!;
+    expect(hero.y + hero.height, 'the hero is exactly one screen').toBeCloseTo(viewportHeight, -1);
+    expect(header.height + hero.height).toBeCloseTo(viewportHeight, -1);
+    await expect(page.locator('.scroll-cue')).toBeInViewport();
+    const card = (await page.locator('article.project-card').first().boundingBox())!;
+    expect(
+      card.y,
+      'the projects are the next page, not squeezed under the hero',
+    ).toBeGreaterThanOrEqual(viewportHeight);
   });
 
-  test('cards sit in two columns on desktop and one on phones, all equal', async ({
+  test('cards sit in two columns on desktop and a swipeable row on phones, all equal', async ({
     page,
     isMobile,
   }) => {
@@ -270,7 +280,9 @@ test.describe('landing page', () => {
     const boxB = (await b.boundingBox())!;
     expect(Math.abs(boxA.width - boxB.width)).toBeLessThan(1);
     if (isMobile) {
-      expect(boxB.y).toBeGreaterThan(boxA.y + boxA.height - 1);
+      // a row to swipe sideways: same height, side by side
+      expect(Math.abs(boxA.y - boxB.y)).toBeLessThan(1);
+      expect(boxB.x).toBeGreaterThan(boxA.x + boxA.width - 1);
     } else {
       expect(Math.abs(boxA.y - boxB.y)).toBeLessThan(1);
       expect(Math.abs(boxA.height - boxB.height)).toBeLessThan(1);

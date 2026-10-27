@@ -8,12 +8,30 @@ html {
      page loads unscrolled */
   scroll-padding-top: calc(var(--header-h) + var(--stroke-hairline));
 }
-/* The home page snaps gently between its bands. Proximity only: it never traps the scroll. */
-html:has(.home) {
-  scroll-snap-type: y proximity;
-}
+/* The home page is a stack of full-screen pages. Where motion is welcome, one swipe or one scroll
+   moves exactly one page. This is native CSS snapping: nothing intercepts the scroll, and a page
+   taller than the screen (a small phone, large text) still scrolls freely inside itself. */
 .home > section {
-  scroll-snap-align: start;
+  min-height: var(--page-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.home > section > .wrap {
+  /* in a flex column the wrap's auto margins would shrink it to its content */
+  width: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.home) {
+    scroll-snap-type: y mandatory;
+  }
+  .home > section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  html:has(.home) .site-footer {
+    scroll-snap-align: end;
+  }
 }
 body {
   margin: 0;
@@ -88,13 +106,27 @@ time {
   color: #fff;
 }
 
-/* header: opaque, stays visible while scrolling (phones hide it on scroll down) */
+/* header: stays visible while scrolling. On the home page it takes the colour of the page behind
+   it, and its text turns light over the dark Lab page (--dark runs from 0 to 1 as the page blends). */
 .site-header {
+  --ink: color-mix(in srgb, #f2f3f0 calc(var(--dark, 0) * 100%), #16181d);
+  --line: color-mix(in srgb, #2a2e36 calc(var(--dark, 0) * 100%), #dadfd6);
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--bg);
   border-bottom: var(--stroke-hairline) solid var(--line);
+}
+/* The tinted, blurred background is its own layer: a blur on the header itself would make the header
+   the containing block of the phone menu sheet, which is position: fixed. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--stage-bg, var(--bg)) 90%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
 }
 .site-nav {
   display: flex;
@@ -151,6 +183,8 @@ time {
 }
 .nav-sheet {
   display: none;
+  --ink: #16181d;
+  --line: #dadfd6;
 }
 .nav-menu[open] .nav-sheet {
   display: flex;
@@ -179,12 +213,12 @@ time {
   margin-left: var(--space-1);
 }
 .nav-main a.nav-cta {
-  color: #fff;
+  color: color-mix(in srgb, #14161b calc(var(--dark, 0) * 100%), #fff);
 }
 .nav-links a.nav-cta[aria-current='location'] {
   text-decoration: none;
   box-shadow:
-    0 0 0 2px var(--bg),
+    0 0 0 2px var(--stage-bg, var(--bg)),
     0 0 0 4px var(--ink);
 }
 @media (max-width: 767px) {
@@ -302,29 +336,20 @@ time {
   max-width: 660px;
 }
 
-/* hero: soft daylight wash and a faint grid */
+/* hero: the first page. Headline, the questions behind the projects, a scroll cue and a trace that
+   draws itself along the bottom. */
 .hero-shell {
   position: relative;
-  background: radial-gradient(900px 420px at 50% -10%, rgba(255, 255, 255, 0.7), transparent 65%);
-}
-.hero-shell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 25% 15%, #000 0%, transparent 72%);
-  mask-image: radial-gradient(ellipse 70% 80% at 25% 15%, #000 0%, transparent 72%);
-  pointer-events: none;
+  overflow: hidden;
 }
 .hero {
   position: relative;
-  padding: var(--rhythm-5) var(--gutter) var(--rhythm-4);
+  padding-block: var(--rhythm-3);
   display: flex;
   flex-direction: column;
   gap: var(--rhythm-2);
+  flex: 1;
+  justify-content: center;
 }
 .hero h1 {
   margin: 0;
@@ -341,11 +366,67 @@ time {
   color: var(--ink-2);
   max-width: 620px;
 }
+.asks {
+  margin-top: var(--rhythm-1);
+  min-height: 5.6em;
+}
+.asks-label {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--text-label);
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.asks-now {
+  margin: var(--space-2) 0 0;
+  max-width: 28ch;
+  font-size: var(--text-card-title-featured);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.scroll-cue {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-family: var(--mono);
+  font-size: var(--text-data);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.signal {
+  display: block;
+  flex: none;
+  width: 100%;
+  height: clamp(72px, 15svh, 150px);
+  pointer-events: none;
+}
+.signal path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.signal-raw {
+  stroke: color-mix(in srgb, var(--ink) 26%, transparent);
+  stroke-width: 1.25;
+}
+.signal-clean {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+}
+.signal-mark {
+  stroke: var(--ink);
+  stroke-width: 2;
+}
 @media (max-width: 767px) {
-  .hero {
-    padding-top: var(--rhythm-3);
-    padding-bottom: var(--rhythm-3);
-    gap: var(--rhythm-2);
+  .asks-now {
+    font-size: var(--text-subsection-title);
   }
 }
 .creds {
@@ -385,8 +466,7 @@ time {
 /* projects */
 .projects-band {
   background: var(--tint-cream);
-  border-top: var(--stroke-hairline) solid var(--line-soft);
-  padding-block: var(--rhythm-4) var(--rhythm-5);
+  padding-block: var(--rhythm-4);
 }
 .project-grid {
   display: grid;
@@ -466,6 +546,44 @@ time {
   font-size: var(--text-body-sm);
   color: var(--ink-3);
 }
+/* the way into the Lab, shown at the foot of the Projects page like a corner of the next page */
+.lab-peek {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--rhythm-3);
+  margin-top: var(--rhythm-3);
+  padding: var(--space-4) var(--space-6);
+  min-height: var(--tap-target);
+  border-radius: var(--radius-lg);
+  background: #14161b;
+  color: #f2f3f0;
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+}
+.lab-peek-label {
+  font-weight: 700;
+  font-size: var(--text-body-lg);
+}
+.lab-peek-names {
+  font-family: var(--mono);
+  font-size: var(--text-data);
+  color: #c4cad5;
+}
+.lab-peek-go {
+  font-weight: 600;
+  font-size: var(--text-body-sm);
+}
+.lab-peek-go span {
+  display: inline-block;
+  transition: transform 240ms var(--spring-snappy, ease);
+}
+@media (hover: hover) {
+  .lab-peek:hover .lab-peek-go span {
+    transform: translateY(3px);
+  }
+}
 .card-updated {
   font-family: var(--mono);
   font-size: var(--text-label);
@@ -523,25 +641,12 @@ time {
 }
 
 /* lab band: the dark layer on the home page */
-/* The first 96px fade from the cream above into charcoal, so there is no hard edge. */
+/* The static colour is what shows without JavaScript; with it, the page behind blends from the
+   cream above to the charcoal here (see the stage rules). */
 .lab-band {
-  background: linear-gradient(to bottom, var(--tint-cream), #14161b var(--rhythm-5));
+  background: #14161b;
   color: #f2f3f0;
-  padding-block: var(--rhythm-5) var(--rhythm-4);
-}
-/* Lab and Contact fill the screen below the nav (small viewport units, so the mobile address bar
-   never makes them jump) and centre their content. Projects is sized by its content. */
-.lab-band,
-.contact-band {
-  min-height: calc(100svh - var(--header-h));
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.lab-band > .wrap,
-.contact-band > .wrap {
-  /* in a flex column the wrap's auto margins would shrink it to its content */
-  width: 100%;
+  padding-block: var(--rhythm-4);
 }
 .lab-band-head {
   display: flex;
@@ -583,10 +688,28 @@ time {
   }
 }
 .lab-tile {
+  position: relative;
   padding: var(--space-5);
   background: #1b1e25;
   border: var(--stroke-hairline) solid #2a2e36;
   border-radius: var(--radius-md);
+}
+.lab-tile .stretched {
+  color: inherit;
+  text-decoration: none;
+}
+.lab-tile .stretched::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+}
+.lab-tile:focus-within {
+  outline: 2px solid #f2f3f0;
+  outline-offset: 3px;
+}
+.lab-tile .stretched:focus-visible {
+  outline: none;
 }
 .lab-tile-top {
   display: flex;
@@ -616,8 +739,8 @@ time {
 
 /* contact */
 .contact-band {
-  background: linear-gradient(to bottom, #14161b, var(--bg) var(--rhythm-5));
-  padding-block: var(--rhythm-5) var(--rhythm-4);
+  background: var(--bg);
+  padding-block: var(--rhythm-4);
 }
 .contact {
   display: flex;
@@ -1317,6 +1440,169 @@ time {
   ::view-transition-group(.morph) {
     animation-duration: 400ms;
     animation-timing-function: var(--spring-snappy);
+  }
+}
+
+/* the page behind the home bands: a fixed colour that HomeStage blends from page to page, with two
+   slow glows and a faint grid. The bands go transparent once it is running. */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--stage-bg, var(--bg));
+}
+html.stage-on .home > section {
+  background: transparent;
+  border-color: transparent;
+}
+.stage-blob {
+  position: absolute;
+  width: 80vmax;
+  height: 80vmax;
+  border-radius: 50%;
+}
+.stage-blob-a {
+  left: -25vmax;
+  top: -30vmax;
+  background: radial-gradient(closest-side, rgb(var(--stage-a, 196 212 232) / 0.55), transparent);
+}
+.stage-blob-b {
+  right: -30vmax;
+  bottom: -35vmax;
+  background: radial-gradient(closest-side, rgb(var(--stage-b, 236 222 196) / 0.5), transparent);
+}
+.stage-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--stage-grid, var(--grid)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stage-grid, var(--grid)) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 0%, transparent 75%);
+}
+.stage-rail {
+  --ink: color-mix(in srgb, #f2f3f0 calc(var(--dark, 0) * 100%), #16181d);
+  position: fixed;
+  right: max(4px, env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  color: var(--ink);
+}
+.stage-rail ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.stage-rail a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  text-decoration: none;
+  color: inherit;
+}
+.stage-rail .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.6;
+}
+.stage-rail a[aria-current='location'] .dot {
+  background: currentColor;
+  opacity: 1;
+  transform: scale(1.3);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stage-blob-a {
+    animation: drift-a 34s ease-in-out infinite alternate;
+  }
+  .stage-blob-b {
+    animation: drift-b 40s ease-in-out infinite alternate;
+  }
+  .stage-rail .dot {
+    transition:
+      transform 300ms ease-out,
+      opacity 300ms ease-out,
+      background-color 300ms ease-out;
+  }
+  .asks-now {
+    animation: ask-in 600ms ease-out;
+  }
+  .signal-clean {
+    animation: signal-draw 2.4s 0.3s cubic-bezier(0.3, 0.1, 0.2, 1) backwards;
+  }
+  .signal-mark {
+    animation: signal-pop 500ms ease-out backwards;
+  }
+  .scroll-cue span {
+    display: inline-block;
+    animation: cue-bob 2.2s ease-in-out infinite;
+  }
+}
+@keyframes drift-a {
+  to {
+    transform: translate3d(16vmax, 12vmax, 0);
+  }
+}
+@keyframes drift-b {
+  to {
+    transform: translate3d(-14vmax, -10vmax, 0);
+  }
+}
+@keyframes ask-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes signal-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes signal-pop {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cue-bob {
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* On phones the project cards are a row you swipe sideways, so the page still fits one screen. The
+   next card peeks in from the edge to show there is more. The three Lab tiles fit stacked. */
+@media (max-width: 767px) {
+  .project-grid {
+    display: flex;
+    gap: var(--rhythm-2);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: var(--space-2) var(--gutter) var(--space-4);
+    scroll-padding-inline: var(--gutter);
+  }
+  .project-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .project-grid > * {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
+  }
+  /* swiping is the way around on a phone, and the dots would sit on the peeking card */
+  .stage-rail {
+    display: none;
   }
 }
 
