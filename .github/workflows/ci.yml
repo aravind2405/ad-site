@@ -16,8 +16,7 @@ concurrency:
 jobs:
   quality:
     name: quality
-    # Pinned: the ubuntu-latest label is moving to Ubuntu 26. Move up on purpose once CI passes there
-    # (the Playwright browser install is the part most likely to be sensitive to the OS).
+    # Pinned: the ubuntu-latest label is moving to Ubuntu 26. Move up on purpose once CI passes there.
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
