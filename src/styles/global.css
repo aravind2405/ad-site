@@ -94,7 +94,7 @@ time {
   min-height: var(--header-h);
 }
 .logo {
-  font-weight: 700;
+  font-weight: 600;
   font-size: 20px;
   color: var(--ink);
   text-decoration: none;
@@ -281,14 +281,14 @@ time {
   margin: 0;
   font-size: var(--text-section-title);
   line-height: 1.15;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.015em;
 }
 .h2-sm {
   margin: 0;
   font-size: var(--text-subsection-title);
   line-height: 1.25;
-  font-weight: 700;
+  font-weight: 600;
 }
 .lede {
   margin: 0;
@@ -328,7 +328,7 @@ time {
   max-width: 20ch;
   font-size: var(--text-display);
   line-height: var(--leading-display);
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: var(--tracking-display);
 }
 .hero .sub {
@@ -420,7 +420,7 @@ time {
   margin: 0;
   font-size: var(--text-card-title);
   line-height: 1.25;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.01em;
 }
 .project-card p {
@@ -510,7 +510,7 @@ time {
 .receipt-tag {
   font-family: var(--mono);
   font-size: var(--text-label);
-  font-weight: 500;
+  font-weight: 400;
   letter-spacing: 0.06em;
   color: var(--ink-3);
 }
@@ -723,7 +723,7 @@ time {
 .tradeoffs thead th {
   font-family: var(--mono);
   font-size: var(--text-label);
-  font-weight: 500;
+  font-weight: 400;
   color: var(--ink-3);
 }
 .tradeoffs tbody th {
@@ -992,7 +992,7 @@ time {
   margin: 0;
   font-size: var(--text-page-title);
   line-height: 1.02;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.03em;
 }
 .lab-hero p {
