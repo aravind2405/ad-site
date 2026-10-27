@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { IBM_Plex_Mono, IBM_Plex_Sans } from 'next/font/google';
+import '@/styles/tokens.css';
 import '@/styles/global.css';
 
 const plexSans = IBM_Plex_Sans({
