@@ -577,3 +577,23 @@ Measured 2026-10-28 at about 03:30 AEDT on a local production build (port 3124) 
 | Vitest | 57 passed |
 
 Lighthouse is run by the CI gate on this PR.
+
+## Contact form, 2026-10-28
+
+Measured 2026-10-28 at about 06:10 AEDT on a local production build (ports 3133 and 3134) of branch `feat/contact-form`, stacked on `feat/home-lab-contact-nav`. Local, not live. No email was sent: tests mock the email service, and the real route was only called with no email configured.
+
+| Check | Result |
+|---|---|
+| Vitest | 72 passed (12 route tests: valid, missing fields, invalid email and short message, over-long and oversized body, honeypot, bad content type or origin, rate limit, email service failure, unreachable service, not configured, no secrets in the response; 3 limiter tests) |
+| Playwright, 4 projects (Chromium and WebKit, 1440x900 and 390x844) | 221 passed, 0 failed (8 contact form tests per project, plus a form error-state axe test) |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home); 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.45 s, 245 KiB transferred |
+| Lighthouse CI, home, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s, 250 KiB transferred |
+| Privacy check on the build | 149 built files scanned, no email-shaped text |
+| Real route, no email configured (`curl`) | valid message 503 (safe error), invalid fields 400 with a message per field, honeypot filled 200 with nothing sent, GET 405, wrong content type 415, other origin 403 |
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, `npm run check:privacy`, the scratch `run-axe.mjs`, `check-contrast.mjs` and overflow scripts with `TAG=contact`, and `curl -X POST localhost:3134/api/contact` against `next start` with `RESEND_API_KEY` and `CONTACT_TO_EMAIL` unset.
+
+Not measured: real email delivery (needs your Resend key and address in Vercel), and the rate limit across several serverless instances.

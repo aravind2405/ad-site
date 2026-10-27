@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Button from '@/components/Button';
+import ContactForm from '@/components/ContactForm';
 import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
 import { gridProjects, lab, labStages, nextUpLine, profile } from '@/lib/content';
@@ -82,23 +83,26 @@ export default async function Home() {
             <div className="main">
               <h2 id="contact-h">{profile.contact.heading}</h2>
               <p>{profile.contact.body}</p>
+              <div className="contact-links">
+                {links.linkedin && (
+                  <Button href={links.linkedin} variant="ghost" external>
+                    LinkedIn
+                  </Button>
+                )}
+                {links.github && (
+                  <Button href={links.github} variant="ghost" external>
+                    GitHub
+                  </Button>
+                )}
+                {links.resume && (
+                  <Button href={links.resume} variant="ghost" download={RESUME_FILE}>
+                    Download resume
+                  </Button>
+                )}
+              </div>
             </div>
             <div className="side">
-              {links.linkedin && (
-                <Button href={links.linkedin} external>
-                  LinkedIn
-                </Button>
-              )}
-              {links.github && (
-                <Button href={links.github} variant="ghost" external>
-                  GitHub
-                </Button>
-              )}
-              {links.resume && (
-                <Button href={links.resume} variant="ghost" download={RESUME_FILE}>
-                  Download resume
-                </Button>
-              )}
+              <ContactForm />
             </div>
           </div>
         </div>
