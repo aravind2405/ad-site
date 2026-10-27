@@ -14,13 +14,17 @@ body {
   overflow-x: clip;
 }
 a {
-  color: var(--link);
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke-hairline);
+  text-decoration-color: var(--line);
+  text-underline-offset: 0.25em;
 }
 a:hover {
-  color: var(--link-hover);
+  text-decoration-color: currentColor;
 }
 :focus-visible {
-  outline: 2px solid var(--link);
+  outline: 2px solid var(--ink);
   outline-offset: 3px;
   border-radius: 4px;
 }
@@ -473,7 +477,28 @@ time {
   z-index: 2;
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   min-height: var(--tap-target);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.card-links a:first-child {
+  color: var(--ink);
+}
+.card-links a::after {
+  content: '\2192' / '';
+  transition: transform 240ms var(--spring-snappy, ease);
+}
+.card-links a[target='_blank']::after {
+  content: '\2197' / '';
+}
+.card-links a:hover {
+  color: var(--ink);
+}
+@media (hover: hover) {
+  .card-links a:hover::after {
+    transform: translateX(3px);
+  }
 }
 .card-updated {
   font-family: var(--mono);
@@ -522,6 +547,8 @@ time {
   color: var(--ink-3);
 }
 .receipt a {
+  text-decoration: none;
+  font-weight: 600;
   align-self: flex-start;
   display: inline-flex;
   align-items: center;
@@ -635,6 +662,8 @@ time {
   gap: 0 var(--space-6);
 }
 .footer-links a {
+  text-decoration: none;
+  font-weight: 500;
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-target);
@@ -647,7 +676,12 @@ time {
 }
 
 /* project detail */
+.crumb:hover {
+  color: var(--ink);
+}
 .crumb {
+  color: var(--ink-3);
+  text-decoration: none;
   display: inline-block;
   margin: 36px 0 18px;
   font-family: var(--mono);
@@ -718,6 +752,14 @@ time {
   display: inline-flex;
   align-items: center;
   min-height: var(--tap-target);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.toc a:hover {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: var(--stroke-hairline);
+  text-underline-offset: 0.25em;
 }
 @media (min-width: 1200px) {
   .detail-layout {
