@@ -20,6 +20,7 @@
     "lighthouse": "lhci autorun --config=lighthouserc.mobile.json && lhci autorun --config=lighthouserc.desktop.json"
   },
   "dependencies": {
+    "mermaid": "12.2.0",
     "next": "16.4.3",
     "react": "19.3.1",
     "react-dom": "19.3.1",

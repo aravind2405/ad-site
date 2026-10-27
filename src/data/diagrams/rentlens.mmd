@@ -1,0 +1,42 @@
+flowchart LR
+  %% Derived from the "Architecture" section of the RentLens README (aravind2405/rentlens-nsw),
+  %% checked 2026-10-28, plus scripts/check_published_numbers.py for the dashed check.
+  %% TODO(ask Aravind): the README draws DuckDB feeding docs/index.html, but the dashboard's figures
+  %% are arrays written into that page, and the "data.json pipeline" is still on the README roadmap.
+  %% How do the numbers get from the marts into index.html today? The arrow below says only what the
+  %% README says until that is confirmed.
+
+  %% Each stage is a column; steps inside a stage run top to bottom. Stages are joined to each other
+  %% (not node to node) so Mermaid keeps that inner direction.
+  subgraph source["1 · Source"]
+    direction TB
+    nsw["NSW Fair Trading<br/>rental bond spreadsheets"]
+  end
+
+  subgraph ingestion["2 · Ingestion"]
+    direction TB
+    load["load_lodgements.py<br/>downloads, safe to re-run"]
+    raw[("Parquet files<br/>one per month, no casting")]
+    load --> raw
+  end
+
+  subgraph transformation["3 · Transformation (dbt)"]
+    direction TB
+    stg["stg_bond_lodgements<br/>type-cast and rename"]
+    int["int_lodgements_flagged<br/>flag bad rows"]
+    marts["Marts<br/>rents_by_month, rents_by_postcode"]
+    stg --> int --> marts
+  end
+
+  subgraph storage["4 · Storage"]
+    direction TB
+    duck[("DuckDB")]
+  end
+
+  subgraph output["5 · Output"]
+    direction TB
+    dash["Static dashboard<br/>Chart.js on GitHub Pages"]
+  end
+
+  source --> ingestion --> transformation --> storage --> output
+  output -. "numbers checked<br/>against the marts" .-> storage

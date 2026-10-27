@@ -32,5 +32,22 @@ for (const [name, size] of Object.entries(viewports)) {
         ).toEqual([]);
       });
     }
+
+    test('/projects/rentlens has no violations once its architecture diagram is drawn', async ({
+      page,
+    }) => {
+      // Reduced motion shows every section in its final state, so axe never measures a half-faded one.
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto('/projects/rentlens');
+      await page.locator('.diagram').scrollIntoViewIfNeeded();
+      await expect(page.locator('.diagram')).toHaveAttribute('data-state', 'drawn');
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+        .exclude('iframe')
+        .analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`),
+      ).toEqual([]);
+    });
   });
 }

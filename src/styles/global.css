@@ -820,6 +820,38 @@ time {
   content: '→';
   color: var(--ink-3);
 }
+.diagram {
+  margin-top: var(--space-6);
+  padding: var(--space-5);
+  background: var(--surface);
+  border: var(--stroke-hairline) solid var(--line);
+  border-radius: var(--radius-lg);
+  overflow-x: clip;
+}
+.diagram svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin-inline: auto;
+}
+/* Without JavaScript, or if drawing fails, the frame is hidden and the plain step list shows.
+   While it waits to be drawn it holds about its final height so the page does not jump. */
+html:not(.js) .diagram,
+.diagram[data-state='failed'] {
+  display: none;
+}
+.js .diagram[data-state='waiting'] {
+  min-height: 340px;
+}
+@media (max-width: 639px) {
+  .js .diagram[data-state='waiting'] {
+    min-height: 1480px;
+  }
+}
+/* once the diagram is drawn, its label carries the steps, so the plain list steps aside */
+.diagram[data-state='drawn'] + .flow {
+  display: none;
+}
 .decision {
   max-width: 720px;
   padding: 18px 20px;
