@@ -17,11 +17,18 @@ a {
   color: inherit;
   text-decoration: underline;
   text-decoration-thickness: var(--stroke-hairline);
-  text-decoration-color: var(--line);
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   text-underline-offset: 0.25em;
 }
-a:hover {
-  text-decoration-color: currentColor;
+/* hover shows a shadow, not an underline; only where a real pointer can hover */
+@media (hover: hover) {
+  a:hover {
+    text-decoration-color: transparent;
+    border-radius: 4px;
+    box-shadow:
+      0 0 0 3px var(--surface),
+      var(--shadow-hover);
+  }
 }
 :focus-visible {
   outline: 2px solid var(--ink);
@@ -126,10 +133,16 @@ time {
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-.nav-main a:hover,
-.nav-menu summary:hover {
-  background: rgba(22, 24, 29, 0.06);
-  color: var(--ink);
+@media (hover: hover) {
+  .nav-main a:hover,
+  .nav-menu summary:hover {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: var(--shadow-hover);
+  }
+  .nav-links a[aria-current='page']:hover {
+    text-decoration-color: currentColor;
+  }
 }
 .nav-links a[aria-current='page'] {
   font-weight: 600;
@@ -231,7 +244,7 @@ time {
 .btn-primary:hover {
   background: #2b2e36;
   color: #fff;
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-hover);
 }
 .btn-ghost {
   background: rgba(255, 255, 255, 0.55);
@@ -240,7 +253,7 @@ time {
 .btn-ghost:hover {
   background: #fff;
   color: var(--ink);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-hover);
 }
 .btn-sm {
   min-height: 44px;
@@ -1008,6 +1021,7 @@ time {
 }
 .chip-btn:hover {
   border-color: #b8c0cc;
+  box-shadow: var(--shadow-hover);
 }
 .chip-btn[aria-pressed='true'] {
   background: var(--ink);
@@ -1097,6 +1111,9 @@ time {
 }
 .lab-page a:hover {
   color: #c4d6c0;
+  box-shadow:
+    0 0 0 3px #14161b,
+    0 8px 22px -6px rgba(0, 0, 0, 0.7);
 }
 .lab-page .site-header {
   background: #14161b;
@@ -1114,7 +1131,8 @@ time {
 }
 .lab-page .nav-main a:hover,
 .lab-page .nav-menu summary:hover {
-  background: rgba(242, 243, 240, 0.08);
+  background: #1d2027;
+  box-shadow: 0 8px 22px -6px rgba(0, 0, 0, 0.7);
 }
 .lab-page .nav-menu summary {
   border-color: #2a2e36;
@@ -1383,10 +1401,33 @@ time {
   flex-direction: column;
   gap: var(--space-1);
   min-height: var(--tap-target);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
   text-decoration: none;
 }
+.exits a:first-child {
+  margin-left: calc(var(--space-4) * -1);
+}
 .exits .exit-next {
+  margin-right: calc(var(--space-4) * -1);
   text-align: right;
+}
+@media (max-width: 479px) {
+  .exits {
+    flex-direction: column;
+    gap: 0;
+  }
+  .exits .exit-next {
+    margin-left: calc(var(--space-4) * -1);
+    margin-right: 0;
+    text-align: left;
+  }
+}
+@media (hover: hover) {
+  .exits a:hover {
+    background: var(--surface);
+    box-shadow: var(--shadow-hover);
+  }
 }
 .exit-label {
   font-family: var(--mono);
@@ -1398,11 +1439,7 @@ time {
   font-weight: 600;
   letter-spacing: -0.01em;
 }
-.exits a:hover .exit-title {
-  text-decoration: underline;
-  text-decoration-thickness: var(--stroke-hairline);
-  text-underline-offset: 0.25em;
-}
+
 .provenance {
   margin: var(--space-8) 0 0;
   max-width: 720px;

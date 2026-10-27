@@ -430,3 +430,29 @@ bash run-lighthouse.sh && node run-axe.mjs && bash check-headers.sh > out/header
 ```
 
 Set `CHROME_PATH` for `run-lighthouse.sh` and edit the `executablePath` in `run-axe.mjs` if Chrome is not at the macOS default location. Results will differ slightly from the table: Lighthouse varies between runs and the site may have changed.
+
+## Hover shadows, cream bands and plain closing section, 2026-10-28
+
+Measured 2026-10-28 from 00:18 to 00:29 AEDT against a local production build (`npm run build`, then `next start` on port 3114) of branch `style/hover-shadow`, which sits on `main` at `da47260` (PR 23). Local, not the live site, so comparable only with other local runs. Same machine, Chrome and tool versions as above. The scripts were run from a scratch copy that has `puppeteer-core` and `pngjs` installed.
+
+```bash
+export P="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth /shelf /lab"
+BASE=http://127.0.0.1:3114 PAGES="$P" TAG=hover node run-axe.mjs                  # 00:21
+BASE=http://127.0.0.1:3114 PAGES="$P" TAG=hover node check-contrast.mjs           # 00:22
+BASE=http://127.0.0.1:3114 PAGES="/ /projects/rentlens /projects/ontimesydney /shelf /lab" TAG=hover- bash run-lighthouse.sh   # 00:23 to 00:28
+npx playwright test                                                               # desktop Chrome
+npx playwright test -c <config using devices['Pixel 7']>                          # phone, temporary config, not committed
+```
+
+| Check | Result |
+|---|---|
+| axe-core 4.14.0, 7 pages at 375 px and 1440 px (14 runs) | 0 violations in every run |
+| Lowest text contrast, all 7 pages, both sizes | 6.73:1 (`/lab` 7.65:1); 0 elements below threshold |
+| Lighthouse desktop, 5 pages, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, LCP 0.50 to 0.51 s, TBT 0 ms, CLS 0 |
+| Lighthouse mobile, 5 pages, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, LCP 2.31 s (home) and 2.46 s (others), TBT 4 to 7 ms, CLS 0 |
+| Transfer per page (local) | home 249 KiB, RentLens 309 KiB, others 239 to 241 KiB (still over the 200 KB target) |
+| Horizontal overflow, 8 routes at 320, 375, 768 and 1280 px | none, after stacking the previous and next links below 480 px |
+| Playwright, desktop Chrome | 52 of 52 passed |
+| Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is "the top bar stays in view while scrolling", which does not apply on phones because the header hides on scroll down by design |
+
+One Lighthouse run (home, mobile, run 1) hit `NO_NAVSTART` and was re-run on the same build at 00:28. A first contrast run flagged `/lab` at 1.31:1 on the footer line "The main work is on the home page." That was the pale link underline (`--line`) being sampled as background on the dark page, and the same reading appears on the live site, so it predates this change. The underline colour is now derived from the text colour (`color-mix(in srgb, currentColor 35%, transparent)`), after which `/lab` reads 7.65:1.
