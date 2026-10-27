@@ -374,11 +374,50 @@ A burst of requests from this machine within about two minutes (28 page loads of
 | HSTS short form on the custom domain | Open |
 | CSP allows inline scripts and styles | Open (needed by Next.js hydration) |
 
+## Redesign branch, local production build (2026-10-27)
+
+What this is: the stacked redesign PRs (#14 to #19, measured at the top of the stack) built with `npm run build` and served with `npx next start -p 3700`, measured on the same machine as the 2026-10-24 baseline but against `localhost`, not the live site. Local numbers have no CDN or HTTP/2 and are not comparable with the live tables above. For a fair comparison, `main` at commit `0484e7b` was built and measured the same way (home page only).
+
+Commands (setup as in "Reproduce"; scripts in `scripts/measure/`):
+
+```bash
+npm run build && npx next start -p 3700 &
+BASE=http://127.0.0.1:3700 PAGES="/ /projects/rentlens /lab /shelf" TAG=redesign- bash run-lighthouse.sh   # 3 runs per page and form
+python3 summarize-lighthouse.py                                                                          # run on a folder holding only these files
+BASE=http://127.0.0.1:3700 PAGES="/ /projects/rentlens /lab /shelf" TAG=redesign node run-axe.mjs
+BASE=http://127.0.0.1:3700 PAGES="/ /lab /shelf /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth" TAG=redesign-final node check-contrast.mjs
+```
+
+Lighthouse (median of 3; one first mobile run of the home page returned `NO_NAVSTART`, a Lighthouse error, and was re-run). Lighthouse ran on commit `a1a21e3`, before a one-line colour fix to the Lab band eyebrow (below).
+
+| Page | Form | Perf | A11y | Best practices | SEO | FCP | LCP | TBT | CLS | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `/` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.46 s | 7 ms | 0 | 249 KiB | 22 |
+| `/projects/rentlens` | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.47 s | 4 ms | 0 | 309 KiB | 22 |
+| `/lab` | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.46 s | 8 ms | 0 | 239 KiB | 20 |
+| `/shelf` | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.46 s | 4 ms | 0 | 239 KiB | 20 |
+| `/` | desktop | 100 | 100 | 100 | 100 | 0.21 s | 0.50 s | 0 ms | 0 | 256 KiB | 24 |
+| `/projects/rentlens` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 309 KiB | 22 |
+| `/lab` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 239 KiB | 20 |
+| `/shelf` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.54 s | 0 ms | 0 | 239 KiB | 20 |
+
+Same method on `main` (`0484e7b`), home page only: mobile 98 / 100 / 100 / 100, LCP 2.31 s, 224 KiB, 19 requests; desktop 100 / 100 / 100 / 100, LCP 0.50 s, 224 KiB, 19 requests. So the redesign costs about 0.15 s of mobile LCP, 25 KiB and 3 requests on the home page, with the same mobile score. Every page, before and after, transfers more than 200 KiB, which is over the 200 KB target for the redesign brief; the largest contributor has not been investigated.
+
+axe-core 4.14.0 (final build, commit `ae4a099`): 0 violations on every page at 375 px and 1440 px. Passes 38 (`/`), 47 (`/projects/rentlens`), 40 (`/lab`), 38 (`/shelf`). Incomplete (axe could not decide): 1 on `/`, `/projects/rentlens` and `/lab`; 0 on `/shelf`.
+
+Contrast (pixel sampling, final build): no text pair below its threshold on any of 7 pages at 375 px and 1440 px. Lowest ratio 6.31:1 (`/projects/rentlens`, desktop); `/lab` lowest 7.65:1.
+
+Found while measuring:
+- The new "Experiments" eyebrow on the dark Lab band inherited the dark grey eyebrow colour and measured 2.26:1. axe reported it only as "incomplete". Fixed (commit `ce11798`, now `#d3d7de`, the same as the band text).
+- `check-contrast.mjs` now scrolls through the page first, because sections below the first screen start transparent and fade in once scrolled to; without that it flagged them at about 1:1. It scrolls with `behavior: 'instant'` because the site uses smooth scrolling.
+
+Raw results are in `measurements/2026-10-27/`.
+
 ## Not measured
 
 - Real-user (field) data such as Core Web Vitals from visitors. Lighthouse is lab data from one machine and location, so these scores are not a guarantee for visitors on slow devices or networks.
 - Keyboard-only navigation and screen-reader testing. Automated tools find only some accessibility problems.
-- Focus order and reduced-motion behaviour. The skip link and keyboard operation of the shelf filters are covered by end-to-end tests, which record pass or fail rather than a measurement.
+- Focus order. The skip link, keyboard operation of the shelf filters and the reduced-motion behaviour of the spring easings are covered by end-to-end tests, which record pass or fail rather than a measurement.
 - Anything about the other projects in this workspace.
 
 ## Reproduce
