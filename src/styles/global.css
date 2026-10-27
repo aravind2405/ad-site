@@ -3,7 +3,17 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-padding-top: 80px;
+  /* anchors and snap points land just below the sticky nav */
+  /* exactly the sticky nav: its height plus its 1px border, so the hero's snap point is 0 and the
+     page loads unscrolled */
+  scroll-padding-top: calc(var(--header-h) + var(--stroke-hairline));
+}
+/* The home page snaps gently between its bands. Proximity only: it never traps the scroll. */
+html:has(.home) {
+  scroll-snap-type: y proximity;
+}
+.home > section {
+  scroll-snap-align: start;
 }
 body {
   margin: 0;
@@ -268,8 +278,8 @@ time {
 .section-head {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-7);
+  gap: var(--rhythm-1);
+  margin-bottom: var(--rhythm-3);
 }
 .eyebrow {
   font-family: var(--mono);
@@ -311,10 +321,10 @@ time {
 }
 .hero {
   position: relative;
-  padding: var(--space-22) var(--gutter) var(--space-10);
+  padding: var(--rhythm-5) var(--gutter) var(--rhythm-4);
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--rhythm-2);
 }
 .hero h1 {
   margin: 0;
@@ -333,9 +343,9 @@ time {
 }
 @media (max-width: 767px) {
   .hero {
-    padding-top: var(--space-8);
-    padding-bottom: var(--space-6);
-    gap: var(--space-4);
+    padding-top: var(--rhythm-3);
+    padding-bottom: var(--rhythm-3);
+    gap: var(--rhythm-2);
   }
 }
 .creds {
@@ -376,18 +386,16 @@ time {
 .projects-band {
   background: var(--tint-cream);
   border-top: var(--stroke-hairline) solid var(--line-soft);
-  border-bottom: var(--stroke-hairline) solid var(--line-soft);
-  padding-block: var(--space-10) var(--space-18);
+  padding-block: var(--rhythm-4) var(--rhythm-5);
 }
 .project-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-5);
+  gap: var(--rhythm-3);
 }
 @media (min-width: 768px) {
   .project-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--space-6);
   }
 }
 .project-card {
@@ -454,7 +462,7 @@ time {
   }
 }
 .next-up {
-  margin: var(--space-6) 0 0;
+  margin: var(--rhythm-3) 0 0;
   font-size: var(--text-body-sm);
   color: var(--ink-3);
 }
@@ -515,18 +523,33 @@ time {
 }
 
 /* lab band: the dark layer on the home page */
+/* The first 96px fade from the cream above into charcoal, so there is no hard edge. */
 .lab-band {
-  background: #14161b;
+  background: linear-gradient(to bottom, var(--tint-cream), #14161b var(--rhythm-5));
   color: #f2f3f0;
-  padding-block: var(--space-18);
+  padding-block: var(--rhythm-5) var(--rhythm-4);
+}
+/* Lab and Contact fill the screen below the nav (small viewport units, so the mobile address bar
+   never makes them jump) and centre their content. Projects is sized by its content. */
+.lab-band,
+.contact-band {
+  min-height: calc(100svh - var(--header-h));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.lab-band > .wrap,
+.contact-band > .wrap {
+  /* in a flex column the wrap's auto margins would shrink it to its content */
+  width: 100%;
 }
 .lab-band-head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: flex-end;
-  gap: var(--space-5);
-  margin-bottom: var(--space-8);
+  gap: var(--rhythm-3);
+  margin-bottom: var(--rhythm-4);
 }
 .lab-band h2 {
   margin: 0;
@@ -552,7 +575,7 @@ time {
   list-style: none;
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-4);
+  gap: var(--rhythm-2);
 }
 @media (min-width: 768px) {
   .lab-tiles {
@@ -593,15 +616,16 @@ time {
 
 /* contact */
 .contact-band {
-  padding-block: var(--space-18);
+  background: linear-gradient(to bottom, #14161b, var(--bg) var(--rhythm-5));
+  padding-block: var(--rhythm-5) var(--rhythm-4);
 }
 .contact {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-8);
+  gap: var(--rhythm-4);
   justify-content: space-between;
   align-items: center;
-  padding: 44px;
+  padding: var(--rhythm-4);
   border-radius: var(--radius-xl);
   background: linear-gradient(180deg, var(--surface), var(--surface-2));
 }
@@ -719,7 +743,7 @@ time {
 }
 @media (max-width: 640px) {
   .contact {
-    padding: 28px 24px;
+    padding: var(--rhythm-3);
   }
 }
 
@@ -945,7 +969,7 @@ time {
 }
 .dash {
   width: 100%;
-  height: 80vh;
+  height: 80svh;
   min-height: 560px;
   margin-top: var(--space-3);
   border: 1px solid var(--line);
@@ -1043,7 +1067,7 @@ time {
 .lab-page {
   background: #14161b;
   color: #f2f3f0;
-  min-height: 100vh;
+  min-height: 100svh;
 }
 .lab-page a {
   color: #9dbb98;
@@ -1280,10 +1304,10 @@ time {
   }
   .js .reveal {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
     transition:
-      opacity 300ms ease,
-      transform 300ms ease;
+      opacity 400ms ease-out,
+      transform 400ms ease-out;
   }
   .js .reveal.in {
     opacity: 1;
