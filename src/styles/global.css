@@ -20,15 +20,9 @@ a {
   text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   text-underline-offset: 0.25em;
 }
-/* hover shows a shadow, not an underline; only where a real pointer can hover */
-@media (hover: hover) {
-  a:hover {
-    text-decoration-color: transparent;
-    border-radius: 4px;
-    box-shadow:
-      0 0 0 3px var(--surface),
-      var(--shadow-hover);
-  }
+/* text links change colour on hover; shadows are kept for cards, buttons and tiles */
+a:hover {
+  color: var(--ink);
 }
 :focus-visible {
   outline: 2px solid var(--ink);
@@ -133,16 +127,14 @@ time {
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-@media (hover: hover) {
-  .nav-main a:hover,
-  .nav-menu summary:hover {
-    background: var(--surface);
-    color: var(--ink);
-    box-shadow: var(--shadow-hover);
-  }
-  .nav-links a[aria-current='page']:hover {
-    text-decoration-color: currentColor;
-  }
+.nav-main a:not(.btn),
+.nav-menu summary {
+  color: var(--ink-2);
+}
+.nav-main a:not(.btn):hover,
+.nav-menu summary:hover,
+.nav-links a[aria-current='page'] {
+  color: var(--ink);
 }
 .nav-links a[aria-current='page'] {
   font-weight: 600;
@@ -1021,7 +1013,6 @@ time {
 }
 .chip-btn:hover {
   border-color: #b8c0cc;
-  box-shadow: var(--shadow-hover);
 }
 .chip-btn[aria-pressed='true'] {
   background: var(--ink);
@@ -1111,9 +1102,6 @@ time {
 }
 .lab-page a:hover {
   color: #c4d6c0;
-  box-shadow:
-    0 0 0 3px #14161b,
-    0 8px 22px -6px rgba(0, 0, 0, 0.7);
 }
 .lab-page .site-header {
   background: #14161b;
@@ -1129,10 +1117,14 @@ time {
 .lab-page .nav-sheet a {
   color: #f2f3f0;
 }
-.lab-page .nav-main a:hover,
-.lab-page .nav-menu summary:hover {
-  background: #1d2027;
-  box-shadow: 0 8px 22px -6px rgba(0, 0, 0, 0.7);
+.lab-page .nav-main a:not(.btn),
+.lab-page .nav-menu summary {
+  color: #b4bac6;
+}
+.lab-page .nav-main a:not(.btn):hover,
+.lab-page .nav-menu summary:hover,
+.lab-page .nav-links a[aria-current='page'] {
+  color: #f2f3f0;
 }
 .lab-page .nav-menu summary {
   border-color: #2a2e36;
