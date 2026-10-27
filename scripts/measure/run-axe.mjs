@@ -10,7 +10,7 @@ const axeSource = readFileSync(require.resolve('axe-core/axe.min.js'), 'utf8');
 const axeVersion = require('axe-core/package.json').version;
 
 const BASE = process.env.BASE ?? 'https://www.aravindd.com';
-const pages = (process.env.PAGES ?? '/ /lab /shelf /rentlens').split(' ');
+const pages = (process.env.PAGES ?? '/ /lab /rentlens').split(' ');
 const tag = process.env.TAG ?? '';
 const viewports = {
   mobile: { width: 375, height: 812, isMobile: true, hasTouch: true, deviceScaleFactor: 2 },

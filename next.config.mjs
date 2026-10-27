@@ -58,6 +58,8 @@ const nextConfig = {
   // The old Vercel address permanently forwards to the custom domain.
   async redirects() {
     return [
+      // The Shelf section was removed.
+      { source: '/shelf', destination: '/', permanent: true },
       // The RentLens page moved under /projects.
       { source: '/rentlens', destination: '/projects/rentlens', permanent: true },
       {

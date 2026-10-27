@@ -8,7 +8,7 @@ BASE=https://$HOST
 REQUIRED="content-security-policy x-frame-options x-content-type-options referrer-policy permissions-policy cross-origin-opener-policy strict-transport-security"
 
 echo "## headers per page (required: $REQUIRED)"
-for p in "" projects/rentlens projects/ontimesydney projects/gridwatch projects/groundtruth lab shelf robots.txt sitemap.xml does-not-exist; do
+for p in "" projects/rentlens projects/ontimesydney projects/gridwatch projects/groundtruth lab robots.txt sitemap.xml does-not-exist; do
   H=$(c -sI "$BASE/$p" | tr -d '\r')
   missing=""
   for h in $REQUIRED; do echo "$H" | grep -qi "^$h:" || missing="$missing $h"; done
@@ -46,4 +46,4 @@ echo; echo "## CSP directives"
 c -sI "$BASE/" | tr -d '\r' | grep -i '^content-security-policy:' | sed 's/^[^:]*: //' | tr ';' '\n' | sed 's/^ *//'
 
 echo; echo "## external hosts referenced by page HTML (expect only the dashboard and links)"
-for p in "" projects/rentlens projects/ontimesydney projects/gridwatch projects/groundtruth lab shelf; do c -s "$BASE/$p"; done | grep -o 'https\?://[a-zA-Z0-9.-]*' | sort | uniq -c | sort -rn
+for p in "" projects/rentlens projects/ontimesydney projects/gridwatch projects/groundtruth lab; do c -s "$BASE/$p"; done | grep -o 'https\?://[a-zA-Z0-9.-]*' | sort | uniq -c | sort -rn

@@ -12,15 +12,15 @@ describe('sitemap and robots', () => {
     for (const url of urls) expect(url.startsWith(SITE_URL)).toBe(true);
   });
 
-  it('lists the home page, lab, shelf and every project page', () => {
+  it('lists the home page, lab and every project page', () => {
     expect(urls).toContain(SITE_URL);
     expect(urls).toContain(`${SITE_URL}/lab`);
-    expect(urls).toContain(`${SITE_URL}/shelf`);
     for (const p of projects) expect(urls).toContain(`${SITE_URL}/projects/${p.slug}`);
   });
 
-  it('no longer lists the moved /rentlens page', () => {
+  it('no longer lists the moved /rentlens page or the removed /shelf page', () => {
     expect(urls).not.toContain(`${SITE_URL}/rentlens`);
+    expect(urls).not.toContain(`${SITE_URL}/shelf`);
   });
 
   it('has no duplicate entries', () => {

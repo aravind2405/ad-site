@@ -9,7 +9,7 @@ import { PNG } from 'pngjs';
 import { writeFileSync } from 'node:fs';
 
 const BASE = process.env.BASE ?? 'https://www.aravindd.com';
-const pages = (process.env.PAGES ?? '/ /lab /shelf /projects/rentlens').split(' ');
+const pages = (process.env.PAGES ?? '/ /lab /projects/rentlens').split(' ');
 const tag = process.env.TAG ?? '';
 const viewports = {
   mobile: { width: 375, height: 812, deviceScaleFactor: 1 },
