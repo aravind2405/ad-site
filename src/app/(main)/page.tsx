@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import Button from '@/components/Button';
+import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
 import { profile, projects } from '@/lib/content';
 import { getRepoMeta } from '@/lib/github';
+import { SITE_URL } from '@/lib/site';
 
 const RESUME_FILE = 'Aravind-Danassegarane-Resume.pdf';
 
@@ -15,6 +17,15 @@ export default async function Home() {
 
   return (
     <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Person',
+          name: profile.name,
+          url: SITE_URL,
+          sameAs: [links.linkedin, links.github].filter(Boolean),
+        }}
+      />
       <section className="hero-shell" aria-labelledby="hero-h">
         <div className="wrap hero">
           <h1 id="hero-h">{profile.headline}</h1>
@@ -55,7 +66,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section className="section" aria-labelledby="lab-h">
+        <section className="section reveal" aria-labelledby="lab-h">
           <div className="band">
             <div>
               <span className="eyebrow">Experiments</span>
@@ -68,7 +79,7 @@ export default async function Home() {
           </div>
         </section>
 
-        <section id="contact" className="section" aria-labelledby="contact-h">
+        <section id="contact" className="section reveal" aria-labelledby="contact-h">
           <div className="card contact">
             <div className="main">
               <h2 id="contact-h">{profile.contact.heading}</h2>

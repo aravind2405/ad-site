@@ -1,0 +1,116 @@
+{
+  "axeVersion": "4.14.0",
+  "runAt": "2026-10-27T05:01:34.686Z",
+  "tags": [
+    "wcag2a",
+    "wcag2aa",
+    "wcag21a",
+    "wcag21aa",
+    "wcag22aa",
+    "best-practice"
+  ],
+  "pages": [
+    {
+      "path": "/",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/",
+      "violations": [],
+      "passes": 38,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 30
+        }
+      ],
+      "inapplicable": 53
+    },
+    {
+      "path": "/",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/",
+      "violations": [],
+      "passes": 38,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 30
+        }
+      ],
+      "inapplicable": 53
+    },
+    {
+      "path": "/projects/rentlens",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/projects/rentlens",
+      "violations": [],
+      "passes": 47,
+      "incomplete": [
+        {
+          "id": "frame-tested",
+          "nodes": 1
+        }
+      ],
+      "inapplicable": 43
+    },
+    {
+      "path": "/projects/rentlens",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/projects/rentlens",
+      "violations": [],
+      "passes": 47,
+      "incomplete": [
+        {
+          "id": "frame-tested",
+          "nodes": 1
+        }
+      ],
+      "inapplicable": 43
+    },
+    {
+      "path": "/lab",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/lab",
+      "violations": [],
+      "passes": 40,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "inapplicable": 51
+    },
+    {
+      "path": "/lab",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/lab",
+      "violations": [],
+      "passes": 40,
+      "incomplete": [
+        {
+          "id": "color-contrast",
+          "nodes": 2
+        }
+      ],
+      "inapplicable": 51
+    },
+    {
+      "path": "/shelf",
+      "form": "mobile",
+      "finalUrl": "http://127.0.0.1:3700/shelf",
+      "violations": [],
+      "passes": 38,
+      "incomplete": [],
+      "inapplicable": 53
+    },
+    {
+      "path": "/shelf",
+      "form": "desktop",
+      "finalUrl": "http://127.0.0.1:3700/shelf",
+      "violations": [],
+      "passes": 38,
+      "incomplete": [],
+      "inapplicable": 53
+    }
+  ]
+}

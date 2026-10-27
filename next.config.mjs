@@ -42,11 +42,15 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
   },
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  // One year, this exact host only: no includeSubDomains and no preload, which are hard to undo.
+  ...(isDev ? [] : [{ key: 'Strict-Transport-Security', value: 'max-age=31536000' }]),
 ];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  // One 404 page for the whole site, which has two root layouts.
+  experimental: { globalNotFound: true },
   env: { LAST_UPDATED: lastUpdated() },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];

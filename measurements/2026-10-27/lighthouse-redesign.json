@@ -1,0 +1,542 @@
+{
+  "meta": {
+    "lighthouseVersion": "13.5.0",
+    "hostUserAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/156.0.0.0 Safari/537.36",
+    "throttling": "simulate"
+  },
+  "results": {
+    "home/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:52:19.711Z",
+        "2026-10-27T04:52:29.884Z",
+        "2026-10-27T04:52:39.817Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 205.2,
+        "LCP": 502.5,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 205.2
+      },
+      "weight": {
+        "transferKiB": 256,
+        "requests": 24,
+        "scriptKiB": 145
+      },
+      "auditsBelow1": []
+    },
+    "lab/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:53:38.130Z",
+        "2026-10-27T04:53:48.022Z",
+        "2026-10-27T04:53:57.900Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 203.3,
+        "LCP": 500.0,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 203.3
+      },
+      "weight": {
+        "transferKiB": 239,
+        "requests": 20,
+        "scriptKiB": 145
+      },
+      "auditsBelow1": []
+    },
+    "projects-rentlens/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:52:49.722Z",
+        "2026-10-27T04:53:08.899Z",
+        "2026-10-27T04:53:27.570Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.3,
+        "LCP": 501.4,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.3
+      },
+      "weight": {
+        "transferKiB": 309,
+        "requests": 22,
+        "scriptKiB": 204
+      },
+      "auditsBelow1": []
+    },
+    "shelf/desktop": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:54:07.799Z",
+        "2026-10-27T04:54:17.685Z",
+        "2026-10-27T04:54:27.584Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 204.8,
+        "LCP": 540.7,
+        "TBT": 0,
+        "CLS": 0,
+        "SI": 204.8
+      },
+      "weight": {
+        "transferKiB": 239,
+        "requests": 20,
+        "scriptKiB": 145
+      },
+      "auditsBelow1": []
+    },
+    "home/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:54:53.800Z",
+        "2026-10-27T04:50:15.336Z",
+        "2026-10-27T04:50:25.272Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 754.5,
+        "LCP": 2464.1,
+        "TBT": 7,
+        "CLS": 0,
+        "SI": 754.5
+      },
+      "weight": {
+        "transferKiB": 249,
+        "requests": 22,
+        "scriptKiB": 145
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.9
+        ]
+      ]
+    },
+    "lab/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:51:20.151Z",
+        "2026-10-27T04:51:30.048Z",
+        "2026-10-27T04:51:40.002Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 755.1,
+        "LCP": 2464.1,
+        "TBT": 8,
+        "CLS": 0,
+        "SI": 755.1
+      },
+      "weight": {
+        "transferKiB": 239,
+        "requests": 20,
+        "scriptKiB": 145
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.9
+        ]
+      ]
+    },
+    "projects-rentlens/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:50:35.199Z",
+        "2026-10-27T04:50:45.764Z",
+        "2026-10-27T04:51:04.595Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 755.0,
+        "LCP": 2466.0,
+        "TBT": 4.5,
+        "CLS": 0,
+        "SI": 755.0
+      },
+      "weight": {
+        "transferKiB": 309,
+        "requests": 22,
+        "scriptKiB": 204
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.9
+        ]
+      ]
+    },
+    "shelf/mobile": {
+      "runs": 3,
+      "fetchTimes": [
+        "2026-10-27T04:51:49.949Z",
+        "2026-10-27T04:51:59.849Z",
+        "2026-10-27T04:52:09.780Z"
+      ],
+      "scores": {
+        "performance": {
+          "median": 98,
+          "min": 98,
+          "max": 98,
+          "runs": [
+            98,
+            98,
+            98
+          ]
+        },
+        "accessibility": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "best-practices": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        },
+        "seo": {
+          "median": 100,
+          "min": 100,
+          "max": 100,
+          "runs": [
+            100,
+            100,
+            100
+          ]
+        }
+      },
+      "metrics": {
+        "FCP": 755.1,
+        "LCP": 2463.7,
+        "TBT": 4.5,
+        "CLS": 0,
+        "SI": 755.1
+      },
+      "weight": {
+        "transferKiB": 239,
+        "requests": 20,
+        "scriptKiB": 145
+      },
+      "auditsBelow1": [
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.9
+        ],
+        [
+          "performance",
+          "largest-contentful-paint",
+          0.93
+        ]
+      ]
+    }
+  }
+}

@@ -295,3 +295,75 @@ test.describe('discovery files', () => {
     }
   });
 });
+
+test.describe('engineering', () => {
+  test('unknown addresses get a styled 404 that links home and to projects', async ({ page }) => {
+    const response = await page.goto('/no-such-page');
+    expect(response?.status()).toBe(404);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('This page does not exist');
+    await expect(page.getByRole('link', { name: 'Go to the home page' })).toBeVisible();
+    await expect(page.getByRole('link', { name: 'See my projects' })).toBeVisible();
+  });
+
+  test('the home page carries Person data and project pages carry SoftwareSourceCode', async ({
+    page,
+  }) => {
+    const read = async (path: string) => {
+      await page.goto(path);
+      const raw = await page.locator('script[type="application/ld+json"]').allTextContents();
+      return raw.map((r) => JSON.parse(r) as Record<string, unknown>);
+    };
+    const [person] = await read('/');
+    expect(person['@type']).toBe('Person');
+    expect(person.name).toBe('Aravind Danassegarane');
+    const [code] = await read('/projects/rentlens');
+    expect(code['@type']).toBe('SoftwareSourceCode');
+    expect(code.codeRepository).toBe('https://github.com/aravind2405/rentlens-nsw');
+    // A project with no repository has no code to describe.
+    expect(await read('/projects/gridwatch')).toHaveLength(0);
+  });
+
+  test('every page has a 1200x630 Open Graph image', async ({ page }) => {
+    for (const path of ['/', '/shelf', '/lab', '/projects/rentlens', '/projects/gridwatch']) {
+      await page.goto(path);
+      const content = await page.locator('meta[property="og:image"]').getAttribute('content');
+      expect(content, path).toBeTruthy();
+      const url = new URL(content!);
+      const res = await page.request.get(url.pathname);
+      expect(res.status(), path).toBe(200);
+      expect(res.headers()['content-type'], path).toContain('image/png');
+      const png = await res.body();
+      expect(png.readUInt32BE(16), `${path} width`).toBe(1200);
+      expect(png.readUInt32BE(20), `${path} height`).toBe(630);
+    }
+  });
+
+  test('content stays visible without JavaScript', async ({ browser }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    const page = await context.newPage();
+    await page.goto('/');
+    await expect(page.locator('#contact')).toBeVisible();
+    const opacity = await page.locator('#contact').evaluate((el) => getComputedStyle(el).opacity);
+    expect(opacity).toBe('1');
+    await context.close();
+  });
+
+  test('buttons and cards use the spring easings only for people who allow motion', async ({
+    browser,
+  }) => {
+    for (const [reducedMotion, expectSpring] of [
+      ['no-preference', true],
+      ['reduce', false],
+    ] as const) {
+      const context = await browser.newContext({ reducedMotion });
+      const page = await context.newPage();
+      await page.goto('/');
+      const timing = await page
+        .locator('.project-card')
+        .first()
+        .evaluate((el) => getComputedStyle(el).transitionTimingFunction);
+      expect(timing.includes('linear('), reducedMotion).toBe(expectSpring);
+      await context.close();
+    }
+  });
+});

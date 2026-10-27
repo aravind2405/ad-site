@@ -218,10 +218,6 @@ time {
   font-size: var(--text-body);
   text-decoration: none;
   border: 1px solid var(--ink);
-  transition:
-    background-color 0.15s ease,
-    box-shadow 0.15s ease,
-    transform 0.15s ease;
 }
 .btn-primary {
   background: var(--ink);
@@ -423,16 +419,17 @@ time {
   border-radius: var(--radius-lg);
   padding: var(--space-7);
   background: linear-gradient(180deg, var(--surface-2), transparent 38%), var(--surface);
-  transition:
-    transform 0.18s ease,
-    box-shadow 0.18s ease,
-    border-color 0.18s ease;
 }
 .project-card:hover,
 .project-card:focus-within {
-  transform: translateY(-3px);
   box-shadow: var(--shadow-lg);
   border-color: #c3cad4;
+}
+/* the card lifts only where a real pointer can hover */
+@media (hover: hover) {
+  .project-card:hover {
+    transform: translateY(-3px);
+  }
 }
 .project-card h3 {
   margin: 0;
@@ -1064,9 +1061,6 @@ time {
   padding: 8px 14px;
   min-height: 40px;
   cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    border-color 0.15s ease;
 }
 .chip-btn:hover {
   border-color: #b8c0cc;
@@ -1370,5 +1364,44 @@ time {
   .tempting li,
   .facts dd {
     font-size: var(--text-body);
+  }
+}
+
+/* motion: springs and reveals only for people who have not asked for less motion.
+   Only transform, opacity and box-shadow are animated. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  .btn {
+    transition:
+      transform 400ms var(--spring-snappy),
+      box-shadow 150ms ease;
+  }
+  .project-card {
+    transition:
+      transform 520ms var(--spring-soft),
+      box-shadow 180ms ease;
+  }
+  .btn:active,
+  .project-card:active {
+    transform: scale(0.98);
+    transition-duration: 120ms;
+  }
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 300ms ease,
+      transform 300ms ease;
+  }
+  .js .reveal.in {
+    opacity: 1;
+    transform: none;
+  }
+  /* a project card grows into its project page header */
+  ::view-transition-group(.morph) {
+    animation-duration: 400ms;
+    animation-timing-function: var(--spring-snappy);
   }
 }

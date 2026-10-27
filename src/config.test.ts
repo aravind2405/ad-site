@@ -40,7 +40,7 @@ describe('production security headers', () => {
     expect(rules[0].source).toBe('/:path*');
   });
 
-  it('include all six security headers', async () => {
+  it('include all seven security headers', async () => {
     const { map } = await headersFor('production');
     for (const key of [
       'Content-Security-Policy',
@@ -49,6 +49,7 @@ describe('production security headers', () => {
       'Referrer-Policy',
       'Permissions-Policy',
       'Cross-Origin-Opener-Policy',
+      'Strict-Transport-Security',
     ]) {
       expect(map[key], key).toBeTruthy();
     }
@@ -63,6 +64,11 @@ describe('production security headers', () => {
     expect(csp).toContain("form-action 'self'");
     expect(map['X-Frame-Options']).toBe('DENY');
     expect(map['X-Content-Type-Options']).toBe('nosniff');
+  });
+
+  it('set a one-year HSTS for this host only', async () => {
+    const { map } = await headersFor('production');
+    expect(map['Strict-Transport-Security']).toBe('max-age=31536000');
   });
 
   it('allow only the dashboard origin as a frame', async () => {

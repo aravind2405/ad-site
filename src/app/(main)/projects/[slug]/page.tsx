@@ -1,13 +1,16 @@
 import type { Metadata } from 'next';
+import { ViewTransition } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Button from '@/components/Button';
+import JsonLd from '@/components/JsonLd';
 import Receipt from '@/components/Receipt';
 import StatusPill from '@/components/StatusPill';
-import { getProject, projects } from '@/lib/content';
+import { getProject, profile, projects } from '@/lib/content';
 import { formatDate } from '@/lib/format';
 import { getRepoMeta } from '@/lib/github';
 import { readingMinutes } from '@/lib/readingTime';
+import { SITE_URL } from '@/lib/site';
 
 // Repository activity is read live from GitHub and refreshed hourly.
 export const revalidate = 3600;
@@ -69,50 +72,65 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <div className="wrap">
+      {repoUrl && (
+        <JsonLd
+          data={{
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareSourceCode',
+            name: project.name,
+            description: project.summary,
+            url: `${SITE_URL}/projects/${project.slug}`,
+            codeRepository: repoUrl,
+            author: { '@type': 'Person', name: profile.name },
+          }}
+        />
+      )}
       <Link className="crumb" href="/#projects">
         ← All projects
       </Link>
 
-      <header className="detail-head">
-        <div className="title-row">
-          <span className="name">{project.name}</span>
-          <StatusPill status={project.status} />
-        </div>
-        <h1>{project.question}</h1>
-        <p className="lede">{project.summary}</p>
-        <ul
-          className="tags"
-          aria-label="Technology"
-          style={{ margin: 0, padding: 0, listStyle: 'none' }}
-        >
-          {project.stack.map((t) => (
-            <li className="tag" key={t}>
-              {t}
-            </li>
-          ))}
-          {project.plannedStack.map((t) => (
-            <li className="tag tag-planned" key={t}>
-              {t} (planned)
-            </li>
-          ))}
-        </ul>
-        <p className="read-time">{readingMinutes(project)} min read</p>
-        <Receipt receipt={project.receipt} />
-        {(repoUrl || project.live) && (
-          <div className="detail-actions">
-            {project.live && (
-              <Button href={project.live} external arrow>
-                Open {project.liveLabel?.toLowerCase() ?? 'live demo'}
-              </Button>
-            )}
-            {repoUrl && (
-              <Button href={repoUrl} variant="ghost" external>
-                View code on GitHub
-              </Button>
-            )}
+      <ViewTransition name={`project-${project.slug}`} share="morph" default="none">
+        <header className="detail-head">
+          <div className="title-row">
+            <span className="name">{project.name}</span>
+            <StatusPill status={project.status} />
           </div>
-        )}
-      </header>
+          <h1>{project.question}</h1>
+          <p className="lede">{project.summary}</p>
+          <ul
+            className="tags"
+            aria-label="Technology"
+            style={{ margin: 0, padding: 0, listStyle: 'none' }}
+          >
+            {project.stack.map((t) => (
+              <li className="tag" key={t}>
+                {t}
+              </li>
+            ))}
+            {project.plannedStack.map((t) => (
+              <li className="tag tag-planned" key={t}>
+                {t} (planned)
+              </li>
+            ))}
+          </ul>
+          <p className="read-time">{readingMinutes(project)} min read</p>
+          <Receipt receipt={project.receipt} />
+          {(repoUrl || project.live) && (
+            <div className="detail-actions">
+              {project.live && (
+                <Button href={project.live} external arrow>
+                  Open {project.liveLabel?.toLowerCase() ?? 'live demo'}
+                </Button>
+              )}
+              {repoUrl && (
+                <Button href={repoUrl} variant="ghost" external>
+                  View code on GitHub
+                </Button>
+              )}
+            </div>
+          )}
+        </header>
+      </ViewTransition>
 
       <div className="detail-layout">
         <nav className="toc" aria-label="On this page">
@@ -153,7 +171,7 @@ export default async function ProjectPage({ params }: Props) {
           </section>
 
           {isLive && project.live && (
-            <section className="detail-section" aria-labelledby="live-h">
+            <section className="detail-section reveal" aria-labelledby="live-h">
               <h2 id="live-h">{project.liveLabel ?? 'Live demo'}</h2>
               <iframe
                 className="dash"
@@ -181,7 +199,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.willCover.length > 0 && (
-            <section className="detail-section" aria-labelledby="cover-h">
+            <section className="detail-section reveal" aria-labelledby="cover-h">
               <h2 id="cover-h">What it will cover</h2>
               <ul className="bullets">
                 {d.willCover.map((item) => (
@@ -193,7 +211,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.architecture && (
-            <section className="detail-section" aria-labelledby="arch-h">
+            <section className="detail-section reveal" aria-labelledby="arch-h">
               <h2 id="arch-h">{heading.how ?? 'How it works'}</h2>
               <p className="prose-p">{d.architecture.summary}</p>
               <ol className="flow" aria-label="Data flow">
@@ -207,7 +225,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.decisions.length > 0 && (
-            <section className="detail-section" aria-labelledby="dec-h">
+            <section className="detail-section reveal" aria-labelledby="dec-h">
               <h2 id="dec-h">{heading.decisions ?? 'Decisions and trade-offs'}</h2>
               {structured ? (
                 <div className="table-wrap">
@@ -246,7 +264,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.practices.length > 0 && (
-            <section className="detail-section" aria-labelledby="prac-h">
+            <section className="detail-section reveal" aria-labelledby="prac-h">
               <h2 id="prac-h">{heading.verify ?? 'How I know it works'}</h2>
               <ul className="bullets">
                 {d.practices.map((item) => (
@@ -257,7 +275,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.limitations.length > 0 && (
-            <section className="detail-section" aria-labelledby="lim-h">
+            <section className="detail-section reveal" aria-labelledby="lim-h">
               <h2 id="lim-h">Known limitations</h2>
               <ul className="bullets">
                 {d.limitations.map((item) => (
@@ -268,7 +286,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.roadmap.length > 0 && (
-            <section className="detail-section" aria-labelledby="road-h">
+            <section className="detail-section reveal" aria-labelledby="road-h">
               <h2 id="road-h">{heading.next ?? "What's next"}</h2>
               <ul className="bullets">
                 {d.roadmap.map((item) => (
@@ -279,7 +297,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {d.data && !isLive && (
-            <section className="detail-section" aria-labelledby="data-h">
+            <section className="detail-section reveal" aria-labelledby="data-h">
               <h2 id="data-h">Data source and licence</h2>
               <dl className="facts">
                 <div>
@@ -295,7 +313,7 @@ export default async function ProjectPage({ params }: Props) {
           )}
 
           {meta && (
-            <section className="detail-section" aria-labelledby="repo-h">
+            <section className="detail-section reveal" aria-labelledby="repo-h">
               <h2 id="repo-h">Repository activity</h2>
               <dl className="facts">
                 <div>
