@@ -478,3 +478,16 @@ npx playwright test -c <config using devices['Pixel 7']>         # phone, tempor
 | Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
 
 Lighthouse was not re-run: this change only edits colour and shadow rules in `global.css`, and the previous run on the same code path is recorded above.
+
+## Hover limited to project cards and arrows, 2026-10-28
+
+Measured 2026-10-28 at about 01:00 AEDT against a local production build (port 3116) of branch `style/hover-cards-only`, on `main` at `f5ff9e7` (PR 25). Local, not live. Same scripts and commands as the previous section, with `BASE=http://127.0.0.1:3116` and `TAG=cardsonly`.
+
+| Check | Result |
+|---|---|
+| axe-core, 7 pages at 375 px and 1440 px | 0 violations in all 14 runs |
+| Lowest text contrast, all 7 pages, both sizes | 6.73:1 |
+| Playwright, desktop Chrome | 52 of 52 passed |
+| Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
+
+Lighthouse and the overflow check were not re-run: the change only deletes hover rules from `global.css` and one unused token.

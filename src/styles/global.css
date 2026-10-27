@@ -20,10 +20,6 @@ a {
   text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
   text-underline-offset: 0.25em;
 }
-/* text links change colour on hover; shadows are kept for cards, buttons and tiles */
-a:hover {
-  color: var(--ink);
-}
 :focus-visible {
   outline: 2px solid var(--ink);
   outline-offset: 3px;
@@ -127,15 +123,6 @@ time {
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-.nav-main a:not(.btn),
-.nav-menu summary {
-  color: var(--ink-2);
-}
-.nav-main a:not(.btn):hover,
-.nav-menu summary:hover,
-.nav-links a[aria-current='page'] {
-  color: var(--ink);
-}
 .nav-links a[aria-current='page'] {
   font-weight: 600;
   text-decoration: underline;
@@ -233,19 +220,9 @@ time {
   color: #fff;
   box-shadow: var(--shadow-sm);
 }
-.btn-primary:hover {
-  background: #2b2e36;
-  color: #fff;
-  box-shadow: var(--shadow-hover);
-}
 .btn-ghost {
   background: rgba(255, 255, 255, 0.55);
   color: var(--ink);
-}
-.btn-ghost:hover {
-  background: #fff;
-  color: var(--ink);
-  box-shadow: var(--shadow-hover);
 }
 .btn-sm {
   min-height: 44px;
@@ -496,9 +473,6 @@ time {
 }
 .card-links a[target='_blank']::after {
   content: '\2197' / '';
-}
-.card-links a:hover {
-  color: var(--ink);
 }
 @media (hover: hover) {
   .card-links a:hover::after {
@@ -1011,9 +985,6 @@ time {
   min-height: 40px;
   cursor: pointer;
 }
-.chip-btn:hover {
-  border-color: #b8c0cc;
-}
 .chip-btn[aria-pressed='true'] {
   background: var(--ink);
   border-color: var(--ink);
@@ -1100,9 +1071,6 @@ time {
   color: #9dbb98;
   text-underline-offset: 3px;
 }
-.lab-page a:hover {
-  color: #c4d6c0;
-}
 .lab-page .site-header {
   background: #14161b;
   border-color: #2a2e36;
@@ -1115,15 +1083,6 @@ time {
 .lab-page .nav-main a,
 .lab-page .nav-menu summary,
 .lab-page .nav-sheet a {
-  color: #f2f3f0;
-}
-.lab-page .nav-main a:not(.btn),
-.lab-page .nav-menu summary {
-  color: #b4bac6;
-}
-.lab-page .nav-main a:not(.btn):hover,
-.lab-page .nav-menu summary:hover,
-.lab-page .nav-links a[aria-current='page'] {
   color: #f2f3f0;
 }
 .lab-page .nav-menu summary {
@@ -1413,12 +1372,6 @@ time {
     margin-left: calc(var(--space-4) * -1);
     margin-right: 0;
     text-align: left;
-  }
-}
-@media (hover: hover) {
-  .exits a:hover {
-    background: var(--surface);
-    box-shadow: var(--shadow-hover);
   }
 }
 .exit-label {
