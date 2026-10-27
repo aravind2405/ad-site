@@ -7,6 +7,10 @@ import { formatDate } from '@/lib/format';
 // Phones only: hide the header on scroll down, show it on scroll up or when it has focus.
 const headerScript = `(function(){var h=document.querySelector('.site-header');if(!h)return;var m=matchMedia('(max-width:767px)'),y=scrollY;addEventListener('scroll',function(){var c=scrollY;if(!m.matches){h.classList.remove('is-hidden');y=c;return}if(c-y>0&&c>8&&!h.contains(document.activeElement)){h.classList.add('is-hidden')}else if(c<y){h.classList.remove('is-hidden')}y=c},{passive:true});h.addEventListener('focusin',function(){h.classList.remove('is-hidden')})})();`;
 
+// Sections below the first screen fade and rise once as they scroll into view. Without
+// JavaScript (or with reduced motion) nothing is hidden: the hidden state needs the js class.
+const revealScript = `(function(){if(!('IntersectionObserver' in window))return;var els=document.querySelectorAll('.reveal');if(!els.length)return;document.documentElement.classList.add('js');var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});els.forEach(function(el){io.observe(el)})})();`;
+
 interface Props {
   footer?: ReactNode;
   children: ReactNode;
@@ -30,6 +34,7 @@ export default function SiteShell({ footer, children }: Props) {
       <main id="main" tabIndex={-1}>
         {children}
       </main>
+      <script dangerouslySetInnerHTML={{ __html: revealScript }} />
       <footer className="site-footer">
         <div className="wrap">
           {footer ?? (
