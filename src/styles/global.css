@@ -198,7 +198,7 @@ time {
   background: currentColor;
   opacity: 0.8;
 }
-.pill-in-progress {
+.pill-building {
   color: #7a4210;
   background: #f6e9da;
 }
@@ -206,7 +206,7 @@ time {
   color: #1f5c3e;
   background: #e3f0e8;
 }
-.pill-planned {
+.pill-coming-soon {
   color: #3d4250;
   background: #e8eaee;
 }

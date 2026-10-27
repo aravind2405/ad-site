@@ -15,7 +15,7 @@ describe('content', () => {
   });
 
   it('lists every started project with a repository', () => {
-    for (const p of projects.filter((x) => x.status !== 'planned')) {
+    for (const p of projects.filter((x) => x.status !== 'coming-soon')) {
       expect(p.repo).toMatch(/^aravind2405\//);
     }
   });

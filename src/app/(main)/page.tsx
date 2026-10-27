@@ -52,10 +52,7 @@ export default async function Home() {
             <h2 id="projects-h" className="h2">
               Projects
             </h2>
-            <p className="lede">
-              Real questions answered with real public data, built the way I would build at work.
-              Each card links to the details, taken from the project&apos;s own README.
-            </p>
+            <p className="lede">Real systems, measured: transport, housing, energy and AI.</p>
           </div>
           <div className="project-grid">
             {projects.map((p, i) => (
@@ -68,10 +65,7 @@ export default async function Home() {
           <div className="band">
             <div>
               <h2 id="lab-h">Curiosity Lab</h2>
-              <p>
-                Side experiments with Sydney&apos;s trains, the weather and my own room. For the
-                curious.
-              </p>
+              <p>Early experiments on rail delays, weather and my own room. None are finished.</p>
             </div>
             <Link className="btn btn-sm" href="/lab">
               Visit the lab
