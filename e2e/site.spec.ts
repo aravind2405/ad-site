@@ -366,4 +366,14 @@ test.describe('engineering', () => {
       await context.close();
     }
   });
+
+  test('sections reveal after opening a project from the home page', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('.project-card a[href="/projects/rentlens"]').first().click();
+    await expect(page).toHaveURL(/\/projects\/rentlens$/);
+    const live = page.locator('.detail-section.reveal').first();
+    await live.scrollIntoViewIfNeeded();
+    await expect(live).toHaveClass(/\bin\b/);
+    await expect(live).toHaveCSS('opacity', '1');
+  });
 });
