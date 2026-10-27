@@ -18,27 +18,27 @@ export default async function Home() {
           <p className="sub">{profile.subheadline}</p>
           <div className="hero-actions">
             <a className="btn btn-primary" href="#projects">
-              See projects
+              See my projects
             </a>
-            {links.linkedin && (
+            {links.resume ? (
               <a
                 className="btn btn-ghost"
-                href={links.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={links.resume}
+                download="Aravind-Danassegarane-Resume.pdf"
               >
-                LinkedIn<span className="sr-only"> (opens in a new tab)</span>
+                Download resume
               </a>
-            )}
-            {links.github && (
-              <a
-                className="btn btn-ghost"
-                href={links.github}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub<span className="sr-only"> (opens in a new tab)</span>
-              </a>
+            ) : (
+              links.linkedin && (
+                <a
+                  className="btn btn-ghost"
+                  href={links.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  LinkedIn<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              )
             )}
           </div>
           <p className="creds">{profile.credentials}</p>
@@ -64,6 +64,7 @@ export default async function Home() {
         <section className="section" aria-labelledby="lab-h">
           <div className="band">
             <div>
+              <span className="eyebrow">Experiments</span>
               <h2 id="lab-h">Curiosity Lab</h2>
               <p>Early experiments on rail delays, weather and my own room. None are finished.</p>
             </div>
@@ -98,6 +99,15 @@ export default async function Home() {
                   rel="noopener noreferrer"
                 >
                   GitHub<span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              )}
+              {links.resume && (
+                <a
+                  className="btn btn-ghost"
+                  href={links.resume}
+                  download="Aravind-Danassegarane-Resume.pdf"
+                >
+                  Download resume
                 </a>
               )}
             </div>
