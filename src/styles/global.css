@@ -420,6 +420,8 @@ time {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-7);
   background: linear-gradient(180deg, var(--surface-2), transparent 38%), var(--surface);
   transition:
     transform 0.18s ease,
@@ -472,6 +474,9 @@ time {
 .card-links a {
   position: relative;
   z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
 }
 .card-updated {
   font-family: var(--mono);
@@ -487,7 +492,43 @@ time {
   position: absolute;
   inset: 0;
   z-index: 1;
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-lg);
+}
+
+/* receipt: a measured value with its source; shown only when a project has one */
+.receipt {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: var(--stroke-hairline) solid var(--line);
+  border-left: var(--stroke-rule) solid var(--link);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-caption);
+}
+.receipt-tag {
+  font-family: var(--mono);
+  font-size: var(--text-label);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+.receipt p {
+  margin: 0;
+}
+.receipt-value {
+  font-family: var(--mono);
+  font-size: 18px;
+}
+.receipt-source {
+  color: var(--ink-3);
+}
+.receipt a {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-target);
 }
 
 /* lab band */

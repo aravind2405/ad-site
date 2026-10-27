@@ -43,6 +43,15 @@ export const projectSchema = z
       .nullable(),
     live: httpsUrl.nullable(),
     liveLabel: z.string().min(1).optional(),
+    receipt: z
+      .object({
+        label: z.string().min(1),
+        value: z.string().min(1),
+        source: z.string().min(1),
+        checked: isoDate,
+        href: httpsUrl,
+      })
+      .optional(),
     verified: z.object({ date: isoDate, against: z.string().min(1) }),
     details: projectDetails,
   })

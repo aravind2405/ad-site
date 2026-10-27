@@ -4,6 +4,9 @@ import { formatDate } from '@/lib/format';
 import type { RepoMeta } from '@/lib/github';
 import type { Project } from '@/lib/schemas';
 
+// The card shows the first few technologies; the details page lists them all.
+const MAX_TAGS = 4;
+
 interface Props {
   project: Project;
   meta: RepoMeta | null;
@@ -25,12 +28,12 @@ export default function ProjectCard({ project, meta }: Props) {
         aria-label={`Technology for ${name}`}
         style={{ margin: 0, padding: 0, listStyle: 'none' }}
       >
-        {stack.map((t) => (
+        {stack.slice(0, MAX_TAGS).map((t) => (
           <li className="tag" key={t}>
             {t}
           </li>
         ))}
-        {plannedStack.map((t) => (
+        {plannedStack.slice(0, MAX_TAGS).map((t) => (
           <li className="tag tag-planned" key={t} title="Planned, not built yet">
             {t} (planned)
           </li>
@@ -44,7 +47,7 @@ export default function ProjectCard({ project, meta }: Props) {
           </Link>
           {repo && (
             <a href={`https://github.com/${repo}`} target="_blank" rel="noopener noreferrer">
-              GitHub<span className="sr-only"> repository for {name} (opens in a new tab)</span>
+              Code<span className="sr-only"> for {name} on GitHub (opens in a new tab)</span>
             </a>
           )}
           {live && (
