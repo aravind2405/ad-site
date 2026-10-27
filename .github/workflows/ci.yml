@@ -58,10 +58,23 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
+      - name: Cache the Next.js build
+        uses: actions/cache@v6
+        with:
+          path: .next/cache
+          key: nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'next.config.mjs') }}
+          restore-keys: |
+            nextjs-${{ runner.os }}-${{ hashFiles('package-lock.json') }}-
+
       - name: Build
         run: |
           npm run build 2>&1 | tee build.log
-          if grep -iE "warn|⚠" build.log; then echo "The build printed warnings (above)."; exit 1; fi
+          # Any warning fails the build, except the first run's "no build cache" notice, which the
+          # cache step above removes from every later run.
+          if grep -iE "warn|⚠" build.log | grep -viE "no build cache"; then
+            echo "The build printed warnings (above)."
+            exit 1
+          fi
 
       - name: Privacy check on the built site
         run: npm run check:privacy
