@@ -80,7 +80,15 @@ jobs:
         run: npm run check:privacy
 
       - name: Install browsers
-        run: npx playwright install --with-deps chromium webkit
+        # The system-package part of this step has hung once on a hosted runner, so each attempt is
+        # limited to five minutes and there are three attempts.
+        run: |
+          for attempt in 1 2 3; do
+            if timeout 300 npx playwright install --with-deps chromium webkit; then exit 0; fi
+            echo "Browser install attempt $attempt failed or timed out."
+            sleep 10
+          done
+          exit 1
 
       - name: End-to-end and accessibility tests
         run: npm run e2e
