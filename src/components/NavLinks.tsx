@@ -11,7 +11,6 @@ interface Props {
 const links = [
   { href: '/#projects', label: 'Projects', match: (p: string) => p.startsWith('/projects') },
   { href: '/lab', label: 'Lab', match: (p: string) => p.startsWith('/lab') },
-  { href: '/shelf', label: 'Shelf', match: (p: string) => p.startsWith('/shelf') },
 ];
 
 // The menu below 340px is a <details> element, so it works without JavaScript.

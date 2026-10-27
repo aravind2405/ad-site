@@ -7,7 +7,6 @@ const paths = [
   '/projects/ontimesydney',
   '/projects/gridwatch',
   '/projects/groundtruth',
-  '/shelf',
   '/lab',
 ];
 
@@ -33,13 +32,5 @@ for (const [name, size] of Object.entries(viewports)) {
         ).toEqual([]);
       });
     }
-
-    test('shelf filter buttons are reachable and operable by keyboard', async ({ page }) => {
-      await page.goto('/shelf');
-      const button = page.getByRole('button', { name: 'Finished' });
-      await button.focus();
-      await page.keyboard.press('Enter');
-      await expect(button).toHaveAttribute('aria-pressed', 'true');
-    });
   });
 }

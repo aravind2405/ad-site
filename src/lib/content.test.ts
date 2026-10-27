@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getProject, lab, profile, projects, shelf } from './content';
+import { getProject, lab, profile, projects } from './content';
 
 describe('content', () => {
   it('has unique project slugs and resolves each one', () => {
@@ -7,11 +7,6 @@ describe('content', () => {
     expect(new Set(slugs).size).toBe(slugs.length);
     for (const slug of slugs) expect(getProject(slug)?.slug).toBe(slug);
     expect(getProject('does-not-exist')).toBeUndefined();
-  });
-
-  it('only links shelf items to pages that exist', () => {
-    const known = new Set(['/lab', '/shelf', '/']);
-    for (const item of shelf) if (item.related) expect(known.has(item.related.href)).toBe(true);
   });
 
   it('lists every started project with a repository', () => {

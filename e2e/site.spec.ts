@@ -6,7 +6,6 @@ const routes = [
   { path: '/projects/ontimesydney', h1: "How on time are Sydney's buses, really?" },
   { path: '/projects/gridwatch', h1: 'What is the power grid doing right now?' },
   { path: '/projects/groundtruth', h1: 'Can an AI answer policy questions, and can I prove it?' },
-  { path: '/shelf', h1: 'The shelf' },
   { path: '/lab', h1: 'Curiosity Lab' },
 ];
 
@@ -71,9 +70,12 @@ test.describe('navigation', () => {
     // The bar is opaque: its background must have no transparency.
     const bg = await header.evaluate((el) => getComputedStyle(el).backgroundColor);
     expect(bg).toBe('rgb(244, 245, 242)');
-    await expect(page.getByRole('link', { name: 'Shelf' })).toBeInViewport();
-    await page.getByRole('link', { name: 'Shelf' }).click();
-    await expect(page).toHaveURL(/\/shelf$/);
+    const labLink = page
+      .getByRole('navigation', { name: 'Main' })
+      .getByRole('link', { name: 'Lab' });
+    await expect(labLink).toBeInViewport();
+    await labLink.click();
+    await expect(page).toHaveURL(/\/lab$/);
   });
 
   test('anchor links land below the sticky bar', async ({ page }) => {
@@ -85,9 +87,9 @@ test.describe('navigation', () => {
   });
 
   test('marks the current page in the menu', async ({ page }) => {
-    await page.goto('/shelf');
+    await page.goto('/lab');
     const nav = page.getByRole('navigation', { name: 'Main' });
-    await expect(nav.getByRole('link', { name: 'Shelf' })).toHaveAttribute('aria-current', 'page');
+    await expect(nav.getByRole('link', { name: 'Lab' })).toHaveAttribute('aria-current', 'page');
     await page.goto('/projects/ontimesydney');
     await expect(nav.getByRole('link', { name: 'Projects' })).toHaveAttribute(
       'aria-current',
@@ -258,22 +260,16 @@ test.describe('lab page', () => {
   });
 });
 
-test.describe('shelf', () => {
-  test('filters by status and type', async ({ page }) => {
+test.describe('removed pages', () => {
+  test('the old shelf address permanently redirects to the home page', async ({
+    page,
+    request,
+  }) => {
+    const res = await request.get('/shelf', { maxRedirects: 0 });
+    expect(res.status()).toBe(308);
     await page.goto('/shelf');
-    const count = page.locator('.shelf-count');
-    await expect(count).toHaveText('4 of 4');
-    await page.getByRole('button', { name: 'Finished' }).click();
-    await expect(count).toHaveText('2 of 4');
-    await page.getByRole('button', { name: 'Paper' }).click();
-    await expect(page.getByText('Nothing matches those filters yet.')).toBeVisible();
-    await page.getByRole('button', { name: 'All types' }).click();
-    await page.getByRole('button', { name: 'Reading now' }).click();
-    await expect(count).toHaveText('1 of 4');
-    await expect(page.getByRole('button', { name: 'Reading now' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    );
+    await expect(page).toHaveURL(/\/$/);
+    await expect(page.getByRole('link', { name: 'Shelf' })).toHaveCount(0);
   });
 });
 
@@ -285,7 +281,7 @@ test.describe('discovery files', () => {
     const paths = [...xml.matchAll(/<loc>https:\/\/www\.aravindd\.com([^<]*)<\/loc>/g)].map(
       (m) => m[1] || '/',
     );
-    expect(paths.length).toBeGreaterThanOrEqual(7);
+    expect(paths).toHaveLength(6);
     for (const path of paths) {
       const res = await page.request.get(path);
       expect(res.status(), path).toBe(200);
@@ -321,7 +317,7 @@ test.describe('engineering', () => {
   });
 
   test('every page has a 1200x630 Open Graph image', async ({ page }) => {
-    for (const path of ['/', '/shelf', '/lab', '/projects/rentlens', '/projects/gridwatch']) {
+    for (const path of ['/', '/lab', '/projects/rentlens', '/projects/gridwatch']) {
       await page.goto(path);
       const content = await page.locator('meta[property="og:image"]').getAttribute('content');
       expect(content, path).toBeTruthy();

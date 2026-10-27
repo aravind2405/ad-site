@@ -11,7 +11,6 @@ project's own README and read live repository activity from GitHub.
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `/`                           | Landing page: headline, projects, Curiosity Lab link, contact                                                               |
 | `/projects/[slug]`            | One page per project: status, architecture, how it is checked, data licence, roadmap, limitations, live repository activity |
-| `/shelf`                      | Courses and papers, filterable by status and type                                                                           |
 | `/lab`                        | Curiosity Lab, a dark page of early-stage experiments                                                                       |
 | `/robots.txt`, `/sitemap.xml` | Generated from the same project data                                                                                        |
 
@@ -40,7 +39,7 @@ GitHub Actions runs all of these, plus `npm audit` on production dependencies, o
 
 ## Content
 
-Content is JSON in `src/data/`: `profile.json`, `shelf.json`, `lab.json`, and one file per project in
+Content is JSON in `src/data/`: `profile.json`, `lab.json`, and one file per project in
 `src/data/projects/`. Everything is validated with Zod (`src/lib/schemas.ts`) when it is imported, so a
 mistake fails the build and the tests instead of reaching visitors.
 

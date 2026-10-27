@@ -491,3 +491,21 @@ Measured 2026-10-28 at about 01:00 AEDT against a local production build (port 3
 | Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
 
 Lighthouse and the overflow check were not re-run: the change only deletes hover rules from `global.css` and one unused token.
+
+## Shelf removed, 2026-10-28
+
+Measured 2026-10-28 at about 01:35 AEDT against a local production build (port 3117) of branch `chore/remove-shelf`, on `main` at `2f5d71d`. Local, not live. Scripts run from the scratch copy used above with `BASE=http://127.0.0.1:3117`, `TAG=noshelf` and the six remaining pages.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1; 0 below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Internal links and anchors, crawled from 6 pages | 0 broken, 0 empty; 6 unique internal targets |
+| `/shelf` | 308 permanent redirect to `/` |
+| Sitemap | 6 URLs (was 7) |
+| Vitest | 45 passed (was 47; two Shelf tests removed) |
+| Playwright, desktop Chrome | 47 of 47 passed (was 52; Shelf tests removed, one redirect test added) |
+| Playwright, Pixel 7 emulation | 46 of 47 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
+
+Lighthouse was not re-run: the change removes a page and its CSS and adds no code to the remaining pages. The dated measurements under `measurements/` and the earlier sections above still mention the Shelf as it was then and are left unchanged.

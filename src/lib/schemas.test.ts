@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { projects } from './content';
-import { profileSchema, projectSchema, shelfSchema } from './schemas';
+import { profileSchema, projectSchema } from './schemas';
 
 const base = projects.find((p) => p.status === 'live')!;
 const planned = projects.find((p) => p.status === 'coming-soon')!;
@@ -70,7 +70,7 @@ describe('project schema', () => {
   });
 });
 
-describe('profile and shelf schemas', () => {
+describe('profile schema', () => {
   it('requires HTTPS social links and a valid email when one is set', () => {
     const p = {
       name: 'A',
@@ -87,16 +87,5 @@ describe('profile and shelf schemas', () => {
     expect(profileSchema.safeParse({ ...p, links: { ...p.links, email: 'nope' } }).success).toBe(
       false,
     );
-  });
-
-  it('only allows internal links on shelf items', () => {
-    const item = {
-      status: 'next',
-      kind: 'Paper',
-      title: 't',
-      by: 'b',
-      related: { name: 'x', href: 'https://evil.example' },
-    };
-    expect(shelfSchema.safeParse([item]).success).toBe(false);
   });
 });

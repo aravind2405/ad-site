@@ -6,7 +6,7 @@
 # answers anything other than 200, for example during an abuse-protection challenge.
 export CHROME_PATH="${CHROME_PATH:-/Applications/Google Chrome.app/Contents/MacOS/Google Chrome}"
 BASE="${BASE:-https://www.aravindd.com}"
-PAGES="${PAGES:-/ /lab /shelf /rentlens}"
+PAGES="${PAGES:-/ /lab /rentlens}"
 TAG="${TAG:-}"
 PAUSE="${PAUSE:-0}"
 wait_clear() {

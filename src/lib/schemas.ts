@@ -104,18 +104,6 @@ export const profileSchema = z.object({
 });
 export type Profile = z.infer<typeof profileSchema>;
 
-export const shelfItemSchema = z.object({
-  status: z.enum(['reading', 'next', 'done']),
-  kind: z.string().min(1),
-  title: z.string().min(1),
-  by: z.string().min(1),
-  why: z.string().optional(),
-  stuck: z.string().optional(),
-  related: z.object({ name: z.string().min(1), href: z.string().startsWith('/') }).nullable(),
-});
-export const shelfSchema = z.array(shelfItemSchema);
-export type ShelfItem = z.infer<typeof shelfItemSchema>;
-
 export const experimentSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),

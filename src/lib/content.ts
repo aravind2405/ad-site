@@ -1,16 +1,14 @@
 import labData from '@/data/lab.json';
 import profileData from '@/data/profile.json';
-import shelfData from '@/data/shelf.json';
 import gridwatch from '@/data/projects/gridwatch.json';
 import groundtruth from '@/data/projects/groundtruth.json';
 import ontimesydney from '@/data/projects/ontimesydney.json';
 import rentlens from '@/data/projects/rentlens.json';
-import { labSchema, profileSchema, projectSchema, shelfSchema, type Project } from './schemas';
+import { labSchema, profileSchema, projectSchema, type Project } from './schemas';
 
 // Every content file is validated when it is first imported, so invalid content
 // fails the build (and the tests) instead of reaching visitors.
 export const profile = profileSchema.parse(profileData);
-export const shelf = shelfSchema.parse(shelfData);
 export const lab = labSchema.parse(labData);
 
 // Display order: live work first, then work in progress, then plans.
