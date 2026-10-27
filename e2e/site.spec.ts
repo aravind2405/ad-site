@@ -65,7 +65,7 @@ test.describe('navigation', () => {
     const header = page.locator('header.site-header');
     await expect(header).toBeVisible();
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(1000);
+    await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(300);
     const box = await header.boundingBox();
     expect(box?.y).toBeLessThanOrEqual(1);
     // The bar is opaque: its background must have no transparency.
@@ -151,22 +151,53 @@ test.describe('landing page', () => {
     );
   });
 
-  test('shows four equal project cards with a details link each', async ({ page }) => {
+  test('shows two equal project cards and names the next two in one quiet line', async ({
+    page,
+  }) => {
     await page.goto('/');
     const cards = page.locator('article.project-card');
-    await expect(cards).toHaveCount(4);
-    for (const slug of ['rentlens', 'ontimesydney', 'gridwatch', 'groundtruth']) {
+    await expect(cards).toHaveCount(2);
+    for (const slug of ['rentlens', 'ontimesydney']) {
       await expect(page.locator(`a[href="/projects/${slug}"]`)).toHaveCount(1);
+    }
+    // Planned projects keep their pages but are not linked from the grid or anywhere on the home page.
+    for (const slug of ['gridwatch', 'groundtruth']) {
+      await expect(page.locator(`a[href="/projects/${slug}"]`)).toHaveCount(0);
+    }
+    await expect(page.locator('.next-up')).toHaveText(
+      'Next up: GridWatch AU (grid data on AWS) and GroundTruth (evaluated AI search).',
+    );
+    expect((await page.locator('.tag').allInnerTexts()).join(' ')).not.toContain('planned');
+    await expect(page.locator('.eyebrow', { hasText: 'Work' })).toHaveCount(0);
+  });
+
+  test('every grid card shows its status and updated date', async ({ page }) => {
+    await page.goto('/');
+    for (const card of await page.locator('article.project-card').all()) {
+      await expect(card.locator('.pill')).toBeVisible();
+      await expect(card.locator('.card-updated')).toHaveText(/^Updated \d{1,2} \w{3} \d{4}$/);
     }
   });
 
-  test('planned projects have no code or demo links and say so', async ({ page }) => {
+  test('the hero has the headline, subline and credentials but no buttons', async ({ page }) => {
     await page.goto('/');
-    for (const name of ['GridWatch AU', 'GroundTruth']) {
-      const card = page.locator('article.project-card', { hasText: name });
-      await expect(card).toContainText('Coming soon');
-      await expect(card.locator('a')).toHaveCount(1);
-    }
+    const hero = page.locator('.hero-shell');
+    await expect(hero.getByRole('heading', { level: 1 })).toBeVisible();
+    await expect(hero.locator('.sub')).toBeVisible();
+    await expect(hero.locator('.creds')).toContainText('Master of IT');
+    await expect(hero.getByRole('link')).toHaveCount(0);
+    await expect(hero.getByRole('button')).toHaveCount(0);
+  });
+
+  test('the nav lists exactly Projects, Curiosity Lab and Contact', async ({ page }) => {
+    await page.goto('/');
+    const nav = page.getByRole('navigation', { name: 'Main' });
+    const names = (await nav.locator('.nav-links').getByRole('link').allInnerTexts()).map((t) =>
+      t.trim(),
+    );
+    // The menu on very narrow phones repeats the same links; compare each distinct label once.
+    expect([...new Set(names)].sort()).toEqual(['Contact', 'Curiosity Lab', 'Projects']);
+    await expect(nav.getByRole('link', { name: 'Shelf' })).toHaveCount(0);
   });
 
   test('the whole card opens the project details', async ({ page }) => {

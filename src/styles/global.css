@@ -284,12 +284,6 @@ time {
   font-weight: 700;
   letter-spacing: -0.015em;
 }
-.h2-sm {
-  margin: 0;
-  font-size: var(--text-subsection-title);
-  line-height: 1.25;
-  font-weight: 700;
-}
 .lede {
   margin: 0;
   font-size: var(--text-body-lg);
@@ -338,12 +332,6 @@ time {
   color: var(--ink-2);
   max-width: 620px;
 }
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding-top: 6px;
-}
 @media (max-width: 767px) {
   .hero {
     padding-top: var(--space-8);
@@ -385,12 +373,6 @@ time {
   background: var(--chip);
   border-radius: var(--radius-xs);
 }
-.tag-planned {
-  background: transparent;
-  border: 1px dashed #8a93a3;
-  color: var(--ink-3);
-}
-
 /* projects */
 .project-grid {
   display: grid;
@@ -477,6 +459,11 @@ time {
   .card-links a:hover::after {
     transform: translateX(3px);
   }
+}
+.next-up {
+  margin: var(--space-6) 0 0;
+  font-size: var(--text-body-sm);
+  color: var(--ink-3);
 }
 .card-updated {
   font-family: var(--mono);

@@ -532,3 +532,18 @@ npm run check:privacy && npm run check:receipts && npm run check:hygiene
 | Production dependency audit | 0 vulnerabilities |
 
 WebKit note: the production CSP has `upgrade-insecure-requests`, which WebKit applies even to plain `http://127.0.0.1`, so pages never hydrate in a local WebKit run. The test fixture removes only that directive from responses in WebKit runs; production headers are unchanged and covered by `src/config.test.ts`. Playwright's request interception also stalls on redirects in WebKit, so the two redirect tests check the 308 and `Location` in every browser and drive the page-level redirect in Chromium only.
+
+## Home page noise removed, 2026-10-28
+
+Measured 2026-10-28 at about 02:10 AEDT on a local production build (port 3119) of branch `chore/home-noise`, stacked on `test/ci-gates`. Local, not live. Scripts run from the scratch copy used above, `BASE=http://127.0.0.1:3119`, `TAG=noise`, six pages.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1 |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Vitest | 57 passed |
+| Playwright, 4 projects (Chromium and WebKit, desktop and phone) | 159 passed, 0 failed |
+| Unused CSS classes after the change | 0 (the unused `.h2-sm` rule was removed; `btn-ghost` and `pill-*` are built dynamically) |
+
+Lighthouse was not re-run: the change only removes elements from the home page and card. The PR 37 CI gate runs it.
