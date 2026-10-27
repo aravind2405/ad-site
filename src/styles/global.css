@@ -296,7 +296,6 @@ time {
 .hero-shell {
   position: relative;
   background: radial-gradient(900px 420px at 50% -10%, rgba(255, 255, 255, 0.7), transparent 65%);
-  margin-bottom: var(--space-10);
 }
 .hero-shell::before {
   content: '';
@@ -374,17 +373,29 @@ time {
   border-radius: var(--radius-xs);
 }
 /* projects */
+.projects-band {
+  background: var(--tint-cream);
+  border-top: var(--stroke-hairline) solid var(--line-soft);
+  border-bottom: var(--stroke-hairline) solid var(--line-soft);
+  padding-block: var(--space-10) var(--space-18);
+}
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
-  gap: var(--space-6);
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+@media (min-width: 768px) {
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-6);
+  }
 }
 .project-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-3);
   border-radius: var(--radius-lg);
-  padding: var(--space-7);
+  padding: var(--space-6);
   background: linear-gradient(180deg, var(--surface-2), transparent 38%), var(--surface);
 }
 .project-card:hover,
@@ -398,6 +409,12 @@ time {
     transform: translateY(-3px);
   }
 }
+.project-card .problem {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
 .project-card h3 {
   margin: 0;
   font-size: var(--text-card-title);
@@ -405,35 +422,14 @@ time {
   font-weight: 700;
   letter-spacing: -0.01em;
 }
-.project-card p {
-  margin: 0;
-  font-size: var(--text-body-sm);
-  line-height: 1.65;
-  color: var(--ink-2);
-}
-.project-card .name {
-  font-family: var(--mono);
-  font-size: var(--text-data);
-  color: var(--ink-3);
-}
-.project-card .spacer {
-  flex: 1;
-}
-.card-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line-soft);
-  font-size: var(--text-caption);
-}
 .card-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 18px;
-  font-weight: 600;
+  gap: 0 var(--space-5);
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 500;
 }
 .card-links a {
   position: relative;
@@ -444,9 +440,6 @@ time {
   min-height: var(--tap-target);
   color: var(--ink-2);
   text-decoration: none;
-}
-.card-links a:first-child {
-  color: var(--ink);
 }
 .card-links a::after {
   content: '\2192' / '';
@@ -473,6 +466,7 @@ time {
 /* the details link covers the whole card; other links stay clickable above it */
 .project-card .stretched {
   position: static;
+  text-decoration: none;
 }
 .project-card .stretched::after {
   content: '';

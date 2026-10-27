@@ -547,3 +547,19 @@ Measured 2026-10-28 at about 02:10 AEDT on a local production build (port 3119) 
 | Unused CSS classes after the change | 0 (the unused `.h2-sm` rule was removed; `btn-ghost` and `pill-*` are built dynamically) |
 
 Lighthouse was not re-run: the change only removes elements from the home page and card. The PR 37 CI gate runs it.
+
+## Hero and projects band, 2026-10-28
+
+Measured 2026-10-28 at about 02:50 AEDT on a local production build (ports 3122) of branch `feat/home-hero-projects`, stacked on `chore/home-noise`. Local, not live. Scripts run from the scratch copy used above with `TAG=bands`.
+
+| Check | Result |
+|---|---|
+| Top edge of the first project card, 1440x900, Chromium and WebKit | 522 px from the top of the page (viewport 900 px); hero ends at 379 px |
+| Top edge of the first project card, 390x844, Chromium and WebKit | 450 px (viewport 844 px); hero ends at 286 px |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home) |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Playwright, 4 projects | 171 passed, 0 failed |
+| Vitest | 57 passed |
+
+Measured with a Playwright script that reads `getBoundingClientRect().top` of `.project-card` after load (`scratchpad/fold.mjs`, not committed). Lighthouse is run by the CI gate on this PR.

@@ -200,6 +200,51 @@ test.describe('landing page', () => {
     await expect(nav.getByRole('link', { name: 'Shelf' })).toHaveCount(0);
   });
 
+  test('the top of the project cards is visible in the first screen', async ({ page }) => {
+    await page.goto('/');
+    const viewportHeight = page.viewportSize()!.height;
+    const box = await page.locator('article.project-card').first().boundingBox();
+    // At least 80px of the first card shows, so the page clearly continues below the hero.
+    expect(box!.y).toBeLessThan(viewportHeight - 80);
+    const hero = await page.locator('.hero-shell').boundingBox();
+    expect(hero!.y + hero!.height, 'the hero must not fill the screen').toBeLessThan(
+      viewportHeight,
+    );
+  });
+
+  test('cards sit in two columns on desktop and one on phones, all equal', async ({
+    page,
+    isMobile,
+  }) => {
+    await page.goto('/');
+    const [a, b] = await page.locator('article.project-card').all();
+    const boxA = (await a.boundingBox())!;
+    const boxB = (await b.boundingBox())!;
+    expect(Math.abs(boxA.width - boxB.width)).toBeLessThan(1);
+    if (isMobile) {
+      expect(boxB.y).toBeGreaterThan(boxA.y + boxA.height - 1);
+    } else {
+      expect(Math.abs(boxA.y - boxB.y)).toBeLessThan(1);
+      expect(Math.abs(boxA.height - boxB.height)).toBeLessThan(1);
+    }
+    // No flagship: every card has the same parts.
+    for (const card of [a, b]) {
+      await expect(card.locator('h3 a')).toHaveCount(1);
+      await expect(card.locator('.problem')).toHaveCount(1);
+      await expect(card.locator('.tag').first()).toBeVisible();
+    }
+  });
+
+  test('card repo and live links open in a new tab safely', async ({ page }) => {
+    await page.goto('/');
+    const links = page.locator('article.project-card .card-links a');
+    expect(await links.count()).toBeGreaterThanOrEqual(3);
+    for (const link of await links.all()) {
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', /noopener/);
+    }
+  });
+
   test('the whole card opens the project details', async ({ page }) => {
     await page.goto('/');
     await page
