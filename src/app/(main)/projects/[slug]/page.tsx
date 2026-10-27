@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import Receipt from '@/components/Receipt';
 import StatusPill from '@/components/StatusPill';
 import { getProject, projects } from '@/lib/content';
 import { formatDate } from '@/lib/format';
@@ -71,6 +72,7 @@ export default async function ProjectPage({ params }: Props) {
             </li>
           ))}
         </ul>
+        <Receipt receipt={project.receipt} />
         {(repoUrl || project.live) && (
           <div className="detail-actions">
             {project.live && (

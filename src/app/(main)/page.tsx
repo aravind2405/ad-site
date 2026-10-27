@@ -1,7 +1,10 @@
 import Link from 'next/link';
+import Button from '@/components/Button';
 import ProjectCard from '@/components/ProjectCard';
 import { profile, projects } from '@/lib/content';
 import { getRepoMeta } from '@/lib/github';
+
+const RESUME_FILE = 'Aravind-Danassegarane-Resume.pdf';
 
 // Repository facts on the cards come live from GitHub and refresh hourly.
 export const revalidate = 3600;
@@ -17,27 +20,18 @@ export default async function Home() {
           <h1 id="hero-h">{profile.headline}</h1>
           <p className="sub">{profile.subheadline}</p>
           <div className="hero-actions">
-            <a className="btn btn-primary" href="#projects">
+            <Button href="#projects" arrow>
               See my projects
-            </a>
+            </Button>
             {links.resume ? (
-              <a
-                className="btn btn-ghost"
-                href={links.resume}
-                download="Aravind-Danassegarane-Resume.pdf"
-              >
+              <Button href={links.resume} variant="ghost" download={RESUME_FILE}>
                 Download resume
-              </a>
+              </Button>
             ) : (
               links.linkedin && (
-                <a
-                  className="btn btn-ghost"
-                  href={links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LinkedIn<span className="sr-only"> (opens in a new tab)</span>
-                </a>
+                <Button href={links.linkedin} variant="ghost" external>
+                  LinkedIn
+                </Button>
               )
             )}
           </div>
@@ -82,33 +76,19 @@ export default async function Home() {
             </div>
             <div className="side">
               {links.linkedin && (
-                <a
-                  className="btn btn-primary"
-                  href={links.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LinkedIn<span className="sr-only"> (opens in a new tab)</span>
-                </a>
+                <Button href={links.linkedin} external>
+                  LinkedIn
+                </Button>
               )}
               {links.github && (
-                <a
-                  className="btn btn-ghost"
-                  href={links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  GitHub<span className="sr-only"> (opens in a new tab)</span>
-                </a>
+                <Button href={links.github} variant="ghost" external>
+                  GitHub
+                </Button>
               )}
               {links.resume && (
-                <a
-                  className="btn btn-ghost"
-                  href={links.resume}
-                  download="Aravind-Danassegarane-Resume.pdf"
-                >
+                <Button href={links.resume} variant="ghost" download={RESUME_FILE}>
                   Download resume
-                </a>
+                </Button>
               )}
             </div>
           </div>

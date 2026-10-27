@@ -5,7 +5,29 @@ import { profileSchema, projectSchema, shelfSchema } from './schemas';
 const base = projects.find((p) => p.status === 'live')!;
 const planned = projects.find((p) => p.status === 'coming-soon')!;
 
+const receipt = {
+  label: 'Example',
+  value: 'value',
+  source: 'a public dataset',
+  checked: '2026-10-24',
+  href: 'https://example.com/how',
+};
+
 describe('project schema', () => {
+  it('ships no receipt data until a measured value exists', () => {
+    for (const p of projects) expect(p.receipt).toBeUndefined();
+  });
+
+  it('accepts an optional receipt with a source and a check date', () => {
+    expect(projectSchema.safeParse({ ...base, receipt }).success).toBe(true);
+  });
+
+  it('rejects a receipt without a check date', () => {
+    expect(
+      projectSchema.safeParse({ ...base, receipt: { ...receipt, checked: 'today' } }).success,
+    ).toBe(false);
+  });
+
   it('accepts every project shipped with the site', () => {
     for (const p of projects) expect(() => projectSchema.parse(p)).not.toThrow();
   });
