@@ -2,7 +2,6 @@ import Link from 'next/link';
 import AskRotator from '@/components/AskRotator';
 import Button from '@/components/Button';
 import ContactForm from '@/components/ContactForm';
-import HeroSignal from '@/components/HeroSignal';
 import HomeStage from '@/components/HomeStage';
 import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
@@ -41,7 +40,6 @@ export default async function Home() {
         <a className="scroll-cue" href="#projects">
           Projects <span aria-hidden="true">↓</span>
         </a>
-        <HeroSignal />
       </section>
 
       <section id="projects" className="projects-band" aria-labelledby="projects-h">
