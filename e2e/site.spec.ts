@@ -100,6 +100,20 @@ test.describe('navigation', () => {
     await expect(page).toHaveURL(/\/lab$/);
   });
 
+  test('the top bar on the Lab page is dark, not pale', async ({ page }) => {
+    await page.goto('/lab');
+    const tint = await page.evaluate(() => {
+      const header = document.querySelector('.site-header')!;
+      const layer = getComputedStyle(header, '::before').backgroundColor;
+      const m = /rgba?\((\d+)[ ,]+(\d+)[ ,]+(\d+)/.exec(layer);
+      const lab = /color\(srgb ([\d.]+) ([\d.]+) ([\d.]+)/.exec(layer);
+      if (m) return [Number(m[1]), Number(m[2]), Number(m[3])];
+      return lab ? [Number(lab[1]) * 255, Number(lab[2]) * 255, Number(lab[3]) * 255] : null;
+    });
+    expect(tint, 'the bar layer has a colour').not.toBeNull();
+    for (const channel of tint!) expect(channel).toBeLessThan(60);
+  });
+
   test('highlights the section on screen while scrolling the home page', async ({ page }) => {
     await page.goto('/');
     await page.waitForFunction(() => document.documentElement.classList.contains('stage-on'));
