@@ -3,7 +3,35 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
-  scroll-padding-top: 80px;
+  /* anchors and snap points land just below the sticky nav */
+  /* exactly the sticky nav: its height plus its 1px border, so the hero's snap point is 0 and the
+     page loads unscrolled */
+  scroll-padding-top: calc(var(--header-h) + var(--stroke-hairline));
+}
+/* The home page is a stack of full-screen pages. Where motion is welcome, one swipe or one scroll
+   moves exactly one page. This is native CSS snapping: nothing intercepts the scroll, and a page
+   taller than the screen (a small phone, large text) still scrolls freely inside itself. */
+.home > section {
+  min-height: var(--page-h);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.home > section > .wrap {
+  /* in a flex column the wrap's auto margins would shrink it to its content */
+  width: 100%;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.home) {
+    scroll-snap-type: y mandatory;
+  }
+  .home > section {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+  html:has(.home) .site-footer {
+    scroll-snap-align: end;
+  }
 }
 body {
   margin: 0;
@@ -78,13 +106,27 @@ time {
   color: #fff;
 }
 
-/* header: opaque, stays visible while scrolling (phones hide it on scroll down) */
+/* header: stays visible while scrolling. On the home page it takes the colour of the page behind
+   it, and its text turns light over the dark Lab page (--dark runs from 0 to 1 as the page blends). */
 .site-header {
+  --ink: color-mix(in srgb, #f2f3f0 calc(var(--dark, 0) * 100%), #16181d);
+  --line: color-mix(in srgb, #2a2e36 calc(var(--dark, 0) * 100%), #dadfd6);
   position: sticky;
   top: 0;
   z-index: 50;
-  background: var(--bg);
   border-bottom: var(--stroke-hairline) solid var(--line);
+}
+/* The tinted, blurred background is its own layer: a blur on the header itself would make the header
+   the containing block of the phone menu sheet, which is position: fixed. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, var(--stage-bg, var(--bg)) 90%, transparent);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  pointer-events: none;
 }
 .site-nav {
   display: flex;
@@ -122,7 +164,8 @@ time {
   border-radius: var(--radius-sm);
   cursor: pointer;
 }
-.nav-links a[aria-current='page'] {
+.nav-links a[aria-current='page'],
+.nav-links a[aria-current='location'] {
   font-weight: 600;
   text-decoration: underline;
   text-decoration-thickness: var(--stroke-rule);
@@ -140,6 +183,8 @@ time {
 }
 .nav-sheet {
   display: none;
+  --ink: #16181d;
+  --line: #dadfd6;
 }
 .nav-menu[open] .nav-sheet {
   display: flex;
@@ -167,6 +212,15 @@ time {
 .nav-cta {
   margin-left: var(--space-1);
 }
+.nav-main a.nav-cta {
+  color: color-mix(in srgb, #14161b calc(var(--dark, 0) * 100%), #fff);
+}
+.nav-links a.nav-cta[aria-current='location'] {
+  text-decoration: none;
+  box-shadow:
+    0 0 0 2px var(--stage-bg, var(--bg)),
+    0 0 0 4px var(--ink);
+}
 @media (max-width: 767px) {
   .nav-links {
     gap: var(--space-1);
@@ -181,17 +235,7 @@ time {
     font-size: var(--text-caption);
   }
 }
-@media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
-  .site-header {
-    transition: transform 0.3s ease;
-  }
-}
 @media (max-width: 767px) {
-  .site-header.is-hidden {
-    transform: translateY(-100%);
-  }
-}
-@media (max-width: 339px) {
   .nav-main {
     display: none;
   }
@@ -268,8 +312,8 @@ time {
 .section-head {
   display: flex;
   flex-direction: column;
-  gap: var(--space-2);
-  margin-bottom: var(--space-7);
+  gap: var(--rhythm-1);
+  margin-bottom: var(--rhythm-3);
 }
 .eyebrow {
   font-family: var(--mono);
@@ -284,12 +328,6 @@ time {
   font-weight: 700;
   letter-spacing: -0.015em;
 }
-.h2-sm {
-  margin: 0;
-  font-size: var(--text-subsection-title);
-  line-height: 1.25;
-  font-weight: 700;
-}
 .lede {
   margin: 0;
   font-size: var(--text-body-lg);
@@ -298,30 +336,20 @@ time {
   max-width: 660px;
 }
 
-/* hero: soft daylight wash and a faint grid */
+/* hero: the first page. Headline, the questions behind the projects, a scroll cue and a trace that
+   draws itself along the bottom. */
 .hero-shell {
   position: relative;
-  background: radial-gradient(900px 420px at 50% -10%, rgba(255, 255, 255, 0.7), transparent 65%);
-  margin-bottom: var(--space-10);
-}
-.hero-shell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 44px 44px;
-  -webkit-mask-image: radial-gradient(ellipse 70% 80% at 25% 15%, #000 0%, transparent 72%);
-  mask-image: radial-gradient(ellipse 70% 80% at 25% 15%, #000 0%, transparent 72%);
-  pointer-events: none;
+  overflow: hidden;
 }
 .hero {
   position: relative;
-  padding: var(--space-22) var(--gutter) var(--space-10);
+  padding-block: var(--rhythm-3);
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--rhythm-2);
+  flex: 1;
+  justify-content: center;
 }
 .hero h1 {
   margin: 0;
@@ -338,17 +366,67 @@ time {
   color: var(--ink-2);
   max-width: 620px;
 }
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-3);
-  padding-top: 6px;
+.asks {
+  margin-top: var(--rhythm-1);
+  min-height: 5.6em;
+}
+.asks-label {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--text-label);
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.asks-now {
+  margin: var(--space-2) 0 0;
+  max-width: 28ch;
+  font-size: var(--text-card-title-featured);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.scroll-cue {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-target);
+  padding: 0 var(--space-4);
+  font-family: var(--mono);
+  font-size: var(--text-data);
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.signal {
+  display: block;
+  flex: none;
+  width: 100%;
+  height: clamp(72px, 15svh, 150px);
+  pointer-events: none;
+}
+.signal path {
+  fill: none;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.signal-raw {
+  stroke: color-mix(in srgb, var(--ink) 26%, transparent);
+  stroke-width: 1.25;
+}
+.signal-clean {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+}
+.signal-mark {
+  stroke: var(--ink);
+  stroke-width: 2;
 }
 @media (max-width: 767px) {
-  .hero {
-    padding-top: var(--space-8);
-    padding-bottom: var(--space-6);
-    gap: var(--space-4);
+  .asks-now {
+    font-size: var(--text-subsection-title);
   }
 }
 .creds {
@@ -385,24 +463,27 @@ time {
   background: var(--chip);
   border-radius: var(--radius-xs);
 }
-.tag-planned {
-  background: transparent;
-  border: 1px dashed #8a93a3;
-  color: var(--ink-3);
-}
-
 /* projects */
+.projects-band {
+  background: var(--tint-cream);
+  padding-block: var(--rhythm-4);
+}
 .project-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr));
-  gap: var(--space-6);
+  grid-template-columns: 1fr;
+  gap: var(--rhythm-3);
+}
+@media (min-width: 768px) {
+  .project-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .project-card {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: var(--space-3);
   border-radius: var(--radius-lg);
-  padding: var(--space-7);
+  padding: var(--space-6);
   background: linear-gradient(180deg, var(--surface-2), transparent 38%), var(--surface);
 }
 .project-card:hover,
@@ -416,6 +497,12 @@ time {
     transform: translateY(-3px);
   }
 }
+.project-card .problem {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
 .project-card h3 {
   margin: 0;
   font-size: var(--text-card-title);
@@ -423,35 +510,14 @@ time {
   font-weight: 700;
   letter-spacing: -0.01em;
 }
-.project-card p {
-  margin: 0;
-  font-size: var(--text-body-sm);
-  line-height: 1.65;
-  color: var(--ink-2);
-}
-.project-card .name {
-  font-family: var(--mono);
-  font-size: var(--text-data);
-  color: var(--ink-3);
-}
-.project-card .spacer {
-  flex: 1;
-}
-.card-foot {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px 16px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line-soft);
-  font-size: var(--text-caption);
-}
 .card-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 18px;
-  font-weight: 600;
+  gap: 0 var(--space-5);
+  margin-top: auto;
+  padding-top: var(--space-1);
+  font-size: var(--text-caption);
+  font-weight: 500;
 }
 .card-links a {
   position: relative;
@@ -462,9 +528,6 @@ time {
   min-height: var(--tap-target);
   color: var(--ink-2);
   text-decoration: none;
-}
-.card-links a:first-child {
-  color: var(--ink);
 }
 .card-links a::after {
   content: '\2192' / '';
@@ -478,6 +541,49 @@ time {
     transform: translateX(3px);
   }
 }
+.next-up {
+  margin: var(--rhythm-3) 0 0;
+  font-size: var(--text-body-sm);
+  color: var(--ink-3);
+}
+/* the way into the Lab, shown at the foot of the Projects page like a corner of the next page */
+.lab-peek {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--rhythm-3);
+  margin-top: var(--rhythm-3);
+  padding: var(--space-4) var(--space-6);
+  min-height: var(--tap-target);
+  border-radius: var(--radius-lg);
+  background: #14161b;
+  color: #f2f3f0;
+  text-decoration: none;
+  box-shadow: var(--shadow-md);
+}
+.lab-peek-label {
+  font-weight: 700;
+  font-size: var(--text-body-lg);
+}
+.lab-peek-names {
+  font-family: var(--mono);
+  font-size: var(--text-data);
+  color: #c4cad5;
+}
+.lab-peek-go {
+  font-weight: 600;
+  font-size: var(--text-body-sm);
+}
+.lab-peek-go span {
+  display: inline-block;
+  transition: transform 240ms var(--spring-snappy, ease);
+}
+@media (hover: hover) {
+  .lab-peek:hover .lab-peek-go span {
+    transform: translateY(3px);
+  }
+}
 .card-updated {
   font-family: var(--mono);
   font-size: var(--text-label);
@@ -486,6 +592,7 @@ time {
 /* the details link covers the whole card; other links stay clickable above it */
 .project-card .stretched {
   position: static;
+  text-decoration: none;
 }
 .project-card .stretched::after {
   content: '';
@@ -533,53 +640,115 @@ time {
   min-height: var(--tap-target);
 }
 
-/* lab band */
-.band {
-  background:
-    radial-gradient(500px 220px at 90% 0%, rgba(242, 243, 240, 0.06), transparent 70%), var(--ink);
-  color: #f4f5f2;
-  border-radius: var(--radius-xl);
-  padding: 36px 40px;
+/* lab band: the dark layer on the home page */
+/* The static colour is what shows without JavaScript; with it, the page behind blends from the
+   cream above to the charcoal here (see the stage rules). */
+.lab-band {
+  background: #14161b;
+  color: #f2f3f0;
+  padding-block: var(--rhythm-4);
+}
+.lab-band-head {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
-  gap: var(--space-5);
-  box-shadow: var(--shadow-lg);
+  align-items: flex-end;
+  gap: var(--rhythm-3);
+  margin-bottom: var(--rhythm-4);
 }
-.band h2 {
+.lab-band h2 {
   margin: 0;
-  font-size: 24px;
+  font-size: var(--text-section-title);
+  line-height: var(--leading-section);
+  letter-spacing: -0.015em;
 }
-.band .eyebrow {
-  color: #d3d7de;
-}
-.band p {
-  margin: 6px 0 0;
-  font-size: var(--text-body);
+.lab-band-head p {
+  margin: var(--space-2) 0 0;
+  max-width: 560px;
+  font-size: var(--text-body-lg);
   line-height: 1.6;
-  color: #d3d7de;
-  max-width: 640px;
+  color: #c4cad5;
 }
-.band .btn {
-  background: #f4f5f2;
-  color: var(--ink);
-  border-color: #f4f5f2;
+.lab-band .lab-enter {
+  background: #f2f3f0;
+  color: #14161b;
+  border-color: #f2f3f0;
 }
-@media (max-width: 640px) {
-  .band {
-    padding: 28px 24px;
+.lab-tiles {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--rhythm-2);
+}
+@media (min-width: 768px) {
+  .lab-tiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+.lab-tile {
+  position: relative;
+  padding: var(--space-5);
+  background: #1b1e25;
+  border: var(--stroke-hairline) solid #2a2e36;
+  border-radius: var(--radius-md);
+}
+.lab-tile .stretched {
+  color: inherit;
+  text-decoration: none;
+}
+.lab-tile .stretched::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-md);
+}
+.lab-tile:focus-within {
+  outline: 2px solid #f2f3f0;
+  outline-offset: 3px;
+}
+.lab-tile .stretched:focus-visible {
+  outline: none;
+}
+.lab-tile-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+.lab-tile h3 {
+  margin: 0;
+  font-size: var(--text-card-title);
+  line-height: var(--leading-card);
+}
+.lab-tile p {
+  margin: var(--space-2) 0 0;
+  font-size: var(--text-body-sm);
+  line-height: 1.6;
+  color: #c4cad5;
+}
+.lab-tile .stage-badge {
+  font-family: var(--mono);
+  font-size: var(--text-label);
+  border: 1px solid #5a606c;
+  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  color: #e1e4ea;
 }
 
 /* contact */
+.contact-band {
+  background: var(--bg);
+  padding-block: var(--rhythm-4);
+}
 .contact {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--space-8);
+  gap: var(--rhythm-4);
   justify-content: space-between;
   align-items: center;
-  padding: 44px;
+  padding: var(--rhythm-4);
   border-radius: var(--radius-xl);
   background: linear-gradient(180deg, var(--surface), var(--surface-2));
 }
@@ -604,17 +773,100 @@ time {
   max-width: 560px;
 }
 .contact .side {
-  flex: 1 1 240px;
+  flex: 1 1 340px;
+  min-width: 0;
+}
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+.contact-links .btn {
+  min-height: var(--tap-target);
+  padding: 0 var(--space-5);
+}
+.contact-form {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-4);
 }
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.field label {
+  font-size: var(--text-caption);
+  font-weight: 600;
+}
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 16px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid #8a919d;
+  border-radius: var(--radius-sm);
+}
+.field textarea {
+  resize: vertical;
+  min-height: 132px;
+}
+.field input[aria-invalid='true'],
+.field textarea[aria-invalid='true'] {
+  border-color: #8a1f1f;
+  box-shadow: 0 0 0 1px #8a1f1f;
+}
+.contact .field-error,
+.contact .form-error,
+.field-error,
+.form-error {
+  margin: 0;
+  font-size: var(--text-caption);
+  color: #8a1f1f;
+}
+.form-error {
+  padding: var(--space-3) var(--space-4);
+  background: #fbf0ef;
+  border: 1px solid #d9b3b0;
+  border-radius: var(--radius-sm);
+}
+.form-note {
+  margin: 0;
+  font-size: var(--text-body-sm);
+  color: var(--ink-2);
+}
+.form-done {
+  padding: var(--space-5);
+  background: #eef5f0;
+  border: 1px solid #b9d3c1;
+  border-radius: var(--radius-md);
+}
+.form-done h3 {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-card-title);
+}
+.form-done p {
+  margin: 0;
+  color: var(--ink-2);
+}
+.field-trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 .contact .side .btn {
   width: 100%;
 }
 @media (max-width: 640px) {
   .contact {
-    padding: 28px 24px;
+    padding: var(--rhythm-3);
   }
 }
 
@@ -872,7 +1124,7 @@ html:not(.js) .diagram,
 }
 .dash {
   width: 100%;
-  height: 80vh;
+  height: 80svh;
   min-height: 560px;
   margin-top: var(--space-3);
   border: 1px solid var(--line);
@@ -970,7 +1222,7 @@ html:not(.js) .diagram,
 .lab-page {
   background: #14161b;
   color: #f2f3f0;
-  min-height: 100vh;
+  min-height: 100svh;
 }
 .lab-page a {
   color: #9dbb98;
@@ -1207,10 +1459,10 @@ html:not(.js) .diagram,
   }
   .js .reveal {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
     transition:
-      opacity 300ms ease,
-      transform 300ms ease;
+      opacity 400ms ease-out,
+      transform 400ms ease-out;
   }
   .js .reveal.in {
     opacity: 1;
@@ -1220,6 +1472,169 @@ html:not(.js) .diagram,
   ::view-transition-group(.morph) {
     animation-duration: 400ms;
     animation-timing-function: var(--spring-snappy);
+  }
+}
+
+/* the page behind the home bands: a fixed colour that HomeStage blends from page to page, with two
+   slow glows and a faint grid. The bands go transparent once it is running. */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+  background: var(--stage-bg, var(--bg));
+}
+html.stage-on .home > section {
+  background: transparent;
+  border-color: transparent;
+}
+.stage-blob {
+  position: absolute;
+  width: 80vmax;
+  height: 80vmax;
+  border-radius: 50%;
+}
+.stage-blob-a {
+  left: -25vmax;
+  top: -30vmax;
+  background: radial-gradient(closest-side, rgb(var(--stage-a, 196 212 232) / 0.55), transparent);
+}
+.stage-blob-b {
+  right: -30vmax;
+  bottom: -35vmax;
+  background: radial-gradient(closest-side, rgb(var(--stage-b, 236 222 196) / 0.5), transparent);
+}
+.stage-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--stage-grid, var(--grid)) 1px, transparent 1px),
+    linear-gradient(90deg, var(--stage-grid, var(--grid)) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 35%, #000 0%, transparent 75%);
+}
+.stage-rail {
+  --ink: color-mix(in srgb, #f2f3f0 calc(var(--dark, 0) * 100%), #16181d);
+  position: fixed;
+  right: max(4px, env(safe-area-inset-right));
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  color: var(--ink);
+}
+.stage-rail ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+.stage-rail a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  text-decoration: none;
+  color: inherit;
+}
+.stage-rail .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  opacity: 0.6;
+}
+.stage-rail a[aria-current='location'] .dot {
+  background: currentColor;
+  opacity: 1;
+  transform: scale(1.3);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .stage-blob-a {
+    animation: drift-a 34s ease-in-out infinite alternate;
+  }
+  .stage-blob-b {
+    animation: drift-b 40s ease-in-out infinite alternate;
+  }
+  .stage-rail .dot {
+    transition:
+      transform 300ms ease-out,
+      opacity 300ms ease-out,
+      background-color 300ms ease-out;
+  }
+  .asks-now {
+    animation: ask-in 600ms ease-out;
+  }
+  .signal-clean {
+    animation: signal-draw 2.4s 0.3s cubic-bezier(0.3, 0.1, 0.2, 1) backwards;
+  }
+  .signal-mark {
+    animation: signal-pop 500ms ease-out backwards;
+  }
+  .scroll-cue span {
+    display: inline-block;
+    animation: cue-bob 2.2s ease-in-out infinite;
+  }
+}
+@keyframes drift-a {
+  to {
+    transform: translate3d(16vmax, 12vmax, 0);
+  }
+}
+@keyframes drift-b {
+  to {
+    transform: translate3d(-14vmax, -10vmax, 0);
+  }
+}
+@keyframes ask-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes signal-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+}
+@keyframes signal-pop {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cue-bob {
+  50% {
+    transform: translateY(4px);
+  }
+}
+
+/* On phones the project cards are a row you swipe sideways, so the page still fits one screen. The
+   next card peeks in from the edge to show there is more. The three Lab tiles fit stacked. */
+@media (max-width: 767px) {
+  .project-grid {
+    display: flex;
+    gap: var(--rhythm-2);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: var(--space-2) var(--gutter) var(--space-4);
+    scroll-padding-inline: var(--gutter);
+  }
+  .project-grid::-webkit-scrollbar {
+    display: none;
+  }
+  .project-grid > * {
+    flex: 0 0 84%;
+    scroll-snap-align: start;
+  }
+  /* swiping is the way around on a phone, and the dots would sit on the peeking card */
+  .stage-rail {
+    display: none;
   }
 }
 

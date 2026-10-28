@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import SiteShell from '@/components/SiteShell';
-import { lab } from '@/lib/content';
+import { lab, labStages } from '@/lib/content';
 
 const description =
   'Early-stage experiments, each starting from a question about data I can get hold of.';
@@ -17,8 +17,6 @@ export const metadata: Metadata = {
     type: 'website',
   },
 };
-
-const stages = ['Idea', 'Building', 'Working'];
 
 export default function Lab() {
   return (
@@ -43,7 +41,7 @@ export default function Lab() {
         <div className="exp-head">
           <h2>The experiments</h2>
           <span className="mono" style={{ fontSize: 13, color: '#A9B0BC' }}>
-            Idea → Building → Working
+            Idea → Building → Shipped
           </span>
         </div>
         <div className="exp-grid">
@@ -51,11 +49,11 @@ export default function Lab() {
             <article className="exp" key={e.id}>
               <div className="card-row">
                 <span className="id">{e.id}</span>
-                <span className="stage-badge">{stages[e.stage - 1]}</span>
+                <span className="stage-badge">{labStages[e.stage - 1]}</span>
               </div>
               <h3>{e.name}</h3>
               <p className="q">{e.question}</p>
-              <div className="stagebar" role="img" aria-label={`Stage: ${stages[e.stage - 1]}`}>
+              <div className="stagebar" role="img" aria-label={`Stage: ${labStages[e.stage - 1]}`}>
                 {[1, 2, 3].map((n) => (
                   <span key={n} className={n <= e.stage ? 'on' : ''}></span>
                 ))}

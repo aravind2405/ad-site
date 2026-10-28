@@ -17,6 +17,8 @@
   --shadow-md: 0 1px 2px rgba(16, 24, 40, 0.04), 0 10px 28px -14px rgba(16, 24, 40, 0.16);
   --shadow-lg: 0 2px 4px rgba(16, 24, 40, 0.04), 0 18px 40px -16px rgba(16, 24, 40, 0.22);
   --header-h: 64px;
+  /* one home page: the screen below the sticky nav (its height plus its 1px border) */
+  --page-h: calc(100svh - var(--header-h) - var(--stroke-hairline));
   --sans: var(--font-plex-sans), 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
   --mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, monospace;
 
@@ -58,6 +60,13 @@
   --space-18: 72px;
   --space-20: 80px;
   --space-22: 88px;
+
+  /* page rhythm: the one scale for spacing between and inside the home page bands */
+  --rhythm-1: 8px;
+  --rhythm-2: 16px;
+  --rhythm-3: 24px;
+  --rhythm-4: 48px;
+  --rhythm-5: 96px;
 
   /* radius */
   --radius-xs: 6px;

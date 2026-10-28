@@ -5,7 +5,7 @@ import { formatDate } from '@/lib/format';
 import type { RepoMeta } from '@/lib/github';
 import type { Project } from '@/lib/schemas';
 
-// The card shows the first few technologies; the details page lists them all.
+// A short row: the first few tools. The case study lists the rest.
 const MAX_TAGS = 4;
 
 interface Props {
@@ -14,17 +14,20 @@ interface Props {
 }
 
 export default function ProjectCard({ project, meta }: Props) {
-  const { slug, name, status, question, summary, stack, plannedStack, repo, live, liveLabel } =
-    project;
+  const { slug, name, status, question, stack, repo, live, liveLabel } = project;
   return (
     <ViewTransition name={`project-${slug}`} share="morph" default="none">
       <article className="card project-card">
         <div className="card-row">
-          <span className="name">{name}</span>
           <StatusPill status={status} />
+          {meta && <span className="card-updated">Updated {formatDate(meta.pushedAt)}</span>}
         </div>
-        <h3>{question}</h3>
-        <p>{summary}</p>
+        <h3>
+          <Link className="stretched" href={`/projects/${slug}`}>
+            {name}
+          </Link>
+        </h3>
+        <p className="problem">{question}</p>
         <ul
           className="tags"
           aria-label={`Technology for ${name}`}
@@ -35,32 +38,22 @@ export default function ProjectCard({ project, meta }: Props) {
               {t}
             </li>
           ))}
-          {plannedStack.slice(0, MAX_TAGS).map((t) => (
-            <li className="tag tag-planned" key={t} title="Planned, not built yet">
-              {t} (planned)
-            </li>
-          ))}
         </ul>
-        <div className="spacer" />
-        <div className="card-foot">
+        {(repo || live) && (
           <div className="card-links">
-            <Link className="stretched" href={`/projects/${slug}`}>
-              View details<span className="sr-only"> of {name}</span>
-            </Link>
             {repo && (
               <a href={`https://github.com/${repo}`} target="_blank" rel="noopener noreferrer">
-                Code<span className="sr-only"> for {name} on GitHub (opens in a new tab)</span>
+                Repo<span className="sr-only"> for {name} on GitHub (opens in a new tab)</span>
               </a>
             )}
             {live && (
               <a href={live} target="_blank" rel="noopener noreferrer">
-                {liveLabel ?? 'Live demo'}
+                {liveLabel ?? 'Live'}
                 <span className="sr-only"> for {name} (opens in a new tab)</span>
               </a>
             )}
           </div>
-          {meta && <span className="card-updated">Updated {formatDate(meta.pushedAt)}</span>}
-        </div>
+        )}
       </article>
     </ViewTransition>
   );

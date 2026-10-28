@@ -4,11 +4,14 @@
   "status": "coming-soon",
   "question": "Can an AI answer policy questions, and can I prove it?",
   "summary": "Will be an AI search assistant tested against known answers, so its accuracy is measured, not assumed. Work has not started.",
+  "teaser": "evaluated AI search",
   "stack": [],
-  "plannedStack": ["Retrieval", "Evaluation"],
   "repo": null,
   "live": null,
-  "verified": { "date": "2026-10-24", "against": "the local project folder, which is empty" },
+  "verified": {
+    "date": "2026-10-24",
+    "against": "the local project folder, which is empty"
+  },
   "details": {
     "statusNote": "Coming soon. Work has not started: there is no code or repository yet.",
     "overview": [
