@@ -109,14 +109,24 @@ test.describe('home page rhythm', () => {
         },
         [from, to, f],
       );
-      await page.waitForTimeout(250);
-      return page.evaluate(() => {
-        const root = document.documentElement.style;
-        return {
-          bg: root.getPropertyValue('--stage-bg'),
-          dark: Number(root.getPropertyValue('--dark')),
-        };
-      });
+      const read = () =>
+        page.evaluate(() => {
+          const root = document.documentElement.style;
+          return {
+            bg: root.getPropertyValue('--stage-bg'),
+            dark: Number(root.getPropertyValue('--dark')),
+          };
+        });
+      // the backdrop follows on the next frame, so wait until it has stopped changing
+      let last = await read();
+      for (let i = 0; i < 40; i++) {
+        await page.waitForTimeout(100);
+        const now = await read();
+        const settled = now.bg === last.bg && now.dark === last.dark && now.bg !== '';
+        last = now;
+        if (settled) break;
+      }
+      return last;
     };
     const red = (bg: string) => Number(/rgb\((\d+)/.exec(bg)![1]);
     const cream = await at('projects', 'lab', 0);
@@ -176,7 +186,7 @@ test.describe('reveal on enter', () => {
       await page.locator('#contact').scrollIntoViewIfNeeded();
       await expect(section).toHaveClass(/\bin\b/);
       await expect.poll(() => styleOf(page, '#contact .reveal', 'opacity')).toBe('1');
-      expect(await styleOf(page, '#contact .reveal', 'transform')).toBe('none');
+      await expect.poll(() => styleOf(page, '#contact .reveal', 'transform')).toBe('none');
       // Scrolling away and back does not hide it again: it reveals once.
       await page.evaluate(() => window.scrollTo(0, 0));
       await expect(section).toHaveClass(/\bin\b/);
