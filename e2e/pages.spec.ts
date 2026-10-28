@@ -145,6 +145,11 @@ test.describe('on a phone', () => {
   }) => {
     test.skip(!isMobile, 'phone layout');
     await page.goto('/');
+    await page.evaluate(() =>
+      document.getElementById('projects')!.scrollIntoView({ behavior: 'instant' }),
+    );
+    // the page eases its content in as it arrives, so measure once it is on screen
+    await page.waitForTimeout(150);
     const width = page.viewportSize()!.width;
     const cards = page.locator('#projects .project-card');
     expect(await cards.count()).toBeGreaterThanOrEqual(2);
