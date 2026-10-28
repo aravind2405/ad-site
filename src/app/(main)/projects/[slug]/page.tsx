@@ -7,7 +7,7 @@ import Diagram from '@/components/Diagram';
 import JsonLd from '@/components/JsonLd';
 import Receipt from '@/components/Receipt';
 import StatusPill from '@/components/StatusPill';
-import { getProject, profile, projects } from '@/lib/content';
+import { getProject, neighbours, profile, projects } from '@/lib/content';
 import { formatDate } from '@/lib/format';
 import { getDiagram } from '@/lib/diagrams';
 import { getRepoMeta } from '@/lib/github';
@@ -51,9 +51,7 @@ export default async function ProjectPage({ params }: Props) {
   const isLive = Boolean(project.live && project.status === 'live');
   const comingSoon = project.status === 'coming-soon';
   const heading = d.headings ?? {};
-  const index = projects.findIndex((p) => p.slug === project.slug);
-  const previous = projects[(index - 1 + projects.length) % projects.length];
-  const next = projects[(index + 1) % projects.length];
+  const { previous, next } = neighbours(project.slug);
   const diagram = getDiagram(project.slug);
 
   const structured =
@@ -93,11 +91,6 @@ export default async function ProjectPage({ params }: Props) {
                 {project.stack.map((t) => (
                   <li className="tag" key={t}>
                     {t}
-                  </li>
-                ))}
-                {project.plannedStack.map((t) => (
-                  <li className="tag tag-planned" key={t}>
-                    {t} (planned)
                   </li>
                 ))}
               </ul>

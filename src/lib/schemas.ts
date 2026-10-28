@@ -59,6 +59,7 @@ export const projectSchema = z
     question: z.string().min(1),
     summary: z.string().min(1),
     stack: z.array(z.string().min(1)),
+    teaser: z.string().min(1).optional(),
     plannedStack: z.array(z.string().min(1)),
     /** Architecture decision records in the project's repo, under docs/decisions/. */
     adrs: z
@@ -89,8 +90,8 @@ export const projectSchema = z
     if (p.status === 'coming-soon') {
       if (p.repo) issue('a planned project must not link a repository');
       if (p.live) issue('a planned project must not link a live demo');
-      if (p.stack.length > 0) issue('a planned project must list its stack as plannedStack');
-      if (p.plannedStack.length === 0) issue('a planned project needs a plannedStack');
+      if (p.stack.length > 0) issue('a planned project must not list a built stack');
+      if (!p.teaser) issue('a planned project needs a teaser for the Next up line');
       if (p.details.willCover.length === 0) issue('a planned project needs willCover items');
     } else {
       if (!p.repo) issue('a project that has started needs a repository');

@@ -4,7 +4,14 @@ import { expect, test } from './fixtures';
 // #fragment must match an element on the page it points to.
 test('every internal link and anchor on the site resolves', async ({ page, baseURL }) => {
   const origin = new URL(baseURL!).origin;
-  const queue = ['/'];
+  // Start from the home page and from every sitemap URL, so pages that are not linked from the
+  // home page (the planned projects) are still checked.
+  const sitemap = await (await page.request.get('/sitemap.xml')).text();
+  const listed = [...sitemap.matchAll(/<loc>https:\/\/www\.aravindd\.com([^<]*)<\/loc>/g)].map(
+    (m) => m[1] || '/',
+  );
+  const seeds = ['/', ...listed];
+  const queue = [...seeds];
   const visited = new Map<string, Set<string>>();
   const links: { from: string; href: string }[] = [];
 
@@ -29,6 +36,7 @@ test('every internal link and anchor on the site resolves', async ({ page, baseU
   }
 
   expect(visited.size).toBeGreaterThanOrEqual(6);
+  for (const path of seeds) expect(visited.has(path), `${path} was crawled`).toBe(true);
   for (const { from, href } of links) {
     const url = new URL(href, `${origin}${from}`);
     const ids = visited.get(url.pathname);
