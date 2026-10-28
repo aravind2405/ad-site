@@ -682,3 +682,18 @@ Numbers visible on the rendered pages, found by `scratchpad/numbers.mjs` (dates 
 Stack tags were checked against each repo on 2026-10-28:
 - RentLens (`rentlens-nsw`, commit `f78a180`): `requirements.txt` has `dbt-core`, `dbt-duckdb`, `duckdb`, `pyarrow` (Parquet) and `openpyxl`; `docs/index.html` loads Chart.js; `.github/workflows/dbt.yml` runs in GitHub Actions; README states GitHub Pages. All seven tags confirmed.
 - OnTimeSydney (`ontimesydney`, commit `d43ed94`): `requirements.txt` lists no runtime dependencies ("added per phase with the code that uses them"), `dbt/` holds only empty `models`, `snapshots` and `tests` folders, and `src/ontimesydney/{collector,common,loaders}` are empty packages. Confirmed in use: Python 3.13, pytest, ruff (`requirements-dev.txt`, `pyproject.toml`) and GitHub Actions (`ci.yml`). GTFS-Realtime, Parquet, PostgreSQL and dbt are the planned design, so they are no longer shown as tags.
+
+## Backdrop depth and eased page changes, 2026-10-28, 22:26 AEDT
+
+Measured on a local production build (`npm run build`, then `npm run start -- -p 3101`), Chrome with a Pixel 7 profile at 390 x 844, CPU slowed 4x through the DevTools protocol (`Emulation.setCPUThrottlingRate`, rate 4). The home page is scrolled down three pages and back up with the mouse wheel. Script: `scrolltrace.mjs` (kept in the working scratch folder, not in the repo), run as `node scrolltrace.mjs http://127.0.0.1:3101 3`. A slow frame is one longer than 33.4 ms.
+
+| Build | Runs | Slow frames per run | Worst frame |
+|---|---|---|---|
+| `staging` before this change | 3 | 0, 0, 0 | 17 to 33 ms |
+| This branch, repeated runs | 12 (four sets of 3) | 0 in every run | 17 ms in every run |
+| This branch, first set measured right after a build | 3 | 3, 8, 1 | 83, 83, 50 ms |
+
+The first set on this branch showed slow frames and the 12 later runs did not. I do not know why; the machine was running other work at the time of the first set. Taking that set out would be wrong, so it is listed. With only the content easing, or only the backdrop sliding, switched off by an injected style, every run had 0 slow frames, so neither part alone explains it. Long tasks were 1 to 2 per run in every build (about 55 to 120 ms in total).
+
+Not measured: a real phone. Lighthouse for this branch is run by CI.
+
