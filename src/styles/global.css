@@ -1250,6 +1250,11 @@ html:not(.js) .diagram,
   background: #14161b;
   border-color: #2a2e36;
 }
+/* the blurred layer takes its colour from the page background token, which is light, so it needs
+   the Lab's own dark here */
+.lab-page .site-header::before {
+  background: color-mix(in srgb, #14161b 90%, transparent);
+}
 .lab-page .skip-link {
   background: #d3d7de;
   color: #14161b;
