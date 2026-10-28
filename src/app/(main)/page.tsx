@@ -17,7 +17,7 @@ export default async function Home() {
   const { links } = profile;
 
   return (
-    <>
+    <div className="home">
       <JsonLd
         data={{
           '@context': 'https://schema.org',
@@ -107,6 +107,6 @@ export default async function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -597,3 +597,24 @@ Measured 2026-10-28 at about 06:10 AEDT on a local production build (ports 3133 
 Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, `npm run check:privacy`, the scratch `run-axe.mjs`, `check-contrast.mjs` and overflow scripts with `TAG=contact`, and `curl -X POST localhost:3134/api/contact` against `next start` with `RESEND_API_KEY` and `CONTACT_TO_EMAIL` unset.
 
 Not measured: real email delivery (needs your Resend key and address in Vercel), and the rate limit across several serverless instances.
+
+## Section rhythm and scroll transitions, 2026-10-28
+
+Measured 2026-10-28 at about 07:30 AEDT on a local production build (port 3144) of branch `feat/section-rhythm`, stacked on `feat/contact-form`. Local, not live.
+
+| Check | Result |
+|---|---|
+| Scroll position and scroll events after the home page loads (Chromium, 412x823, 390x844 and 1440x900) | `scrollY` 0 and no scroll events in all three; with the first version of the snap rule it was 1 on all three, and 222 on phones when the hero was left out of the snap points |
+| Top of the first project card, 1440x900 and 390x844, Chromium and WebKit | 534 px (viewport 900) and 446 px (viewport 844); hero ends at 387 px and 278 px |
+| Lab and Contact band height | at least the viewport minus the nav (Playwright, four browser projects); content centred within 12% of band height |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1; 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s and 2.45 s |
+| Lighthouse CI, same pages, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 259 passed, 0 failed; the rhythm file repeated six times: 228 of 228 |
+| Vitest | 78 passed (includes the no-scroll-takeover scan, proximity-only snapping, no plain `vh`, the 8/16/24/48/96 scale) |
+
+A defect found and fixed in this PR: with scroll snapping on, Lighthouse found no Largest Contentful Paint for the home page on mobile (audit error `NO_LCP`, performance score missing). The cause was a 1 px scroll at load: the sticky nav is 57 px tall (56 px plus its 1 px border) but the snap clearance was 56 px, so the hero's snap point sat at 1 px and the browser moved the page. The clearance is now the nav height plus its border, so the hero's snap point is exactly 0. Leaving the hero out of the snap points was worse: phones loaded already scrolled 222 px, onto the projects band.
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, the scratch `run-axe.mjs` and `check-contrast.mjs` with `TAG=rhythm2`, and a Playwright script that records `scroll` events and `scrollY` after load (`scratchpad/snapload.mjs`, not committed).
