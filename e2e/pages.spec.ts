@@ -46,6 +46,7 @@ test.describe('home pages, with motion allowed', () => {
   test('one swipe moves one page on a phone', async ({ page, isMobile, browserName }) => {
     test.skip(!isMobile || browserName !== 'chromium', 'a touch swipe, driven through Chrome');
     await page.goto('/');
+    await page.waitForFunction(() => document.documentElement.classList.contains('stage-on'));
     const cdp = await page.context().newCDPSession(page);
     const swipe = (dy: number) =>
       cdp.send('Input.synthesizeScrollGesture', {

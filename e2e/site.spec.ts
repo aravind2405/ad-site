@@ -102,6 +102,9 @@ test.describe('navigation', () => {
 
   test('highlights the section on screen while scrolling the home page', async ({ page }) => {
     await page.goto('/');
+    await page.waitForFunction(() => document.documentElement.classList.contains('stage-on'));
+    // measure the highlight without the snapping pulling the page to a page edge
+    await page.addStyleTag({ content: 'html { scroll-snap-type: none !important; }' });
     const current = page.locator('.nav-links a[aria-current="location"]');
     for (const [id, label] of [
       ['projects', 'Projects'],

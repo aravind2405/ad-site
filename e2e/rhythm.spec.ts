@@ -93,6 +93,7 @@ test.describe('home page rhythm', () => {
 
   test('the page behind blends from cream to charcoal instead of switching', async ({ page }) => {
     await page.goto('/');
+    await page.waitForFunction(() => document.documentElement.classList.contains('stage-on'));
     // measure the blend without the snapping pulling the page to a page edge
     await page.addStyleTag({ content: 'html { scroll-snap-type: none !important; }' });
     const at = async (from: string, to: string, f: number) => {
