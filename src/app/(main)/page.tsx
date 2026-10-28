@@ -6,6 +6,7 @@ import HeroSignal from '@/components/HeroSignal';
 import HomeStage from '@/components/HomeStage';
 import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
+import ProjectCarousel from '@/components/ProjectCarousel';
 import { gridProjects, lab, labStages, nextUpLine, profile } from '@/lib/content';
 import { getRepoMeta } from '@/lib/github';
 import { SITE_URL } from '@/lib/site';
@@ -52,11 +53,11 @@ export default async function Home() {
             </h2>
             <p className="lede">Real systems, measured: transport, housing, energy and AI.</p>
           </div>
-          <div className="project-grid">
+          <ProjectCarousel count={gridProjects.length}>
             {gridProjects.map((p, i) => (
               <ProjectCard key={p.slug} project={p} meta={metas[i]} />
             ))}
-          </div>
+          </ProjectCarousel>
           <p className="next-up">{nextUpLine()}</p>
           <a className="lab-peek" href="#lab">
             <span className="lab-peek-label">Curiosity Lab</span>

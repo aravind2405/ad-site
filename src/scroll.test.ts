@@ -24,7 +24,11 @@ describe('native scrolling only', () => {
     ];
     for (const file of sourceFiles(join(process.cwd(), 'src'))) {
       const text = readFileSync(file, 'utf8');
+      // The project slides' own Previous and Next buttons move that one sideways row when clicked.
+      // Nothing moves the page or runs on its own.
+      const rowButtons = file.endsWith('ProjectCarousel.tsx');
       for (const pattern of forbidden) {
+        if (rowButtons && pattern.source.includes('scrollIntoView')) continue;
         expect(pattern.test(text), `${file} matches ${pattern}`).toBe(false);
       }
       // Cancelling an event is only for the contact form's own submit handler.
@@ -42,9 +46,10 @@ describe('native scrolling only', () => {
     expect(css).toMatch(
       /\.home > section \{\s*scroll-snap-align: start;\s*scroll-snap-stop: always;/,
     );
-    // The only other snapping is the sideways row of project cards on phones.
+    // The only other snapping is the sideways row of project slides: one rule for phones, one for
+    // wider screens.
     const snaps = [...css.matchAll(/scroll-snap-type:\s*([^;]+);/g)].map((m) => m[1].trim());
-    expect(snaps).toEqual(['y mandatory', 'x mandatory']);
+    expect(snaps).toEqual(['y mandatory', 'x mandatory', 'x mandatory']);
     expect(css).not.toMatch(/proximity/);
   });
 

@@ -288,29 +288,61 @@ test.describe('landing page', () => {
     ).toBeGreaterThanOrEqual(viewportHeight);
   });
 
-  test('cards sit in two columns on desktop and a swipeable row on phones, all equal', async ({
-    page,
-    isMobile,
-  }) => {
+  test('the project slides sit in one row, all equal', async ({ page }) => {
     await page.goto('/');
+    await page.evaluate(() =>
+      document.getElementById('projects')!.scrollIntoView({ behavior: 'instant' }),
+    );
+    // the page eases its content in as it arrives, so wait until it is on screen
+    await page.waitForTimeout(150);
     const [a, b] = await page.locator('article.project-card').all();
-    const boxA = (await a.boundingBox())!;
-    const boxB = (await b.boundingBox())!;
-    expect(Math.abs(boxA.width - boxB.width)).toBeLessThan(1);
-    if (isMobile) {
-      // a row to swipe sideways: same height, side by side
-      expect(Math.abs(boxA.y - boxB.y)).toBeLessThan(1);
-      expect(boxB.x).toBeGreaterThan(boxA.x + boxA.width - 1);
-    } else {
-      expect(Math.abs(boxA.y - boxB.y)).toBeLessThan(1);
-      expect(Math.abs(boxA.height - boxB.height)).toBeLessThan(1);
-    }
+    // layout size, so the slight turn a neighbouring slide shows does not count
+    const size = (el: typeof a) =>
+      el.evaluate((n) => {
+        const e = n as HTMLElement;
+        return { w: e.offsetWidth, h: e.offsetHeight, top: e.offsetTop, left: e.offsetLeft };
+      });
+    const boxA = await size(a);
+    const boxB = await size(b);
+    expect(Math.abs(boxA.w - boxB.w)).toBeLessThan(1);
+    expect(Math.abs(boxA.h - boxB.h)).toBeLessThan(1);
+    expect(Math.abs(boxA.top - boxB.top)).toBeLessThan(1);
+    expect(boxB.left).toBeGreaterThan(boxA.left + boxA.w - 1);
     // No flagship: every card has the same parts.
     for (const card of [a, b]) {
       await expect(card.locator('h3 a')).toHaveCount(1);
       await expect(card.locator('.problem')).toHaveCount(1);
       await expect(card.locator('.tag').first()).toBeVisible();
     }
+  });
+
+  test('each slide shows how the project works, and says when the pipeline is only planned', async ({
+    page,
+    isMobile,
+  }) => {
+    test.skip(isMobile, 'the pipeline line is for screens wide enough to show it');
+    await page.goto('/');
+    const rentlens = page.locator('article.project-card', { hasText: 'RentLens' });
+    await expect(rentlens.locator('.pipe-label')).toHaveText('How it works');
+    await expect(rentlens.locator('.pipe li')).toHaveCount(7);
+    await expect(rentlens.locator('.pipe li').first()).toHaveText('NSW Fair Trading spreadsheets');
+    const bus = page.locator('article.project-card', { hasText: 'OnTimeSydney' });
+    await expect(bus.locator('.pipe-label')).toHaveText('Planned pipeline');
+  });
+
+  test('the buttons move between project slides on desktop', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'a phone swipes instead');
+    await page.goto('/');
+    const count = page.locator('.carousel-count');
+    const next = page.getByRole('button', { name: 'Next project' });
+    const previous = page.getByRole('button', { name: 'Previous project' });
+    await expect(count).toHaveText('Project 1 of 2');
+    await expect(previous).toBeDisabled();
+    await next.click();
+    await expect(count).toHaveText('Project 2 of 2');
+    await expect(next).toBeDisabled();
+    await previous.click();
+    await expect(count).toHaveText('Project 1 of 2');
   });
 
   test('card repo and live links open in a new tab safely', async ({ page }) => {
