@@ -101,6 +101,20 @@ deployments. To deploy by hand, run this from this folder only:
 vercel deploy --prod --scope aravind-db77
 ```
 
+## Releasing in batches
+
+Changes are collected on a `staging` branch and go live together.
+
+1. Each change gets an issue and its own branch, and its pull request targets `staging`. CI runs on it
+   and Vercel makes a preview.
+2. Merged changes are checked together on the stable `staging` preview:
+   `https://aravind-ad-git-staging-aravind-db77.vercel.app`.
+3. When the batch is approved, one pull request from `staging` to `main` runs the full CI again.
+   Merging it is the only production deploy.
+4. An urgent fix branches from `main`, goes straight to `main`, and is then merged into `staging`.
+
+Keep batches small (a day or two of work) so the final merge stays easy to review and to undo.
+
 ## Licence
 
 Code under the [MIT licence](LICENSE). Project write-ups and other content are © Aravind Danassegarane.
