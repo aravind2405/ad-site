@@ -51,9 +51,7 @@ export default async function ProjectPage({ params }: Props) {
   const isLive = Boolean(project.live && project.status === 'live');
   const comingSoon = project.status === 'coming-soon';
   const heading = d.headings ?? {};
-  const index = projects.findIndex((p) => p.slug === project.slug);
-  const previous = projects[(index - 1 + projects.length) % projects.length];
-  const next = projects[(index + 1) % projects.length];
+  const { previous, next } = neighbours(project.slug);
   const diagram = getDiagram(project.slug);
 
   const structured =

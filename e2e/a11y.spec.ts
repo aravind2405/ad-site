@@ -55,6 +55,22 @@ for (const [name, size] of Object.entries(viewports)) {
       });
     }
 
+    test('/ has no violations with the contact form showing its errors', async ({ page }) => {
+      await page.goto('/');
+      await page.evaluate(() => document.getElementById('contact')!.scrollIntoView());
+      await page.getByRole('button', { name: 'Send message' }).click();
+      await expect(page.locator('#contact-name-error')).toBeVisible();
+      await page.waitForTimeout(250);
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+        .include('#contact')
+        .exclude('iframe')
+        .analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`),
+      ).toEqual([]);
+    });
+
     test('/projects/rentlens has no violations once its architecture diagram is drawn', async ({
       page,
     }) => {

@@ -533,6 +533,113 @@ npm run check:privacy && npm run check:receipts && npm run check:hygiene
 
 WebKit note: the production CSP has `upgrade-insecure-requests`, which WebKit applies even to plain `http://127.0.0.1`, so pages never hydrate in a local WebKit run. The test fixture removes only that directive from responses in WebKit runs; production headers are unchanged and covered by `src/config.test.ts`. Playwright's request interception also stalls on redirects in WebKit, so the two redirect tests check the 308 and `Location` in every browser and drive the page-level redirect in Chromium only.
 
+## Home page noise removed, 2026-10-28
+
+Measured 2026-10-28 at about 02:10 AEDT on a local production build (port 3119) of branch `chore/home-noise`, stacked on `test/ci-gates`. Local, not live. Scripts run from the scratch copy used above, `BASE=http://127.0.0.1:3119`, `TAG=noise`, six pages.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1 |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Vitest | 57 passed |
+| Playwright, 4 projects (Chromium and WebKit, desktop and phone) | 159 passed, 0 failed |
+| Unused CSS classes after the change | 0 (the unused `.h2-sm` rule was removed; `btn-ghost` and `pill-*` are built dynamically) |
+
+Lighthouse was not re-run: the change only removes elements from the home page and card. The PR 37 CI gate runs it.
+
+## Hero and projects band, 2026-10-28
+
+Measured 2026-10-28 at about 02:50 AEDT on a local production build (ports 3122) of branch `feat/home-hero-projects`, stacked on `chore/home-noise`. Local, not live. Scripts run from the scratch copy used above with `TAG=bands`.
+
+| Check | Result |
+|---|---|
+| Top edge of the first project card, 1440x900, Chromium and WebKit | 522 px from the top of the page (viewport 900 px); hero ends at 379 px |
+| Top edge of the first project card, 390x844, Chromium and WebKit | 450 px (viewport 844 px); hero ends at 286 px |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home) |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Playwright, 4 projects | 171 passed, 0 failed |
+| Vitest | 57 passed |
+
+Measured with a Playwright script that reads `getBoundingClientRect().top` of `.project-card` after load (`scratchpad/fold.mjs`, not committed). Lighthouse is run by the CI gate on this PR.
+
+## Lab band, contact band and sticky nav, 2026-10-28
+
+Measured 2026-10-28 at about 03:30 AEDT on a local production build (port 3124) of branch `feat/home-lab-contact-nav`, stacked on `feat/home-hero-projects`. Local, not live. Scripts run from the scratch copy used above with `TAG=labnav`.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs (the home page is measured with reduced motion so no section is caught mid-fade) |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home); 0 elements below threshold, including the dark Lab band |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Playwright, 4 projects | 187 passed, 0 failed |
+| Vitest | 57 passed |
+
+Lighthouse is run by the CI gate on this PR.
+
+## Contact form, 2026-10-28
+
+Measured 2026-10-28 at about 06:10 AEDT on a local production build (ports 3133 and 3134) of branch `feat/contact-form`, stacked on `feat/home-lab-contact-nav`. Local, not live. No email was sent: tests mock the email service, and the real route was only called with no email configured.
+
+| Check | Result |
+|---|---|
+| Vitest | 72 passed (12 route tests: valid, missing fields, invalid email and short message, over-long and oversized body, honeypot, bad content type or origin, rate limit, email service failure, unreachable service, not configured, no secrets in the response; 3 limiter tests) |
+| Playwright, 4 projects (Chromium and WebKit, 1440x900 and 390x844) | 221 passed, 0 failed (8 contact form tests per project, plus a form error-state axe test) |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home); 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.45 s, 245 KiB transferred |
+| Lighthouse CI, home, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s, 250 KiB transferred |
+| Privacy check on the build | 149 built files scanned, no email-shaped text |
+| Real route, no email configured (`curl`) | valid message 503 (safe error), invalid fields 400 with a message per field, honeypot filled 200 with nothing sent, GET 405, wrong content type 415, other origin 403 |
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, `npm run check:privacy`, the scratch `run-axe.mjs`, `check-contrast.mjs` and overflow scripts with `TAG=contact`, and `curl -X POST localhost:3134/api/contact` against `next start` with `RESEND_API_KEY` and `CONTACT_TO_EMAIL` unset.
+
+Not measured: real email delivery (needs your Resend key and address in Vercel), and the rate limit across several serverless instances.
+
+## Section rhythm and scroll transitions, 2026-10-28
+
+Measured 2026-10-28 at about 07:30 AEDT on a local production build (port 3144) of branch `feat/section-rhythm`, stacked on `feat/contact-form`. Local, not live.
+
+| Check | Result |
+|---|---|
+| Scroll position and scroll events after the home page loads (Chromium, 412x823, 390x844 and 1440x900) | `scrollY` 0 and no scroll events in all three; with the first version of the snap rule it was 1 on all three, and 222 on phones when the hero was left out of the snap points |
+| Top of the first project card, 1440x900 and 390x844, Chromium and WebKit | 534 px (viewport 900) and 446 px (viewport 844); hero ends at 387 px and 278 px |
+| Lab and Contact band height | at least the viewport minus the nav (Playwright, four browser projects); content centred within 12% of band height |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1; 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s and 2.45 s |
+| Lighthouse CI, same pages, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 259 passed, 0 failed; the rhythm file repeated six times: 228 of 228 |
+| Vitest | 78 passed (includes the no-scroll-takeover scan, proximity-only snapping, no plain `vh`, the 8/16/24/48/96 scale) |
+
+A defect found and fixed in this PR: with scroll snapping on, Lighthouse found no Largest Contentful Paint for the home page on mobile (audit error `NO_LCP`, performance score missing). The cause was a 1 px scroll at load: the sticky nav is 57 px tall (56 px plus its 1 px border) but the snap clearance was 56 px, so the hero's snap point sat at 1 px and the browser moved the page. The clearance is now the nav height plus its border, so the hero's snap point is exactly 0. Leaving the hero out of the snap points was worse: phones loaded already scrolled 222 px, onto the projects band.
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, the scratch `run-axe.mjs` and `check-contrast.mjs` with `TAG=rhythm2`, and a Playwright script that records `scroll` events and `scrollY` after load (`scratchpad/snapload.mjs`, not committed).
+
+## Immersive home pages, 2026-10-28
+
+Measured 2026-10-28 on a local production build of branch `feat/immersive-pages` (stacked on `feat/section-rhythm`), Chrome and WebKit on a MacBook. Local, not live.
+
+| Check | Result |
+|---|---|
+| Height of each home page, 390x844 (px) | hero 787, projects 787, lab 787, contact 835 (screen below the nav is 787) |
+| Height of each home page, 1440x900 (px) | 835 for all four (screen below the nav is 835) |
+| Pages taller than the screen | 320x568: 513, 771, 739, 863; 375x667: 610, 745, 688, 835 (these scroll inside themselves) |
+| Horizontal overflow, home page at 320, 375, 390, 768, 1024, 1280, 1440 px | none |
+| Page position after a 300 px swipe up on a 375x667 phone, from the foot of the Projects page | stays at the foot of Projects (a short swipe does not advance on a phone shorter than the page) |
+| Playwright, 4 projects | 279 passed, 16 skipped (wheel and swipe tests run only where the browser supports snapping), 0 failed |
+| Vitest | 78 passed |
+| axe-core on the home page, each of its four pages scrolled into view, 375 px and 1440 px | 0 violations |
+| Lighthouse CI, home and `/projects/rentlens`, mobile | perf 97 to 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP about 2.4 s, TBT 28 to 37 ms |
+| Lighthouse CI, same pages, desktop | perf 100, CLS 0 |
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse` (Lighthouse medians read from `.lighthouseci/*/*.report.json`), `npm test`, and scratch Playwright scripts that read `getBoundingClientRect()` heights at each size and dispatch touch swipes through Chrome's `Input.synthesizeScrollGesture`.
+
+Not measured: real iPhone Safari or Android Chrome swipes, a real mouse wheel and trackpad, and VoiceOver. A very hard synthetic swipe (700 px at 8000 px/s) skipped a page in Chrome, so "one page per swipe" is verified for ordinary swipes only.
+
 ## RentLens architecture diagram, 2026-10-28
 
 Measured 2026-10-28 at about 04:40 AEDT on a local production build of branch `feat/rentlens-diagram` (Mermaid 12.2.0), based on `test/ci-gates`. Local, not live.

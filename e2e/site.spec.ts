@@ -1,4 +1,5 @@
 import { allowPlainHttpInWebKit, expect, test } from './fixtures';
+import { followNavLink } from './helpers';
 
 const routes = [
   { path: '/', h1: "Hi, I'm Aravind." },
