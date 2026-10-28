@@ -693,7 +693,7 @@ Measured on a local production build (`npm run build`, then `npm run start -- -p
 | This branch, repeated runs | 12 (four sets of 3) | 0 in every run | 17 ms in every run |
 | This branch, first set measured right after a build | 3 | 3, 8, 1 | 83, 83, 50 ms |
 
-The first set on this branch showed slow frames and the 12 later runs did not. I do not know why; the machine was running other work at the time of the first set. Taking that set out would be wrong, so it is listed. With only the content easing, or only the backdrop sliding, switched off by an injected style, every run had 0 slow frames, so neither part alone explains it. Long tasks were 1 to 2 per run in every build (about 55 to 120 ms in total).
+The first set on this branch showed slow frames and the 12 later runs did not. I do not know why. Leaving that set out would be wrong, so it is listed. With only the content easing, or only the backdrop sliding, switched off by an injected style, every run had 0 slow frames, so neither part alone explains it. Long tasks were 1 to 2 per run in every build (about 55 to 120 ms in total).
 
 Not measured: a real phone. Lighthouse for this branch is run by CI.
 
