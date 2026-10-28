@@ -374,11 +374,50 @@ A burst of requests from this machine within about two minutes (28 page loads of
 | HSTS short form on the custom domain | Open |
 | CSP allows inline scripts and styles | Open (needed by Next.js hydration) |
 
+## Redesign branch, local production build (2026-10-27)
+
+What this is: the stacked redesign PRs (#14 to #19, measured at the top of the stack) built with `npm run build` and served with `npx next start -p 3700`, measured on the same machine as the 2026-10-24 baseline but against `localhost`, not the live site. Local numbers have no CDN or HTTP/2 and are not comparable with the live tables above. For a fair comparison, `main` at commit `0484e7b` was built and measured the same way (home page only).
+
+Commands (setup as in "Reproduce"; scripts in `scripts/measure/`):
+
+```bash
+npm run build && npx next start -p 3700 &
+BASE=http://127.0.0.1:3700 PAGES="/ /projects/rentlens /lab /shelf" TAG=redesign- bash run-lighthouse.sh   # 3 runs per page and form
+python3 summarize-lighthouse.py                                                                          # run on a folder holding only these files
+BASE=http://127.0.0.1:3700 PAGES="/ /projects/rentlens /lab /shelf" TAG=redesign node run-axe.mjs
+BASE=http://127.0.0.1:3700 PAGES="/ /lab /shelf /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth" TAG=redesign-final node check-contrast.mjs
+```
+
+Lighthouse (median of 3; one first mobile run of the home page returned `NO_NAVSTART`, a Lighthouse error, and was re-run). Lighthouse ran on commit `a1a21e3`, before a one-line colour fix to the Lab band eyebrow (below).
+
+| Page | Form | Perf | A11y | Best practices | SEO | FCP | LCP | TBT | CLS | Transfer | Requests |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| `/` | mobile | 98 | 100 | 100 | 100 | 0.75 s | 2.46 s | 7 ms | 0 | 249 KiB | 22 |
+| `/projects/rentlens` | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.47 s | 4 ms | 0 | 309 KiB | 22 |
+| `/lab` | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.46 s | 8 ms | 0 | 239 KiB | 20 |
+| `/shelf` | mobile | 98 | 100 | 100 | 100 | 0.76 s | 2.46 s | 4 ms | 0 | 239 KiB | 20 |
+| `/` | desktop | 100 | 100 | 100 | 100 | 0.21 s | 0.50 s | 0 ms | 0 | 256 KiB | 24 |
+| `/projects/rentlens` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 309 KiB | 22 |
+| `/lab` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.50 s | 0 ms | 0 | 239 KiB | 20 |
+| `/shelf` | desktop | 100 | 100 | 100 | 100 | 0.20 s | 0.54 s | 0 ms | 0 | 239 KiB | 20 |
+
+Same method on `main` (`0484e7b`), home page only: mobile 98 / 100 / 100 / 100, LCP 2.31 s, 224 KiB, 19 requests; desktop 100 / 100 / 100 / 100, LCP 0.50 s, 224 KiB, 19 requests. So the redesign costs about 0.15 s of mobile LCP, 25 KiB and 3 requests on the home page, with the same mobile score. Every page, before and after, transfers more than 200 KiB, which is over the 200 KB target for the redesign brief; the largest contributor has not been investigated.
+
+axe-core 4.14.0 (final build, commit `ae4a099`): 0 violations on every page at 375 px and 1440 px. Passes 38 (`/`), 47 (`/projects/rentlens`), 40 (`/lab`), 38 (`/shelf`). Incomplete (axe could not decide): 1 on `/`, `/projects/rentlens` and `/lab`; 0 on `/shelf`.
+
+Contrast (pixel sampling, final build): no text pair below its threshold on any of 7 pages at 375 px and 1440 px. Lowest ratio 6.31:1 (`/projects/rentlens`, desktop); `/lab` lowest 7.65:1.
+
+Found while measuring:
+- The new "Experiments" eyebrow on the dark Lab band inherited the dark grey eyebrow colour and measured 2.26:1. axe reported it only as "incomplete". Fixed (commit `ce11798`, now `#d3d7de`, the same as the band text).
+- `check-contrast.mjs` now scrolls through the page first, because sections below the first screen start transparent and fade in once scrolled to; without that it flagged them at about 1:1. It scrolls with `behavior: 'instant'` because the site uses smooth scrolling.
+
+Raw results are in `measurements/2026-10-27/`.
+
 ## Not measured
 
 - Real-user (field) data such as Core Web Vitals from visitors. Lighthouse is lab data from one machine and location, so these scores are not a guarantee for visitors on slow devices or networks.
 - Keyboard-only navigation and screen-reader testing. Automated tools find only some accessibility problems.
-- Focus order and reduced-motion behaviour. The skip link and keyboard operation of the shelf filters are covered by end-to-end tests, which record pass or fail rather than a measurement.
+- Focus order. The skip link, keyboard operation of the shelf filters and the reduced-motion behaviour of the spring easings are covered by end-to-end tests, which record pass or fail rather than a measurement.
 - Anything about the other projects in this workspace.
 
 ## Reproduce
@@ -391,3 +430,255 @@ bash run-lighthouse.sh && node run-axe.mjs && bash check-headers.sh > out/header
 ```
 
 Set `CHROME_PATH` for `run-lighthouse.sh` and edit the `executablePath` in `run-axe.mjs` if Chrome is not at the macOS default location. Results will differ slightly from the table: Lighthouse varies between runs and the site may have changed.
+
+## Hover shadows, cream bands and plain closing section, 2026-10-28
+
+Measured 2026-10-28 from 00:18 to 00:29 AEDT against a local production build (`npm run build`, then `next start` on port 3114) of branch `style/hover-shadow`, which sits on `main` at `da47260` (PR 23). Local, not the live site, so comparable only with other local runs. Same machine, Chrome and tool versions as above. The scripts were run from a scratch copy that has `puppeteer-core` and `pngjs` installed.
+
+```bash
+export P="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth /shelf /lab"
+BASE=http://127.0.0.1:3114 PAGES="$P" TAG=hover node run-axe.mjs                  # 00:21
+BASE=http://127.0.0.1:3114 PAGES="$P" TAG=hover node check-contrast.mjs           # 00:22
+BASE=http://127.0.0.1:3114 PAGES="/ /projects/rentlens /projects/ontimesydney /shelf /lab" TAG=hover- bash run-lighthouse.sh   # 00:23 to 00:28
+npx playwright test                                                               # desktop Chrome
+npx playwright test -c <config using devices['Pixel 7']>                          # phone, temporary config, not committed
+```
+
+| Check | Result |
+|---|---|
+| axe-core 4.14.0, 7 pages at 375 px and 1440 px (14 runs) | 0 violations in every run |
+| Lowest text contrast, all 7 pages, both sizes | 6.73:1 (`/lab` 7.65:1); 0 elements below threshold |
+| Lighthouse desktop, 5 pages, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, LCP 0.50 to 0.51 s, TBT 0 ms, CLS 0 |
+| Lighthouse mobile, 5 pages, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, LCP 2.31 s (home) and 2.46 s (others), TBT 4 to 7 ms, CLS 0 |
+| Transfer per page (local) | home 249 KiB, RentLens 309 KiB, others 239 to 241 KiB (still over the 200 KB target) |
+| Horizontal overflow, 8 routes at 320, 375, 768 and 1280 px | none, after stacking the previous and next links below 480 px |
+| Playwright, desktop Chrome | 52 of 52 passed |
+| Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is "the top bar stays in view while scrolling", which does not apply on phones because the header hides on scroll down by design |
+
+One Lighthouse run (home, mobile, run 1) hit `NO_NAVSTART` and was re-run on the same build at 00:28. A first contrast run flagged `/lab` at 1.31:1 on the footer line "The main work is on the home page." That was the pale link underline (`--line`) being sampled as background on the dark page, and the same reading appears on the live site, so it predates this change. The underline colour is now derived from the text colour (`color-mix(in srgb, currentColor 35%, transparent)`), after which `/lab` reads 7.65:1.
+
+## Calmer hover states, 2026-10-28
+
+Measured 2026-10-28 at about 00:45 AEDT against a local production build (port 3115) of branch `style/calmer-hover`, on `main` at `ff9bf8a` (PR 24). Local, not live. Scripts run from the scratch copy used above.
+
+```bash
+export P="/ /projects/rentlens /projects/ontimesydney /projects/gridwatch /projects/groundtruth /shelf /lab"
+BASE=http://127.0.0.1:3115 PAGES="$P" TAG=calm node run-axe.mjs
+BASE=http://127.0.0.1:3115 PAGES="$P" TAG=calm node check-contrast.mjs
+npx playwright test                                              # desktop Chrome
+npx playwright test -c <config using devices['Pixel 7']>         # phone, temporary config, not committed
+```
+
+| Check | Result |
+|---|---|
+| axe-core, 7 pages at 375 px and 1440 px | 0 violations in all 14 runs |
+| Lowest text contrast, all 7 pages, both sizes | 6.73:1 (`/lab` 7.65:1); 0 below threshold |
+| Horizontal overflow, 8 routes at 320, 375, 768, 1280 px | none |
+| Playwright, desktop Chrome | 52 of 52 passed |
+| Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
+
+Lighthouse was not re-run: this change only edits colour and shadow rules in `global.css`, and the previous run on the same code path is recorded above.
+
+## Hover limited to project cards and arrows, 2026-10-28
+
+Measured 2026-10-28 at about 01:00 AEDT against a local production build (port 3116) of branch `style/hover-cards-only`, on `main` at `f5ff9e7` (PR 25). Local, not live. Same scripts and commands as the previous section, with `BASE=http://127.0.0.1:3116` and `TAG=cardsonly`.
+
+| Check | Result |
+|---|---|
+| axe-core, 7 pages at 375 px and 1440 px | 0 violations in all 14 runs |
+| Lowest text contrast, all 7 pages, both sizes | 6.73:1 |
+| Playwright, desktop Chrome | 52 of 52 passed |
+| Playwright, Pixel 7 emulation | 51 of 52 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
+
+Lighthouse and the overflow check were not re-run: the change only deletes hover rules from `global.css` and one unused token.
+
+## Shelf removed, 2026-10-28
+
+Measured 2026-10-28 at about 01:35 AEDT against a local production build (port 3117) of branch `chore/remove-shelf`, on `main` at `2f5d71d`. Local, not live. Scripts run from the scratch copy used above with `BASE=http://127.0.0.1:3117`, `TAG=noshelf` and the six remaining pages.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1; 0 below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Internal links and anchors, crawled from 6 pages | 0 broken, 0 empty; 6 unique internal targets |
+| `/shelf` | 308 permanent redirect to `/` |
+| Sitemap | 6 URLs (was 7) |
+| Vitest | 45 passed (was 47; two Shelf tests removed) |
+| Playwright, desktop Chrome | 47 of 47 passed (was 52; Shelf tests removed, one redirect test added) |
+| Playwright, Pixel 7 emulation | 46 of 47 passed; the failure is the desktop-only "top bar stays in view while scrolling" test (phones hide the header on scroll down by design) |
+
+Lighthouse was not re-run: the change removes a page and its CSS and adds no code to the remaining pages. The dated measurements under `measurements/` and the earlier sections above still mention the Shelf as it was then and are left unchanged.
+
+## Test tooling and CI gates, 2026-10-28
+
+Measured 2026-10-28 at about 01:20 to 01:30 AEDT on a local production build of branch `test/ci-gates`. Local, not live; Lighthouse CI uses its own server on ports 3200 and 3201.
+
+```bash
+npm run build
+npx playwright test                       # four projects: chromium and webkit, desktop 1440x900 and phone 390x844
+npm run lighthouse                        # lhci autorun, mobile then desktop, 3 runs each, thresholds in lighthouserc.*.json
+npm run check:privacy && npm run check:receipts && npm run check:hygiene
+```
+
+| Check | Result |
+|---|---|
+| Playwright, 4 projects (chromium desktop, chromium phone, WebKit desktop, WebKit phone) | 151 passed, 0 failed (axe and link crawl run once, in chromium desktop) |
+| Vitest | 53 passed (includes the privacy and receipt script tests) |
+| Lighthouse CI mobile, home and `/projects/rentlens`, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s and 2.47 s |
+| Lighthouse CI desktop, same pages, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Privacy check on the build | 141 built files scanned, no email-shaped text |
+| Receipt check on site copy | passes; allowlisted numbers are 2026, 2027 and 4.0, each with a reason |
+| Production dependency audit | 0 vulnerabilities |
+
+WebKit note: the production CSP has `upgrade-insecure-requests`, which WebKit applies even to plain `http://127.0.0.1`, so pages never hydrate in a local WebKit run. The test fixture removes only that directive from responses in WebKit runs; production headers are unchanged and covered by `src/config.test.ts`. Playwright's request interception also stalls on redirects in WebKit, so the two redirect tests check the 308 and `Location` in every browser and drive the page-level redirect in Chromium only.
+
+## Home page noise removed, 2026-10-28
+
+Measured 2026-10-28 at about 02:10 AEDT on a local production build (port 3119) of branch `chore/home-noise`, stacked on `test/ci-gates`. Local, not live. Scripts run from the scratch copy used above, `BASE=http://127.0.0.1:3119`, `TAG=noise`, six pages.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1 |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Vitest | 57 passed |
+| Playwright, 4 projects (Chromium and WebKit, desktop and phone) | 159 passed, 0 failed |
+| Unused CSS classes after the change | 0 (the unused `.h2-sm` rule was removed; `btn-ghost` and `pill-*` are built dynamically) |
+
+Lighthouse was not re-run: the change only removes elements from the home page and card. The PR 37 CI gate runs it.
+
+## Hero and projects band, 2026-10-28
+
+Measured 2026-10-28 at about 02:50 AEDT on a local production build (ports 3122) of branch `feat/home-hero-projects`, stacked on `chore/home-noise`. Local, not live. Scripts run from the scratch copy used above with `TAG=bands`.
+
+| Check | Result |
+|---|---|
+| Top edge of the first project card, 1440x900, Chromium and WebKit | 522 px from the top of the page (viewport 900 px); hero ends at 379 px |
+| Top edge of the first project card, 390x844, Chromium and WebKit | 450 px (viewport 844 px); hero ends at 286 px |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home) |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Playwright, 4 projects | 171 passed, 0 failed |
+| Vitest | 57 passed |
+
+Measured with a Playwright script that reads `getBoundingClientRect().top` of `.project-card` after load (`scratchpad/fold.mjs`, not committed). Lighthouse is run by the CI gate on this PR.
+
+## Lab band, contact band and sticky nav, 2026-10-28
+
+Measured 2026-10-28 at about 03:30 AEDT on a local production build (port 3124) of branch `feat/home-lab-contact-nav`, stacked on `feat/home-hero-projects`. Local, not live. Scripts run from the scratch copy used above with `TAG=labnav`.
+
+| Check | Result |
+|---|---|
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs (the home page is measured with reduced motion so no section is caught mid-fade) |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home); 0 elements below threshold, including the dark Lab band |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Playwright, 4 projects | 187 passed, 0 failed |
+| Vitest | 57 passed |
+
+Lighthouse is run by the CI gate on this PR.
+
+## Contact form, 2026-10-28
+
+Measured 2026-10-28 at about 06:10 AEDT on a local production build (ports 3133 and 3134) of branch `feat/contact-form`, stacked on `feat/home-lab-contact-nav`. Local, not live. No email was sent: tests mock the email service, and the real route was only called with no email configured.
+
+| Check | Result |
+|---|---|
+| Vitest | 72 passed (12 route tests: valid, missing fields, invalid email and short message, over-long and oversized body, honeypot, bad content type or origin, rate limit, email service failure, unreachable service, not configured, no secrets in the response; 3 limiter tests) |
+| Playwright, 4 projects (Chromium and WebKit, 1440x900 and 390x844) | 221 passed, 0 failed (8 contact form tests per project, plus a form error-state axe test) |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1 (home); 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.45 s, 245 KiB transferred |
+| Lighthouse CI, home, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s, 250 KiB transferred |
+| Privacy check on the build | 149 built files scanned, no email-shaped text |
+| Real route, no email configured (`curl`) | valid message 503 (safe error), invalid fields 400 with a message per field, honeypot filled 200 with nothing sent, GET 405, wrong content type 415, other origin 403 |
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, `npm run check:privacy`, the scratch `run-axe.mjs`, `check-contrast.mjs` and overflow scripts with `TAG=contact`, and `curl -X POST localhost:3134/api/contact` against `next start` with `RESEND_API_KEY` and `CONTACT_TO_EMAIL` unset.
+
+Not measured: real email delivery (needs your Resend key and address in Vercel), and the rate limit across several serverless instances.
+
+## Section rhythm and scroll transitions, 2026-10-28
+
+Measured 2026-10-28 at about 07:30 AEDT on a local production build (port 3144) of branch `feat/section-rhythm`, stacked on `feat/contact-form`. Local, not live.
+
+| Check | Result |
+|---|---|
+| Scroll position and scroll events after the home page loads (Chromium, 412x823, 390x844 and 1440x900) | `scrollY` 0 and no scroll events in all three; with the first version of the snap rule it was 1 on all three, and 222 on phones when the hero was left out of the snap points |
+| Top of the first project card, 1440x900 and 390x844, Chromium and WebKit | 534 px (viewport 900) and 446 px (viewport 844); hero ends at 387 px and 278 px |
+| Lab and Contact band height | at least the viewport minus the nav (Playwright, four browser projects); content centred within 12% of band height |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.68:1; 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s and 2.45 s |
+| Lighthouse CI, same pages, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 259 passed, 0 failed; the rhythm file repeated six times: 228 of 228 |
+| Vitest | 78 passed (includes the no-scroll-takeover scan, proximity-only snapping, no plain `vh`, the 8/16/24/48/96 scale) |
+
+A defect found and fixed in this PR: with scroll snapping on, Lighthouse found no Largest Contentful Paint for the home page on mobile (audit error `NO_LCP`, performance score missing). The cause was a 1 px scroll at load: the sticky nav is 57 px tall (56 px plus its 1 px border) but the snap clearance was 56 px, so the hero's snap point sat at 1 px and the browser moved the page. The clearance is now the nav height plus its border, so the hero's snap point is exactly 0. Leaving the hero out of the snap points was worse: phones loaded already scrolled 222 px, onto the projects band.
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, the scratch `run-axe.mjs` and `check-contrast.mjs` with `TAG=rhythm2`, and a Playwright script that records `scroll` events and `scrollY` after load (`scratchpad/snapload.mjs`, not committed).
+
+## Immersive home pages, 2026-10-28
+
+Measured 2026-10-28 on a local production build of branch `feat/immersive-pages` (stacked on `feat/section-rhythm`), Chrome and WebKit on a MacBook. Local, not live.
+
+| Check | Result |
+|---|---|
+| Height of each home page, 390x844 (px) | hero 787, projects 787, lab 787, contact 835 (screen below the nav is 787) |
+| Height of each home page, 1440x900 (px) | 835 for all four (screen below the nav is 835) |
+| Pages taller than the screen | 320x568: 513, 771, 739, 863; 375x667: 610, 745, 688, 835 (these scroll inside themselves) |
+| Horizontal overflow, home page at 320, 375, 390, 768, 1024, 1280, 1440 px | none |
+| Page position after a 300 px swipe up on a 375x667 phone, from the foot of the Projects page | stays at the foot of Projects (a short swipe does not advance on a phone shorter than the page) |
+| Playwright, 4 projects | 279 passed, 16 skipped (wheel and swipe tests run only where the browser supports snapping), 0 failed |
+| Vitest | 78 passed |
+| axe-core on the home page, each of its four pages scrolled into view, 375 px and 1440 px | 0 violations |
+| Lighthouse CI, home and `/projects/rentlens`, mobile | perf 97 to 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP about 2.4 s, TBT 28 to 37 ms |
+| Lighthouse CI, same pages, desktop | perf 100, CLS 0 |
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse` (Lighthouse medians read from `.lighthouseci/*/*.report.json`), `npm test`, and scratch Playwright scripts that read `getBoundingClientRect()` heights at each size and dispatch touch swipes through Chrome's `Input.synthesizeScrollGesture`.
+
+Not measured: real iPhone Safari or Android Chrome swipes, a real mouse wheel and trackpad, and VoiceOver. A very hard synthetic swipe (700 px at 8000 px/s) skipped a page in Chrome, so "one page per swipe" is verified for ordinary swipes only.
+
+## RentLens architecture diagram, 2026-10-28
+
+Measured 2026-10-28 at about 04:40 AEDT on a local production build of branch `feat/rentlens-diagram` (Mermaid 12.2.0), based on `test/ci-gates`. Local, not live.
+
+| Check | Result |
+|---|---|
+| Transfer on first load of `/projects/rentlens` (Chrome, CDP `encodedDataLength`) | 238 KiB total, 145 KiB of it JavaScript in 8 files; unchanged, because Mermaid is not downloaded until the diagram is within 400 px of the screen |
+| Extra transfer when the diagram is drawn | 654 KiB of JavaScript in 16 files (892 KiB total, 799 KiB JavaScript); same on desktop and phone |
+| Drawn diagram, 1440 / 1024 / 768 / 390 / 320 px wide | height 314 / 289 / 221 / 1465 / 1392 px; the picture is 1030 / 934 / 678 / 259 / 246 px wide and always inside its frame; no horizontal page scroll at any of the five widths |
+| Orientation | left to right at 640 px and wider, top to bottom below (decided from the diagram's own width) |
+| Text contrast on `/projects/rentlens` with the diagram drawn (contrast script) | lowest 6.73:1, 0 elements below threshold, desktop and phone |
+| axe-core on `/projects/rentlens` with the diagram drawn | 0 violations (Playwright, reduced motion) |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s |
+| Lighthouse CI, same pages, desktop, median | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 165 passed, 0 failed |
+| Vitest | 60 passed |
+
+Lighthouse does not scroll, so it measures the page before Mermaid loads. The 654 KiB is the cost to people who scroll to the diagram. Production dependency audit with Mermaid: 0 vulnerabilities.
+
+Commands: `npm run build`, then `npx playwright test`, `npm run lighthouse`, `BASE=http://127.0.0.1:3129 PAGES="/projects/rentlens /projects/ontimesydney" TAG=diagram node check-contrast.mjs` (scratch copy of `scripts/measure`), and a Playwright/CDP script that sums `Network.loadingFinished` `encodedDataLength` before and after scrolling the diagram into view (`scratchpad/bytes.mjs`, not committed).
+
+## Case study structure and stack tags, 2026-10-28
+
+Measured 2026-10-28 at about 05:20 AEDT on a local production build (port 3131) of branch `feat/case-study-structure`, stacked on `feat/rentlens-diagram`. Local, not live. Scripts run from the scratch copy used above, `TAG=casestudy`, six pages.
+
+| Check | Result |
+|---|---|
+| Section order on RentLens and OnTimeSydney | Problem, Architecture, Key decisions, Evidence, Known limitations (Playwright, all four browser projects) |
+| axe-core, 6 pages at 375 px and 1440 px | 0 violations in all 12 runs |
+| Lowest text contrast, all 6 pages, both sizes | 6.73:1; 0 elements below threshold |
+| Horizontal overflow, 7 routes at 320, 375, 768, 1280 px | none |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median of 3 | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.47 s and 2.32 s |
+| Lighthouse CI, same pages, desktop, median of 3 | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 182 passed, 0 failed (includes a new test that scans every number shown on 7 pages) |
+| Vitest | 60 passed |
+| ADR link `https://github.com/aravind2405/rentlens-nsw/blob/main/docs/decisions/001-duckdb-first.md` | HTTP 200 on 2026-10-28 (`curl -L`) |
+
+Numbers visible on the rendered pages, found by `scratchpad/numbers.mjs` (dates and version labels removed): `2026` (copyright year), `1` to `5` (stage numbers in the architecture diagram), `4.0` (CC BY licence version), `404` (error code). None is a measurement; each is in `scripts/receipts-allowlist.json` with its reason. The Playwright test `e2e/receipts.spec.ts` repeats this scan in CI.
+
+Stack tags were checked against each repo on 2026-10-28:
+- RentLens (`rentlens-nsw`, commit `f78a180`): `requirements.txt` has `dbt-core`, `dbt-duckdb`, `duckdb`, `pyarrow` (Parquet) and `openpyxl`; `docs/index.html` loads Chart.js; `.github/workflows/dbt.yml` runs in GitHub Actions; README states GitHub Pages. All seven tags confirmed.
+- OnTimeSydney (`ontimesydney`, commit `d43ed94`): `requirements.txt` lists no runtime dependencies ("added per phase with the code that uses them"), `dbt/` holds only empty `models`, `snapshots` and `tests` folders, and `src/ontimesydney/{collector,common,loaders}` are empty packages. Confirmed in use: Python 3.13, pytest, ruff (`requirements-dev.txt`, `pyproject.toml`) and GitHub Actions (`ci.yml`). GTFS-Realtime, Parquet, PostgreSQL and dbt are the planned design, so they are no longer shown as tags.

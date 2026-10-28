@@ -11,7 +11,6 @@ project's own README and read live repository activity from GitHub.
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `/`                           | Landing page: headline, projects, Curiosity Lab link, contact                                                               |
 | `/projects/[slug]`            | One page per project: status, architecture, how it is checked, data licence, roadmap, limitations, live repository activity |
-| `/shelf`                      | Courses and papers, filterable by status and type                                                                           |
 | `/lab`                        | Curiosity Lab, a dark page of early-stage experiments                                                                       |
 | `/robots.txt`, `/sitemap.xml` | Generated from the same project data                                                                                        |
 
@@ -40,7 +39,7 @@ GitHub Actions runs all of these, plus `npm audit` on production dependencies, o
 
 ## Content
 
-Content is JSON in `src/data/`: `profile.json`, `shelf.json`, `lab.json`, and one file per project in
+Content is JSON in `src/data/`: `profile.json`, `lab.json`, and one file per project in
 `src/data/projects/`. Everything is validated with Zod (`src/lib/schemas.ts`) when it is imported, so a
 mistake fails the build and the tests instead of reaching visitors.
 
@@ -52,6 +51,24 @@ Rules the schema enforces:
 
 To add a project, copy an existing file in `src/data/projects/`, add it to the list in `src/lib/content.ts`,
 and run `npm run check`.
+
+## Contact form
+
+The contact band posts to `POST /api/contact` (`src/app/api/contact/route.ts`), which validates the input,
+drops bots that fill a hidden field, limits each visitor address to five messages an hour, and forwards the
+message by email through Resend's REST API. No address of mine appears in the source, the HTML or the
+JavaScript: the destination and the API key are environment variables, set in the Vercel project settings.
+Names are in `.env.example`.
+
+| Variable             | Purpose                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `RESEND_API_KEY`     | Resend API key (free tier: 100 emails a day)                                                           |
+| `CONTACT_TO_EMAIL`   | Where messages are delivered                                                                           |
+| `CONTACT_FROM_EMAIL` | Optional sender; the default shared Resend sender can only deliver to the Resend account's own address |
+
+The rate limit lives in memory, so on a serverless host it is a best-effort brake per running instance, not a
+global limit. If the variables are missing the route answers 503 and the form tells the visitor to use LinkedIn.
+`npm run check:privacy` fails the build if any email-shaped text reaches the built site.
 
 ## Live GitHub data
 

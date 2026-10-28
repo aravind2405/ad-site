@@ -1,4 +1,19 @@
+import { execSync } from 'node:child_process';
+
 const isDev = process.env.NODE_ENV !== 'production';
+
+// Date of the latest commit, inlined at build so ISR refreshes do not change it.
+// Falls back to the build date when git history is not available.
+function lastUpdated() {
+  try {
+    const out = execSync('git log -1 --format=%cI', { stdio: ['ignore', 'pipe', 'ignore'] });
+    const iso = out.toString().trim();
+    if (iso) return iso;
+  } catch {
+    // no git history here
+  }
+  return new Date().toISOString();
+}
 
 // Next.js injects inline scripts for hydration, so script-src needs 'unsafe-inline'
 // (a nonce would force every page to render per request). Dev mode also needs 'unsafe-eval'.
@@ -27,17 +42,24 @@ const securityHeaders = [
     value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
   },
   { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+  // One year, this exact host only: no includeSubDomains and no preload, which are hard to undo.
+  ...(isDev ? [] : [{ key: 'Strict-Transport-Security', value: 'max-age=31536000' }]),
 ];
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   poweredByHeader: false,
+  // One 404 page for the whole site, which has two root layouts.
+  experimental: { globalNotFound: true },
+  env: { LAST_UPDATED: lastUpdated() },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];
   },
   // The old Vercel address permanently forwards to the custom domain.
   async redirects() {
     return [
+      // The Shelf section was removed.
+      { source: '/shelf', destination: '/', permanent: true },
       // The RentLens page moved under /projects.
       { source: '/rentlens', destination: '/projects/rentlens', permanent: true },
       {

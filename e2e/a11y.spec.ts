@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures';
 
 const paths = [
   '/',
@@ -7,7 +7,6 @@ const paths = [
   '/projects/ontimesydney',
   '/projects/gridwatch',
   '/projects/groundtruth',
-  '/shelf',
   '/lab',
 ];
 
@@ -18,9 +17,31 @@ const viewports = {
 
 for (const [name, size] of Object.entries(viewports)) {
   test.describe(`accessibility (${name})`, () => {
-    test.use({ viewport: size });
+    // Reduced motion shows every section in its final state, so axe never measures a half-faded one.
+    test.use({ viewport: size, reducedMotion: 'reduce' });
 
-    for (const path of paths) {
+    // The home page's backdrop changes colour as it scrolls, so each page is scrolled to and
+    // checked while it is on screen, together with the nav.
+    test('/ has no WCAG A/AA violations on any of its pages', async ({ page }) => {
+      await page.goto('/');
+      for (const id of ['hero', 'projects', 'lab', 'contact']) {
+        await page.evaluate((i) => document.getElementById(i)!.scrollIntoView(), id);
+        await page.waitForTimeout(250);
+        const results = await new AxeBuilder({ page })
+          .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+          .include(`#${id}`)
+          .include('header')
+          .exclude('iframe')
+          .analyze();
+        expect(
+          results.violations.map(
+            (v) => `${id} ${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`,
+          ),
+        ).toEqual([]);
+      }
+    });
+
+    for (const path of paths.filter((p) => p !== '/')) {
       test(`${path} has no WCAG A/AA violations`, async ({ page }) => {
         await page.goto(path);
         const results = await new AxeBuilder({ page })
@@ -34,12 +55,37 @@ for (const [name, size] of Object.entries(viewports)) {
       });
     }
 
-    test('shelf filter buttons are reachable and operable by keyboard', async ({ page }) => {
-      await page.goto('/shelf');
-      const button = page.getByRole('button', { name: 'Finished' });
-      await button.focus();
-      await page.keyboard.press('Enter');
-      await expect(button).toHaveAttribute('aria-pressed', 'true');
+    test('/ has no violations with the contact form showing its errors', async ({ page }) => {
+      await page.goto('/');
+      await page.evaluate(() => document.getElementById('contact')!.scrollIntoView());
+      await page.getByRole('button', { name: 'Send message' }).click();
+      await expect(page.locator('#contact-name-error')).toBeVisible();
+      await page.waitForTimeout(250);
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+        .include('#contact')
+        .exclude('iframe')
+        .analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`),
+      ).toEqual([]);
+    });
+
+    test('/projects/rentlens has no violations once its architecture diagram is drawn', async ({
+      page,
+    }) => {
+      // Reduced motion shows every section in its final state, so axe never measures a half-faded one.
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto('/projects/rentlens');
+      await page.locator('.diagram').scrollIntoViewIfNeeded();
+      await expect(page.locator('.diagram')).toHaveAttribute('data-state', 'drawn');
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+        .exclude('iframe')
+        .analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`),
+      ).toEqual([]);
     });
   });
 }

@@ -5,6 +5,12 @@
   "question": "What are tenants actually paying across NSW?",
   "summary": "Turns official NSW rental bond lodgements into median weekly rents by dwelling type, postcode and month: signed rents, not asking prices. A tested dbt pipeline on DuckDB feeds a live dashboard.",
   "stack": ["Python", "dbt", "DuckDB", "Parquet", "Chart.js", "GitHub Actions", "GitHub Pages"],
+  "adrs": [
+    {
+      "file": "001-duckdb-first.md",
+      "title": "ADR-001: Use DuckDB locally, Snowflake in production"
+    }
+  ],
   "plannedStack": [],
   "repo": "aravind2405/rentlens-nsw",
   "live": "https://aravind2405.github.io/rentlens-nsw/",
@@ -33,7 +39,10 @@
     "decisions": [
       {
         "title": "Watermark on arrival time, not lodgement date",
-        "body": "An incremental model needs a watermark. Using the event time (lodgement date) would silently drop late-arriving records, so the model keys on when each file arrived. A test checks that late records land; it only proves the incremental case once a second, later batch of files is added, which is still to do."
+        "body": "An incremental model needs a watermark. Using the event time (lodgement date) would silently drop late-arriving records, so the model keys on when each file arrived. A test checks that late records land; it only proves the incremental case once a second, later batch of files is added, which is still to do.",
+        "chose": "Watermark on the arrival time of each file",
+        "rejected": "Watermark on the lodgement date (event time)",
+        "why": "Event time would silently drop late-arriving records. A test checks that late records land; it only proves the incremental case once a second, later batch of files is added, which is still to do."
       }
     ],
     "practices": [
@@ -51,16 +60,22 @@
       "note": "Median rents are my own aggregation of that data and are not an official NSW Government statistic."
     },
     "roadmap": [
-      "A data.json pipeline: Python queries the dbt marts and the dashboard reads the result dynamically",
-      "dbt column descriptions and dbt docs published to GitHub Pages",
-      "A SQL agent over the DuckDB marts",
-      "Monthly automatic ingest when NSW publishes new data"
+      "Will add a data.json pipeline: Python queries the dbt marts and the dashboard reads the result dynamically.",
+      "Will add dbt column descriptions and publish dbt docs to GitHub Pages.",
+      "Will add a SQL agent over the DuckDB marts.",
+      "Will ingest each month automatically when NSW publishes new data."
     ],
     "limitations": [
       "Covers new tenancies only: it shows the rent agreed at lease signing, not what existing tenants pay now.",
       "Bonds can be lodged up to about six weeks after a lease starts, so the latest months fill in late."
     ],
-    "willCover": []
+    "willCover": [],
+    "headings": {
+      "how": "A re-runnable ingest and three dbt layers turn bond records into median rents",
+      "decisions": "Keying on arrival time stops late bond records being dropped",
+      "verify": "dbt tests run in CI on every push, and the dashboard is checked against the pipeline",
+      "next": "Next, the dashboard will read straight from the pipeline"
+    }
   },
   "liveLabel": "Live dashboard"
 }

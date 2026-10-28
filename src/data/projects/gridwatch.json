@@ -1,19 +1,23 @@
 {
   "slug": "gridwatch",
   "name": "GridWatch AU",
-  "status": "planned",
+  "status": "coming-soon",
   "question": "What is the power grid doing right now?",
-  "summary": "Planned: electricity market data every five minutes, run fully in the cloud, with the real running cost shown. Work has not started.",
+  "summary": "Will bring in electricity market data every five minutes, run fully in the cloud, and show the real running cost. Work has not started.",
+  "teaser": "grid data on AWS",
   "stack": [],
-  "plannedStack": ["AWS", "Terraform"],
+  "plannedStack": [],
   "repo": null,
   "live": null,
-  "verified": { "date": "2026-10-24", "against": "the local project folder, which is empty" },
+  "verified": {
+    "date": "2026-10-24",
+    "against": "the local project folder, which is empty"
+  },
   "details": {
-    "statusNote": "Planned. Work has not started: there is no code or repository yet.",
+    "statusNote": "Coming soon. Work has not started: there is no code or repository yet.",
     "overview": [
-      "The question this project is meant to answer: what is the electricity grid doing right now?",
-      "The plan is to ingest Australian electricity market data every five minutes, run the whole system in the cloud, and show what it really costs to run."
+      "The question this project will answer: what is the electricity grid doing right now?",
+      "It will ingest Australian electricity market data every five minutes, run the whole system in the cloud, and show what it really costs to run."
     ],
     "architecture": null,
     "decisions": [],

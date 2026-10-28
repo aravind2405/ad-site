@@ -1,23 +1,17 @@
 {
   "slug": "ontimesydney",
   "name": "OnTimeSydney",
-  "status": "in-progress",
+  "status": "building",
   "question": "How on time are Sydney's buses, really?",
-  "summary": "Captures Sydney bus GTFS-Realtime data continuously to measure reliability honestly: what was observed against what was predicted and scheduled. It is at the foundation stage, so no data has been collected yet.",
-  "stack": [
-    "Python",
-    "GTFS-Realtime",
-    "Parquet",
-    "PostgreSQL",
-    "dbt",
-    "pytest",
-    "ruff",
-    "GitHub Actions"
-  ],
+  "summary": "Sets up a pipeline to capture Sydney bus GTFS-Realtime data and compare what was observed with what was predicted and scheduled. It is at the foundation stage (v0.1) and no data has been collected yet. The collector is next.",
+  "stack": ["Python", "pytest", "ruff", "GitHub Actions"],
   "plannedStack": [],
   "repo": "aravind2405/ontimesydney",
   "live": null,
-  "verified": { "date": "2026-10-24", "against": "the project README and repository" },
+  "verified": {
+    "date": "2026-10-24",
+    "against": "the project README and repository"
+  },
   "details": {
     "statusNote": "Foundation stage (v0.1). No data has been collected yet, so there are no findings to show.",
     "overview": [
@@ -32,7 +26,8 @@
         "PostgreSQL",
         "dbt: staging, intermediate, marts",
         "Report"
-      ]
+      ],
+      "planned": true
     },
     "decisions": [],
     "practices": [
@@ -59,6 +54,11 @@
       "No data has been collected yet.",
       "Known limitations are not documented yet; the README says they will be added as they are found."
     ],
-    "willCover": []
+    "willCover": [],
+    "headings": {
+      "how": "The design: a collector feeds Parquet, PostgreSQL and three dbt layers",
+      "verify": "CI runs lint, tests and a repository check on every push, before any data exists",
+      "next": "Next is the collector, then loading, modelling and metrics"
+    }
   }
 }

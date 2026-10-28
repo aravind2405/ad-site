@@ -3,16 +3,39 @@ import { z } from 'zod';
 const httpsUrl = z.url({ protocol: /^https$/ });
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'expected YYYY-MM-DD');
 
-export const projectStatus = z.enum(['live', 'in-progress', 'planned']);
+export const projectStatus = z.enum(['live', 'building', 'coming-soon']);
 export type ProjectStatus = z.infer<typeof projectStatus>;
 
 const projectDetails = z.object({
   statusNote: z.string().min(1),
   overview: z.array(z.string().min(1)).min(1),
   architecture: z
-    .object({ summary: z.string().min(1), steps: z.array(z.string().min(1)).min(2) })
+    .object({
+      summary: z.string().min(1),
+      steps: z.array(z.string().min(1)).min(2),
+      /** True when the design is written down but not built, so the page says so. */
+      planned: z.boolean().optional(),
+    })
     .nullable(),
-  decisions: z.array(z.object({ title: z.string().min(1), body: z.string().min(1) })),
+  decisions: z.array(
+    z.object({
+      title: z.string().min(1),
+      body: z.string().min(1),
+      // Optional structure for the trade-offs table.
+      chose: z.string().min(1).optional(),
+      rejected: z.string().min(1).optional(),
+      why: z.string().min(1).optional(),
+    }),
+  ),
+  // Optional headings that state the point of a section instead of labelling it.
+  headings: z
+    .object({
+      how: z.string().min(1).optional(),
+      decisions: z.string().min(1).optional(),
+      verify: z.string().min(1).optional(),
+      next: z.string().min(1).optional(),
+    })
+    .optional(),
   practices: z.array(z.string().min(1)),
   data: z
     .object({
@@ -36,23 +59,39 @@ export const projectSchema = z
     question: z.string().min(1),
     summary: z.string().min(1),
     stack: z.array(z.string().min(1)),
+    teaser: z.string().min(1).optional(),
     plannedStack: z.array(z.string().min(1)),
+    /** Architecture decision records in the project's repo, under docs/decisions/. */
+    adrs: z
+      .array(
+        z.object({ file: z.string().regex(/^\d{3}-[a-z0-9-]+\.md$/), title: z.string().min(1) }),
+      )
+      .default([]),
     repo: z
       .string()
       .regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/)
       .nullable(),
     live: httpsUrl.nullable(),
     liveLabel: z.string().min(1).optional(),
+    receipt: z
+      .object({
+        label: z.string().min(1),
+        value: z.string().min(1),
+        source: z.string().min(1),
+        checked: isoDate,
+        href: httpsUrl,
+      })
+      .optional(),
     verified: z.object({ date: isoDate, against: z.string().min(1) }),
     details: projectDetails,
   })
   .superRefine((p, ctx) => {
     const issue = (message: string) => ctx.addIssue({ code: 'custom', message });
-    if (p.status === 'planned') {
+    if (p.status === 'coming-soon') {
       if (p.repo) issue('a planned project must not link a repository');
       if (p.live) issue('a planned project must not link a live demo');
-      if (p.stack.length > 0) issue('a planned project must list its stack as plannedStack');
-      if (p.plannedStack.length === 0) issue('a planned project needs a plannedStack');
+      if (p.stack.length > 0) issue('a planned project must not list a built stack');
+      if (!p.teaser) issue('a planned project needs a teaser for the Next up line');
       if (p.details.willCover.length === 0) issue('a planned project needs willCover items');
     } else {
       if (!p.repo) issue('a project that has started needs a repository');
@@ -76,18 +115,6 @@ export const profileSchema = z.object({
   }),
 });
 export type Profile = z.infer<typeof profileSchema>;
-
-export const shelfItemSchema = z.object({
-  status: z.enum(['reading', 'next', 'done']),
-  kind: z.string().min(1),
-  title: z.string().min(1),
-  by: z.string().min(1),
-  why: z.string().optional(),
-  stuck: z.string().optional(),
-  related: z.object({ name: z.string().min(1), href: z.string().startsWith('/') }).nullable(),
-});
-export const shelfSchema = z.array(shelfItemSchema);
-export type ShelfItem = z.infer<typeof shelfItemSchema>;
 
 export const experimentSchema = z.object({
   id: z.string().min(1),

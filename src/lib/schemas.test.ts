@@ -1,11 +1,33 @@
 import { describe, expect, it } from 'vitest';
 import { projects } from './content';
-import { profileSchema, projectSchema, shelfSchema } from './schemas';
+import { profileSchema, projectSchema } from './schemas';
 
 const base = projects.find((p) => p.status === 'live')!;
-const planned = projects.find((p) => p.status === 'planned')!;
+const planned = projects.find((p) => p.status === 'coming-soon')!;
+
+const receipt = {
+  label: 'Example',
+  value: 'value',
+  source: 'a public dataset',
+  checked: '2026-10-24',
+  href: 'https://example.com/how',
+};
 
 describe('project schema', () => {
+  it('ships no receipt data until a measured value exists', () => {
+    for (const p of projects) expect(p.receipt).toBeUndefined();
+  });
+
+  it('accepts an optional receipt with a source and a check date', () => {
+    expect(projectSchema.safeParse({ ...base, receipt }).success).toBe(true);
+  });
+
+  it('rejects a receipt without a check date', () => {
+    expect(
+      projectSchema.safeParse({ ...base, receipt: { ...receipt, checked: 'today' } }).success,
+    ).toBe(false);
+  });
+
   it('accepts every project shipped with the site', () => {
     for (const p of projects) expect(() => projectSchema.parse(p)).not.toThrow();
   });
@@ -29,7 +51,7 @@ describe('project schema', () => {
   });
 
   it('rejects a started project without a repository', () => {
-    expect(projectSchema.safeParse({ ...base, repo: null, status: 'in-progress' }).success).toBe(
+    expect(projectSchema.safeParse({ ...base, repo: null, status: 'building' }).success).toBe(
       false,
     );
   });
@@ -48,7 +70,7 @@ describe('project schema', () => {
   });
 });
 
-describe('profile and shelf schemas', () => {
+describe('profile schema', () => {
   it('requires HTTPS social links and a valid email when one is set', () => {
     const p = {
       name: 'A',
@@ -65,16 +87,5 @@ describe('profile and shelf schemas', () => {
     expect(profileSchema.safeParse({ ...p, links: { ...p.links, email: 'nope' } }).success).toBe(
       false,
     );
-  });
-
-  it('only allows internal links on shelf items', () => {
-    const item = {
-      status: 'next',
-      kind: 'Paper',
-      title: 't',
-      by: 'b',
-      related: { name: 'x', href: 'https://evil.example' },
-    };
-    expect(shelfSchema.safeParse([item]).success).toBe(false);
   });
 });

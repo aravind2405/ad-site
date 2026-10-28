@@ -9,7 +9,7 @@ import { PNG } from 'pngjs';
 import { writeFileSync } from 'node:fs';
 
 const BASE = process.env.BASE ?? 'https://www.aravindd.com';
-const pages = (process.env.PAGES ?? '/ /lab /shelf /projects/rentlens').split(' ');
+const pages = (process.env.PAGES ?? '/ /lab /projects/rentlens').split(' ');
 const tag = process.env.TAG ?? '';
 const viewports = {
   mobile: { width: 375, height: 812, deviceScaleFactor: 1 },
@@ -39,6 +39,16 @@ for (const path of pages) {
     const page = await context.newPage();
     await page.setViewport(vp);
     await page.goto(BASE + path, { waitUntil: 'load', timeout: 60000 });
+    // Sections below the first screen fade in once scrolled to, so scroll through the whole
+    // page first; otherwise they are still transparent when the pixels are sampled.
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 400) {
+        window.scrollTo({ top: y, behavior: 'instant' });
+        await new Promise((r) => setTimeout(r, 60));
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    });
+    await new Promise((r) => setTimeout(r, 500));
     await page.evaluate(() => document.fonts.ready);
     await new Promise((resolve) => setTimeout(resolve, 800));
 

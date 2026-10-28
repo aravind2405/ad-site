@@ -6,7 +6,7 @@ import { profile } from '@/lib/content';
 import { SITE_URL } from '@/lib/site';
 
 const title = 'Aravind Danassegarane';
-const description = `${profile.headline} ${profile.subheadline}`;
+const description = profile.subheadline;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: { title, description, url: '/', siteName: title, type: 'website' },
 };
 
-export const viewport: Viewport = { themeColor: '#F4F5F2' };
+export const viewport: Viewport = { themeColor: '#F4F5F2', viewportFit: 'cover' };
 
 export default function MainLayout({ children }: { children: ReactNode }) {
   return (
