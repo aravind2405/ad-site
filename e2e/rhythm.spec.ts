@@ -124,7 +124,10 @@ test.describe('home page rhythm', () => {
           () => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))),
         );
       const before = previous;
-      if (before) {
+      if (!before) {
+        // the first reading must wait until the backdrop has set its first colour
+        await expect.poll(async () => (await read()).bg, { timeout: 8000 }).not.toBe('');
+      } else {
         await expect
           .poll(async () => (await frames(), (await read()).bg), {
             message: `backdrop after scrolling to ${f} of the way from ${from} to ${to}`,
