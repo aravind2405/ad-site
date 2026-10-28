@@ -4,16 +4,8 @@
   "status": "building",
   "question": "How on time are Sydney's buses, really?",
   "summary": "Sets up a pipeline to capture Sydney bus GTFS-Realtime data and compare what was observed with what was predicted and scheduled. It is at the foundation stage (v0.1) and no data has been collected yet. The collector is next.",
-  "stack": [
-    "Python",
-    "GTFS-Realtime",
-    "Parquet",
-    "PostgreSQL",
-    "dbt",
-    "pytest",
-    "ruff",
-    "GitHub Actions"
-  ],
+  "stack": ["Python", "pytest", "ruff", "GitHub Actions"],
+  "plannedStack": [],
   "repo": "aravind2405/ontimesydney",
   "live": null,
   "verified": {
@@ -34,7 +26,8 @@
         "PostgreSQL",
         "dbt: staging, intermediate, marts",
         "Report"
-      ]
+      ],
+      "planned": true
     },
     "decisions": [],
     "practices": [

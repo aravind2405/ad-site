@@ -367,6 +367,68 @@ test.describe('project pages', () => {
     expect(cspErrors).toEqual([]);
   });
 
+  test('started projects follow the same five sections in the same order', async ({ page }) => {
+    for (const slug of ['rentlens', 'ontimesydney']) {
+      await page.goto(`/projects/${slug}`);
+      const headings = await page.locator('main h2').allTextContents();
+      expect(headings, slug).toEqual([
+        'Problem',
+        'Architecture',
+        'Key decisions',
+        'Evidence',
+        'Known limitations',
+      ]);
+      const ids = await page.locator('main section[id]').evaluateAll((els) => els.map((e) => e.id));
+      expect(ids, slug).toEqual([
+        'problem',
+        'architecture',
+        'decisions',
+        'evidence',
+        'limitations',
+      ]);
+    }
+  });
+
+  test('planned projects show only the problem and what the case study will cover', async ({
+    page,
+  }) => {
+    for (const slug of ['gridwatch', 'groundtruth']) {
+      await page.goto(`/projects/${slug}`);
+      expect(await page.locator('main h2').allTextContents(), slug).toEqual(['Problem']);
+      await expect(page.getByRole('heading', { name: 'What it will cover' })).toBeVisible();
+    }
+  });
+
+  test('key decisions link to the repo decision records and evidence links open safely', async ({
+    page,
+  }) => {
+    await page.goto('/projects/rentlens');
+    const adr = page.locator('.adr-links a');
+    await expect(adr).toHaveCount(1);
+    await expect(adr).toHaveAttribute(
+      'href',
+      'https://github.com/aravind2405/rentlens-nsw/blob/main/docs/decisions/001-duckdb-first.md',
+    );
+    const links = page.locator('#evidence .facts a, #decisions .adr-links a');
+    expect(await links.count()).toBeGreaterThanOrEqual(3);
+    for (const link of await links.all()) {
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', /noopener/);
+    }
+    await expect(page.locator('#evidence .facts')).toContainText('Live demo');
+    await expect(page.locator('#evidence iframe.dash')).toHaveCount(1);
+  });
+
+  test('stack tags list only tools the repo uses, and the unbuilt design says so', async ({
+    page,
+  }) => {
+    await page.goto('/projects/ontimesydney');
+    const tags = await page.locator('.detail-head .tag').allTextContents();
+    expect(tags).toEqual(['Python', 'pytest', 'ruff', 'GitHub Actions']);
+    await expect(page.locator('.planned-note')).toContainText('not a running system');
+    await expect(page.locator('#decisions .none-yet')).toBeVisible();
+  });
+
   test('RentLens draws its architecture diagram without errors or sideways scrolling', async ({
     page,
     isMobile,

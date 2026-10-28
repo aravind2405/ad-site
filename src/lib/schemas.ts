@@ -10,7 +10,12 @@ const projectDetails = z.object({
   statusNote: z.string().min(1),
   overview: z.array(z.string().min(1)).min(1),
   architecture: z
-    .object({ summary: z.string().min(1), steps: z.array(z.string().min(1)).min(2) })
+    .object({
+      summary: z.string().min(1),
+      steps: z.array(z.string().min(1)).min(2),
+      /** True when the design is written down but not built, so the page says so. */
+      planned: z.boolean().optional(),
+    })
     .nullable(),
   decisions: z.array(
     z.object({
@@ -55,6 +60,13 @@ export const projectSchema = z
     summary: z.string().min(1),
     stack: z.array(z.string().min(1)),
     teaser: z.string().min(1).optional(),
+    plannedStack: z.array(z.string().min(1)),
+    /** Architecture decision records in the project's repo, under docs/decisions/. */
+    adrs: z
+      .array(
+        z.object({ file: z.string().regex(/^\d{3}-[a-z0-9-]+\.md$/), title: z.string().min(1) }),
+      )
+      .default([]),
     repo: z
       .string()
       .regex(/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/)

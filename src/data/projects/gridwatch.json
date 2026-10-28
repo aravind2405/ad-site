@@ -6,6 +6,7 @@
   "summary": "Will bring in electricity market data every five minutes, run fully in the cloud, and show the real running cost. Work has not started.",
   "teaser": "grid data on AWS",
   "stack": [],
+  "plannedStack": [],
   "repo": null,
   "live": null,
   "verified": {
