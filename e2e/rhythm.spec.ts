@@ -96,6 +96,7 @@ test.describe('home page rhythm', () => {
     await page.waitForFunction(() => document.documentElement.classList.contains('stage-on'));
     // measure the blend without the snapping pulling the page to a page edge
     await page.addStyleTag({ content: 'html { scroll-snap-type: none !important; }' });
+    let previous = '';
     const at = async (from: string, to: string, f: number) => {
       await page.evaluate(
         ([a, b, t]) => {
@@ -117,15 +118,29 @@ test.describe('home page rhythm', () => {
             dark: Number(root.getPropertyValue('--dark')),
           };
         });
-      // the backdrop follows on the next frame, so wait until it has stopped changing
+      // the backdrop follows on a later frame: wait for it to change from the previous spot, then settle
+      const frames = () =>
+        page.evaluate(
+          () => new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(done))),
+        );
+      const before = previous;
+      if (before) {
+        await expect
+          .poll(async () => (await frames(), (await read()).bg), {
+            message: `backdrop after scrolling to ${f} of the way from ${from} to ${to}`,
+            timeout: 8000,
+          })
+          .not.toBe(before);
+      }
       let last = await read();
-      for (let i = 0; i < 40; i++) {
+      for (let i = 0; i < 10; i++) {
         await page.waitForTimeout(100);
         const now = await read();
-        const settled = now.bg === last.bg && now.dark === last.dark && now.bg !== '';
+        const settled = now.bg === last.bg && now.dark === last.dark;
         last = now;
         if (settled) break;
       }
+      previous = last.bg;
       return last;
     };
     const red = (bg: string) => Number(/rgb\((\d+)/.exec(bg)![1]);
