@@ -33,5 +33,18 @@ for (const [name, size] of Object.entries(viewports)) {
         ).toEqual([]);
       });
     }
+
+    test('/ has no violations with the contact form showing its errors', async ({ page }) => {
+      await page.goto('/');
+      await page.getByRole('button', { name: 'Send message' }).click();
+      await expect(page.locator('#contact-name-error')).toBeVisible();
+      const results = await new AxeBuilder({ page })
+        .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa', 'best-practice'])
+        .exclude('iframe')
+        .analyze();
+      expect(
+        results.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(' | ')}`),
+      ).toEqual([]);
+    });
   });
 }

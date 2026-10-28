@@ -52,6 +52,24 @@ Rules the schema enforces:
 To add a project, copy an existing file in `src/data/projects/`, add it to the list in `src/lib/content.ts`,
 and run `npm run check`.
 
+## Contact form
+
+The contact band posts to `POST /api/contact` (`src/app/api/contact/route.ts`), which validates the input,
+drops bots that fill a hidden field, limits each visitor address to five messages an hour, and forwards the
+message by email through Resend's REST API. No address of mine appears in the source, the HTML or the
+JavaScript: the destination and the API key are environment variables, set in the Vercel project settings.
+Names are in `.env.example`.
+
+| Variable             | Purpose                                                                                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------ |
+| `RESEND_API_KEY`     | Resend API key (free tier: 100 emails a day)                                                           |
+| `CONTACT_TO_EMAIL`   | Where messages are delivered                                                                           |
+| `CONTACT_FROM_EMAIL` | Optional sender; the default shared Resend sender can only deliver to the Resend account's own address |
+
+The rate limit lives in memory, so on a serverless host it is a best-effort brake per running instance, not a
+global limit. If the variables are missing the route answers 503 and the form tells the visitor to use LinkedIn.
+`npm run check:privacy` fails the build if any email-shaped text reaches the built site.
+
 ## Live GitHub data
 
 Project pages and cards read the repository's last push date, licence and latest CI result from the GitHub
