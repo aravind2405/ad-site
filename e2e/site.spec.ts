@@ -60,7 +60,8 @@ test.describe('every page', () => {
 });
 
 test.describe('navigation', () => {
-  test('the top bar stays in view while scrolling', async ({ page }) => {
+  test('the top bar stays in view while scrolling', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'phones hide the header on scroll down by design');
     await page.goto('/');
     const header = page.locator('header.site-header');
     await expect(header).toBeVisible();
