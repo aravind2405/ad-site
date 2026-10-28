@@ -1521,12 +1521,12 @@ html.stage-on .home > section {
 .stage-blob-a {
   left: -25vmax;
   top: -30vmax;
-  background: radial-gradient(closest-side, rgb(var(--stage-a, 196 212 232) / 0.55), transparent);
+  background: radial-gradient(closest-side, rgb(var(--stage-a, 214 211 202) / 0.7), transparent);
 }
 .stage-blob-b {
   right: -30vmax;
   bottom: -35vmax;
-  background: radial-gradient(closest-side, rgb(var(--stage-b, 236 222 196) / 0.5), transparent);
+  background: radial-gradient(closest-side, rgb(var(--stage-b, 234 230 218) / 0.65), transparent);
 }
 .stage-grid {
   position: absolute;
@@ -1732,4 +1732,80 @@ html.stage-on .home > section {
   max-width: 720px;
   font-size: var(--text-caption);
   color: var(--ink-3);
+}
+
+/* Depth. The layers behind the content sit at different distances: as the page scrolls they slide at
+   different speeds, and each page's content eases in from the back and eases away again. Only
+   transform, translate and opacity move, so it stays on the compositor. Browsers without scroll-driven
+   animation, and people who ask for less motion, get the still page. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .stage-blob-a {
+      animation:
+        drift-a 34s ease-in-out infinite alternate,
+        depth-slide-a linear both;
+      animation-timeline: auto, scroll(root);
+    }
+    .stage-blob-b {
+      animation:
+        drift-b 40s ease-in-out infinite alternate,
+        depth-slide-b linear both;
+      animation-timeline: auto, scroll(root);
+    }
+    .stage-grid {
+      animation: depth-slide-grid linear both;
+      animation-timeline: scroll(root);
+    }
+    .home > section > .wrap > * {
+      animation:
+        depth-in linear backwards,
+        depth-out linear forwards;
+      animation-timeline: view(), view();
+      animation-range:
+        entry 0% entry 55%,
+        exit 45% exit 100%;
+    }
+    .home > section > .wrap > :nth-child(2) {
+      animation-range:
+        entry 6% entry 61%,
+        exit 39% exit 94%;
+    }
+    .home > section > .wrap > :nth-child(3) {
+      animation-range:
+        entry 12% entry 67%,
+        exit 33% exit 88%;
+    }
+    .home > section > .wrap > :nth-child(n + 4) {
+      animation-range:
+        entry 18% entry 73%,
+        exit 27% exit 82%;
+    }
+  }
+}
+@keyframes depth-in {
+  from {
+    opacity: 0.1;
+    transform: perspective(900px) translate3d(0, 32px, -90px) rotateX(6deg);
+  }
+}
+@keyframes depth-out {
+  to {
+    opacity: 0.1;
+    transform: perspective(900px) translate3d(0, -24px, -90px) rotateX(-6deg);
+  }
+}
+@keyframes depth-slide-a {
+  to {
+    translate: 0 -160px;
+  }
+}
+@keyframes depth-slide-b {
+  to {
+    translate: 0 -420px;
+  }
+}
+@keyframes depth-slide-grid {
+  to {
+    translate: 0 -90px;
+  }
 }

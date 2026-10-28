@@ -293,6 +293,11 @@ test.describe('landing page', () => {
     isMobile,
   }) => {
     await page.goto('/');
+    await page.evaluate(() =>
+      document.getElementById('projects')!.scrollIntoView({ behavior: 'instant' }),
+    );
+    // the page eases its content in as it arrives, so measure once it is on screen
+    await page.waitForTimeout(150);
     const [a, b] = await page.locator('article.project-card').all();
     const boxA = (await a.boundingBox())!;
     const boxB = (await b.boundingBox())!;
