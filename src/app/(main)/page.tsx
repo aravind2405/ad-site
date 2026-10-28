@@ -1,6 +1,9 @@
 import Link from 'next/link';
+import AskRotator from '@/components/AskRotator';
 import Button from '@/components/Button';
 import ContactForm from '@/components/ContactForm';
+import HeroSignal from '@/components/HeroSignal';
+import HomeStage from '@/components/HomeStage';
 import JsonLd from '@/components/JsonLd';
 import ProjectCard from '@/components/ProjectCard';
 import { gridProjects, lab, labStages, nextUpLine, profile } from '@/lib/content';
@@ -27,12 +30,18 @@ export default async function Home() {
           sameAs: [links.linkedin, links.github].filter(Boolean),
         }}
       />
-      <section className="hero-shell" aria-labelledby="hero-h">
+      <HomeStage />
+      <section id="hero" className="hero-shell" aria-labelledby="hero-h">
         <div className="wrap hero">
           <h1 id="hero-h">{profile.headline}</h1>
           <p className="sub">{profile.subheadline}</p>
+          <AskRotator questions={gridProjects.map((p) => p.question)} />
           <p className="creds">{profile.credentials}</p>
         </div>
+        <a className="scroll-cue" href="#projects">
+          Projects <span aria-hidden="true">↓</span>
+        </a>
+        <HeroSignal />
       </section>
 
       <section id="projects" className="projects-band" aria-labelledby="projects-h">
@@ -49,6 +58,13 @@ export default async function Home() {
             ))}
           </div>
           <p className="next-up">{nextUpLine()}</p>
+          <a className="lab-peek" href="#lab">
+            <span className="lab-peek-label">Curiosity Lab</span>
+            <span className="lab-peek-names">{lab.experiments.map((e) => e.name).join(' · ')}</span>
+            <span className="lab-peek-go">
+              Take a look <span aria-hidden="true">↓</span>
+            </span>
+          </a>
         </div>
       </section>
 
@@ -67,7 +83,11 @@ export default async function Home() {
             {lab.experiments.map((e) => (
               <li className="lab-tile" key={e.name}>
                 <div className="lab-tile-top">
-                  <h3>{e.name}</h3>
+                  <h3>
+                    <Link className="stretched" href="/lab">
+                      {e.name}
+                    </Link>
+                  </h3>
                   <span className="stage-badge">{labStages[e.stage - 1]}</span>
                 </div>
                 <p>{e.question}</p>

@@ -618,3 +618,24 @@ Measured 2026-10-28 at about 07:30 AEDT on a local production build (port 3144) 
 A defect found and fixed in this PR: with scroll snapping on, Lighthouse found no Largest Contentful Paint for the home page on mobile (audit error `NO_LCP`, performance score missing). The cause was a 1 px scroll at load: the sticky nav is 57 px tall (56 px plus its 1 px border) but the snap clearance was 56 px, so the hero's snap point sat at 1 px and the browser moved the page. The clearance is now the nav height plus its border, so the hero's snap point is exactly 0. Leaving the hero out of the snap points was worse: phones loaded already scrolled 222 px, onto the projects band.
 
 Commands: `npm run build`, `npx playwright test`, `npm run lighthouse`, the scratch `run-axe.mjs` and `check-contrast.mjs` with `TAG=rhythm2`, and a Playwright script that records `scroll` events and `scrollY` after load (`scratchpad/snapload.mjs`, not committed).
+
+## Immersive home pages, 2026-10-28
+
+Measured 2026-10-28 on a local production build of branch `feat/immersive-pages` (stacked on `feat/section-rhythm`), Chrome and WebKit on a MacBook. Local, not live.
+
+| Check | Result |
+|---|---|
+| Height of each home page, 390x844 (px) | hero 787, projects 787, lab 787, contact 835 (screen below the nav is 787) |
+| Height of each home page, 1440x900 (px) | 835 for all four (screen below the nav is 835) |
+| Pages taller than the screen | 320x568: 513, 771, 739, 863; 375x667: 610, 745, 688, 835 (these scroll inside themselves) |
+| Horizontal overflow, home page at 320, 375, 390, 768, 1024, 1280, 1440 px | none |
+| Page position after a 300 px swipe up on a 375x667 phone, from the foot of the Projects page | stays at the foot of Projects (a short swipe does not advance on a phone shorter than the page) |
+| Playwright, 4 projects | 279 passed, 16 skipped (wheel and swipe tests run only where the browser supports snapping), 0 failed |
+| Vitest | 78 passed |
+| axe-core on the home page, each of its four pages scrolled into view, 375 px and 1440 px | 0 violations |
+| Lighthouse CI, home and `/projects/rentlens`, mobile | perf 97 to 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP about 2.4 s, TBT 28 to 37 ms |
+| Lighthouse CI, same pages, desktop | perf 100, CLS 0 |
+
+Commands: `npm run build`, `npx playwright test`, `npm run lighthouse` (Lighthouse medians read from `.lighthouseci/*/*.report.json`), `npm test`, and scratch Playwright scripts that read `getBoundingClientRect()` heights at each size and dispatch touch swipes through Chrome's `Input.synthesizeScrollGesture`.
+
+Not measured: real iPhone Safari or Android Chrome swipes, a real mouse wheel and trackpad, and VoiceOver. A very hard synthetic swipe (700 px at 8000 px/s) skipped a page in Chrome, so "one page per swipe" is verified for ordinary swipes only.
