@@ -3,11 +3,13 @@ import { ViewTransition } from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import Button from '@/components/Button';
+import Diagram from '@/components/Diagram';
 import JsonLd from '@/components/JsonLd';
 import Receipt from '@/components/Receipt';
 import StatusPill from '@/components/StatusPill';
 import { getProject, neighbours, profile, projects } from '@/lib/content';
 import { formatDate } from '@/lib/format';
+import { getDiagram } from '@/lib/diagrams';
 import { getRepoMeta } from '@/lib/github';
 import { SITE_URL } from '@/lib/site';
 
@@ -50,6 +52,7 @@ export default async function ProjectPage({ params }: Props) {
   const comingSoon = project.status === 'coming-soon';
   const heading = d.headings ?? {};
   const { previous, next } = neighbours(project.slug);
+  const diagram = getDiagram(project.slug);
 
   const structured =
     d.decisions.length > 0 && d.decisions.every((x) => x.chose && x.rejected && x.why);
@@ -194,6 +197,12 @@ export default async function ProjectPage({ params }: Props) {
           <div className="wrap reveal">
             <h2 id="arch-h">{heading.how ?? 'How it works'}</h2>
             <p className="prose-p">{d.architecture.summary}</p>
+            {diagram && (
+              <Diagram
+                definition={diagram}
+                label={`Data flow for ${project.name}: ${d.architecture.steps.join(', then ')}.`}
+              />
+            )}
             <ol className="flow" aria-label="Data flow">
               {d.architecture.steps.map((step) => (
                 <li key={step}>

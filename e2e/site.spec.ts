@@ -367,6 +367,63 @@ test.describe('project pages', () => {
     expect(cspErrors).toEqual([]);
   });
 
+  test('RentLens draws its architecture diagram without errors or sideways scrolling', async ({
+    page,
+    isMobile,
+  }) => {
+    const problems: string[] = [];
+    page.on('console', (m) => {
+      if (m.type() === 'error') problems.push(m.text());
+    });
+    page.on('pageerror', (e) => problems.push(e.message));
+    await page.goto('/projects/rentlens');
+    const diagram = page.locator('.diagram');
+    await expect(diagram).toHaveAttribute('data-state', 'waiting');
+    await diagram.scrollIntoViewIfNeeded();
+    await expect(diagram).toHaveAttribute('data-state', 'drawn');
+    const svg = diagram.locator('svg');
+    await expect(svg).toHaveCount(1);
+    await expect(diagram).toHaveAttribute('role', 'img');
+    await expect(diagram).toHaveAttribute('aria-label', /NSW Fair Trading.*DuckDB/s);
+    await expect(diagram).not.toContainText(/syntax error|error in text|parse error/i);
+    for (const word of ['Source', 'Ingestion', 'Transformation', 'Storage', 'Output', 'DuckDB']) {
+      await expect(diagram).toContainText(word);
+    }
+    // Vertical on phones, horizontal on wide screens.
+    const box = (await svg.boundingBox())!;
+    if (isMobile) expect(box.height).toBeGreaterThan(box.width);
+    else expect(box.width).toBeGreaterThan(box.height);
+    // It fits: nothing makes the page scroll sideways, and the picture stays inside its frame.
+    const frame = (await diagram.boundingBox())!;
+    expect(box.x).toBeGreaterThanOrEqual(frame.x - 1);
+    expect(box.x + box.width).toBeLessThanOrEqual(frame.x + frame.width + 1);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+    // Once drawn, the plain step list steps aside; the label above carries the steps.
+    await expect(page.locator('ol.flow')).toBeHidden();
+    expect(problems).toEqual([]);
+  });
+
+  test('without JavaScript the architecture is still readable as a step list', async ({
+    browser,
+    browserName,
+  }) => {
+    const context = await browser.newContext({ javaScriptEnabled: false });
+    await allowPlainHttpInWebKit(context, browserName);
+    const page = await context.newPage();
+    await page.goto('/projects/rentlens');
+    await expect(page.locator('ol.flow')).toBeVisible();
+    await expect(page.locator('ol.flow li')).toHaveCount(7);
+    await context.close();
+  });
+
+  test('a project with no diagram keeps the plain step list', async ({ page }) => {
+    await page.goto('/projects/ontimesydney');
+    await expect(page.locator('.diagram')).toHaveCount(0);
+    await expect(page.locator('ol.flow')).toBeVisible();
+  });
+
   test('OnTimeSydney states plainly that no data exists yet', async ({ page }) => {
     await page.goto('/projects/ontimesydney');
     await expect(page.locator('.stands')).toContainText('No data has been collected yet');

@@ -639,3 +639,24 @@ Measured 2026-10-28 on a local production build of branch `feat/immersive-pages`
 Commands: `npm run build`, `npx playwright test`, `npm run lighthouse` (Lighthouse medians read from `.lighthouseci/*/*.report.json`), `npm test`, and scratch Playwright scripts that read `getBoundingClientRect()` heights at each size and dispatch touch swipes through Chrome's `Input.synthesizeScrollGesture`.
 
 Not measured: real iPhone Safari or Android Chrome swipes, a real mouse wheel and trackpad, and VoiceOver. A very hard synthetic swipe (700 px at 8000 px/s) skipped a page in Chrome, so "one page per swipe" is verified for ordinary swipes only.
+
+## RentLens architecture diagram, 2026-10-28
+
+Measured 2026-10-28 at about 04:40 AEDT on a local production build of branch `feat/rentlens-diagram` (Mermaid 12.2.0), based on `test/ci-gates`. Local, not live.
+
+| Check | Result |
+|---|---|
+| Transfer on first load of `/projects/rentlens` (Chrome, CDP `encodedDataLength`) | 238 KiB total, 145 KiB of it JavaScript in 8 files; unchanged, because Mermaid is not downloaded until the diagram is within 400 px of the screen |
+| Extra transfer when the diagram is drawn | 654 KiB of JavaScript in 16 files (892 KiB total, 799 KiB JavaScript); same on desktop and phone |
+| Drawn diagram, 1440 / 1024 / 768 / 390 / 320 px wide | height 314 / 289 / 221 / 1465 / 1392 px; the picture is 1030 / 934 / 678 / 259 / 246 px wide and always inside its frame; no horizontal page scroll at any of the five widths |
+| Orientation | left to right at 640 px and wider, top to bottom below (decided from the diagram's own width) |
+| Text contrast on `/projects/rentlens` with the diagram drawn (contrast script) | lowest 6.73:1, 0 elements below threshold, desktop and phone |
+| axe-core on `/projects/rentlens` with the diagram drawn | 0 violations (Playwright, reduced motion) |
+| Lighthouse CI, home and `/projects/rentlens`, mobile, median | perf 98, a11y 100, best practices 100, SEO 100, CLS 0, LCP 2.46 s |
+| Lighthouse CI, same pages, desktop, median | perf 100, a11y 100, best practices 100, SEO 100, CLS 0, LCP 0.50 s |
+| Playwright, 4 projects | 165 passed, 0 failed |
+| Vitest | 60 passed |
+
+Lighthouse does not scroll, so it measures the page before Mermaid loads. The 654 KiB is the cost to people who scroll to the diagram. Production dependency audit with Mermaid: 0 vulnerabilities.
+
+Commands: `npm run build`, then `npx playwright test`, `npm run lighthouse`, `BASE=http://127.0.0.1:3129 PAGES="/projects/rentlens /projects/ontimesydney" TAG=diagram node check-contrast.mjs` (scratch copy of `scripts/measure`), and a Playwright/CDP script that sums `Network.loadingFinished` `encodedDataLength` before and after scrolling the diagram into view (`scratchpad/bytes.mjs`, not committed).
